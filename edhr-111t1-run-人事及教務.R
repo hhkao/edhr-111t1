@@ -2226,4 +2226,5 @@ data_person_wide_flag18$err_expecter <- if_else(data_person_wide_flag18$count_ex
 data_person_wide_flag18$err_workexp <- if_else(data_person_wide_flag18$count_workexp / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "一年以上與任教領域相關之業界實務工作經驗人數偏多。（請再協助確認，『是否具備一年以上與任教領域相關之業界實務工作經驗』填寫『Y』之教員，是否確依欄位說明具備此經驗）", "")
 data_person_wide_flag18$err_study <- if_else(data_person_wide_flag18$count_study / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "近六年內進行與專業或技術有關之研習或研究的人數偏多，請再協助確認實際聘任情況。", "")
 
-#!!!!!!!!!!!!!!!!!!!!!!!
+#flag19
+flag_person <- drev_person_1
