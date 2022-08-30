@@ -78,7 +78,7 @@ teacher <- merge(x = teacher, y = list_agree, by = "organization_id", all.x = TR
   subset(select = -c(updated_at, agree)) %>%
   subset(substr(teacher$organization_id, 3, 3) == "0" | substr(teacher$organization_id, 3, 3) == "3" | substr(teacher$organization_id, 3, 3) == "4")
 
-teacher20_1101 <- teacher_1101 %>%
+teacher20_1101 <- teacher %>%
   mutate(dta_teacher = "教員資料表")
 
 ##### 1101公立學校 職員(工)資料表#####
@@ -118,7 +118,7 @@ staff <- merge(x = staff, y = list_agree, by = "organization_id", all.x = TRUE) 
   subset(select = -c(updated_at, agree)) %>%
   subset(substr(teacher$organization_id, 3, 3) == "0" | substr(teacher$organization_id, 3, 3) == "3" | substr(teacher$organization_id, 3, 3) == "4")
 
-staff20_1102 <- staff %>%
+staff20_1101 <- staff %>%
   mutate(dta_teacher = "職員(工)資料表")
 
 ##### 1101公立學校 教員資料表#####
@@ -219,7 +219,7 @@ staff <- merge(x = staff, y = list_agree, by = "organization_id", all.x = TRUE) 
   subset(agree == 1) %>%
   subset(select = -c(updated_at, agree))
 
-staff_1102 <- staff %>%
+staff_1101 <- staff %>%
   mutate(dta_teacher = "職員(工)資料表")
 
 ##### 1102私立學校 教員資料表#####
@@ -324,5 +324,5 @@ staff_1102 <- staff %>%
   mutate(dta_teacher = "職員(工)資料表")
 
 #####合併#####
-personnel_1101_1102 <- bind_rows(teacher_1101, staff_1101, teacher_1102, staff_1102)
+personnel_1101_1102 <- bind_rows(teacher20_1101, staff20_1101, teacher_1101, staff_1101, teacher_1102, staff_1102)
 openxlsx :: write.xlsx(personnel_1101_1102, file = paste("C:/R/", "1101公立學校及1102私立學校_人事資料整合", ".xlsx", sep = ""), rowNames = FALSE, overwrite = TRUE)
