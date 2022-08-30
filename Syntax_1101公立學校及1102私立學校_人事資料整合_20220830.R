@@ -75,8 +75,13 @@ teacher$organization_id <- formatC(teacher$organization_id, dig = 0, wid = 6, fo
 #只留下審核通過之名單 只留下公立
 teacher <- merge(x = teacher, y = list_agree, by = "organization_id", all.x = TRUE) %>%
   subset(agree == 1) %>%
-  subset(select = -c(updated_at, agree)) %>%
-  subset(substr(teacher$organization_id, 3, 3) == "0" | substr(teacher$organization_id, 3, 3) == "3" | substr(teacher$organization_id, 3, 3) == "4")
+  subset(select = -c(updated_at, agree))
+
+teacher$try <- substr(teacher$organization_id, 3, 3)
+
+teacher <- teacher %>%
+  subset(try == "0" | try == "3" | try == "4") %>%
+  subset(select = -c(try))
 
 teacher20_1101 <- teacher %>%
   mutate(dta_teacher = "教員資料表")
@@ -115,8 +120,13 @@ staff$organization_id <- formatC(staff$organization_id, dig = 0, wid = 6, format
 #只留下審核通過之名單
 staff <- merge(x = staff, y = list_agree, by = "organization_id", all.x = TRUE) %>%
   subset(agree == 1) %>%
-  subset(select = -c(updated_at, agree)) %>%
-  subset(substr(teacher$organization_id, 3, 3) == "0" | substr(teacher$organization_id, 3, 3) == "3" | substr(teacher$organization_id, 3, 3) == "4")
+  subset(select = -c(updated_at, agree))
+
+staff$try <- substr(staff$organization_id, 3, 3)
+
+staff <- staff %>%
+  subset(try == "0" | try == "3" | try == "4") %>%
+  subset(select = -c(try))
 
 staff20_1101 <- staff %>%
   mutate(dta_teacher = "職員(工)資料表")
