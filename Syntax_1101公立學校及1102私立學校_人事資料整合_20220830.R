@@ -81,15 +81,44 @@ teacher <- merge(x = teacher, y = list_agree, by = "organization_id", all.x = TR
 teacher20_1101 <- teacher_1101 %>%
   mutate(dta_teacher = "教員資料表")
 
-##### 1101 (含20校試辦)公立學校 職員(工)資料表#####
-#國立
-staff_1101_1 <- readxl :: read_excel("C:/edhr-111t1/110學年度上學期高級中等學校教育人力資源資料庫（國立學校人事）.xlsx", sheet = "職員(工)資料表")
-#縣市立
-staff_1101_2 <- readxl :: read_excel("C:/edhr-111t1/110學年度上學期高級中等學校教育人力資源資料庫（縣市立學校人事）_不含樟樹.xlsx", sheet = "職員(工)資料表")
+##### 1101公立學校 職員(工)資料表#####
+#讀取職員(工)資料表名稱
+staff_tablename <- dbGetQuery(edhr, 
+                              paste("
+SELECT [name] FROM [plat5_edhr].[dbo].[row_tables] 
+	where sheet_id = (SELECT [id] FROM [plat5_edhr].[dbo].[row_sheets] 
+						          where file_id = (SELECT field_component_id FROM [plat5_edhr].[dbo].[teacher_datasets] 
+											                   WHERE title = '職員(工)資料表' AND department_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments] 
+																							                                                 WHERE title = '", department, "' AND  report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports] 
+																												                                                            WHERE title = '", title, "'))))", sep = "")
+) %>% as.character()
 
-staff_1101 <- bind_rows(staff_1101_1, staff_1101_2)
+#讀取職員(工)資料表
+staff <- dbGetQuery(edhr, 
+                    paste("SELECT * FROM [rows].[dbo].[", staff_tablename, "] WHERE deleted_at IS NULL", sep = "")
+) %>%
+  subset(select = -c(id, created_at, deleted_at, updated_by, created_by, deleted_by))
+#欄位名稱更改為設定的欄位代號
+for (i in 2 : dim(staff)[2]) #從2開始是因為第一的欄位是update_at
+{
+  colnames(staff)[i] <- col_names$name[grep(paste(colnames(staff)[i], "$", sep = ""), col_names$id)]
+}
 
-staff_1101 <- staff_1101 %>%
+#格式調整
+staff$gender <- formatC(staff$gender, dig = 0, wid = 1, format = "f", flag = "0")
+staff$birthdate <- formatC(staff$birthdate, dig = 0, wid = 7, format = "f", flag = "0")
+staff$onbodat <- formatC(staff$onbodat, dig = 0, wid = 7, format = "f", flag = "0")
+staff$desedym <- formatC(staff$desedym, dig = 0, wid = 4, format = "f", flag = "0")
+staff$beobdym <- formatC(staff$beobdym, dig = 0, wid = 4, format = "f", flag = "0")
+staff$organization_id <- formatC(staff$organization_id, dig = 0, wid = 6, format = "f", flag = "0")
+
+#只留下審核通過之名單
+staff <- merge(x = staff, y = list_agree, by = "organization_id", all.x = TRUE) %>%
+  subset(agree == 1) %>%
+  subset(select = -c(updated_at, agree)) %>%
+  subset(substr(teacher$organization_id, 3, 3) == "0" | substr(teacher$organization_id, 3, 3) == "3" | substr(teacher$organization_id, 3, 3) == "4")
+
+staff20_1102 <- staff %>%
   mutate(dta_teacher = "職員(工)資料表")
 
 ##### 1101公立學校 教員資料表#####
