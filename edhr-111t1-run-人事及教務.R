@@ -1,7 +1,7 @@
 rm(list=ls())
 
 #套件名稱
-packages <- c("DBI", "odbc", "magrittr", "dplyr", "rJava", "xlsx", "RStata", "readxl", "mailR", "stringr", "haven", "openxlsx", "tidyr")
+packages <- c("DBI", "odbc", "magrittr", "dplyr", "rJava", "xlsx", "RStata", "readxl", "mailR", "stringr", "haven", "openxlsx", "tidyr", "maditr")
 
 # 安裝尚未安裝的套件
 installed_packages <- packages %in% rownames(installed.packages())
@@ -2209,22 +2209,61 @@ for (x in temp){
 
 flag_person$jj <- 1
 
-data_person_wide_flag18 <- aggregate(cbind(count_emptype, count_empunit, count_sertype, count_sertype2, count_skillteacher, count_counselor, count_speteacher, count_joiteacher, count_expecter, count_workexp, count_study, jj) ~ organization_id + source, flag_person, sum)
+flag_person_wide_flag18 <- aggregate(cbind(count_emptype, count_empunit, count_sertype, count_sertype2, count_skillteacher, count_counselor, count_speteacher, count_joiteacher, count_expecter, count_workexp, count_study, jj) ~ organization_id + source, flag_person, sum)
 
-data_person_wide_flag18$flag_err <- 0
-data_person_wide_flag18$err_emptype <- if_else(data_person_wide_flag18$count_emptype / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "教員資料表專任教學人員人數偏低，請再協助確認實際聘任情況，或請確認是否填報完整教員名單資料。", "")
-data_person_wide_flag18$err_emptype <- if_else(data_person_wide_flag18$count_emptype / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "職員工資料表", "職員(工)資料表專任人員人數偏低，請再協助確認實際聘任情況，或請確認是否填報完整職員(工)名單資料。", "")
-data_person_wide_flag18$err_empunit <- if_else(data_person_wide_flag18$count_empunit / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "教員資料表主聘單位各類別人數分布異常，請再協助確認實際聘任情況。", "")
-data_person_wide_flag18$err_empunit <- if_else(data_person_wide_flag18$count_empunit / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "職員工資料表", "職員(工)資料表主聘單位各類別人數分布異常，請再協助確認實際聘任情況。", "")
-data_person_wide_flag18$err_sertype <- if_else(data_person_wide_flag18$count_sertype / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "教師人數偏低，請再協助確認實際聘任情況。", "")
-data_person_wide_flag18$err_sertype <- if_else(data_person_wide_flag18$count_sertype2 / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "校長人數超過一位，請再協助確認實際聘任情況。", "")
-data_person_wide_flag18$err_skillteacher <- if_else(data_person_wide_flag18$count_skillteacher / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "專業及技術教師人數偏多，請再協助確認實際聘任情況。", "")
-data_person_wide_flag18$err_counselor <- if_else(data_person_wide_flag18$count_counselor / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "專任輔導教師人數偏多，請再協助確認實際聘任情況。", "")
-data_person_wide_flag18$err_speteacher <- if_else(data_person_wide_flag18$count_speteacher / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "特教班專職教師人數偏多，請再協助確認實際聘任情況。", "")
-data_person_wide_flag18$err_joiteacher <- if_else(data_person_wide_flag18$count_joiteacher / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "合聘教師人數偏多。（請確認校內教師是否與他校合聘：如有與他校合聘者，本校又為『主聘學校』，再請於『是否為合聘教師』一欄填入『1』，若以本校為『從聘學校』請於『是否為合聘教師』一欄填入『2』；若沒有與他校合聘，則『是否為合聘教師』一欄請填『N』）", "")
-data_person_wide_flag18$err_expecter <- if_else(data_person_wide_flag18$count_expecter / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "業界專家人數偏多，請再協助確認實際聘任情況，或請確認是否將專業及技術教師誤填為業界專家。", "")
-data_person_wide_flag18$err_workexp <- if_else(data_person_wide_flag18$count_workexp / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "一年以上與任教領域相關之業界實務工作經驗人數偏多。（請再協助確認，『是否具備一年以上與任教領域相關之業界實務工作經驗』填寫『Y』之教員，是否確依欄位說明具備此經驗）", "")
-data_person_wide_flag18$err_study <- if_else(data_person_wide_flag18$count_study / data_person_wide_flag18$jj < 0.5 & data_person_wide_flag18$source == "教員資料表", "近六年內進行與專業或技術有關之研習或研究的人數偏多，請再協助確認實際聘任情況。", "")
+flag_person_wide_flag18$flag_err <- 0
+flag_person_wide_flag18$err_emptype <- if_else(flag_person_wide_flag18$count_emptype / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "教員資料表專任教學人員人數偏低，請再協助確認實際聘任情況，或請確認是否填報完整教員名單資料。", "")
+flag_person_wide_flag18$err_emptype <- if_else(flag_person_wide_flag18$count_emptype / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "職員工資料表", "職員(工)資料表專任人員人數偏低，請再協助確認實際聘任情況，或請確認是否填報完整職員(工)名單資料。", "")
+flag_person_wide_flag18$err_empunit <- if_else(flag_person_wide_flag18$count_empunit / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "教員資料表主聘單位各類別人數分布異常，請再協助確認實際聘任情況。", "")
+flag_person_wide_flag18$err_empunit <- if_else(flag_person_wide_flag18$count_empunit / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "職員工資料表", "職員(工)資料表主聘單位各類別人數分布異常，請再協助確認實際聘任情況。", "")
+flag_person_wide_flag18$err_sertype <- if_else(flag_person_wide_flag18$count_sertype / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "教師人數偏低，請再協助確認實際聘任情況。", "")
+flag_person_wide_flag18$err_sertype <- if_else(flag_person_wide_flag18$count_sertype2 > 1 & flag_person_wide_flag18$source == "教員資料表", "校長人數超過一位，請再協助確認實際聘任情況。", "")
+flag_person_wide_flag18$err_skillteacher <- if_else(flag_person_wide_flag18$count_skillteacher / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "專業及技術教師人數偏多，請再協助確認實際聘任情況。", "")
+flag_person_wide_flag18$err_counselor <- if_else(flag_person_wide_flag18$count_counselor / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "專任輔導教師人數偏多，請再協助確認實際聘任情況。", "")
+flag_person_wide_flag18$err_speteacher <- if_else(flag_person_wide_flag18$count_speteacher / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "特教班專職教師人數偏多，請再協助確認實際聘任情況。", "")
+flag_person_wide_flag18$err_joiteacher <- if_else(flag_person_wide_flag18$count_joiteacher / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "合聘教師人數偏多。（請確認校內教師是否與他校合聘：如有與他校合聘者，本校又為『主聘學校』，再請於『是否為合聘教師』一欄填入『1』，若以本校為『從聘學校』請於『是否為合聘教師』一欄填入『2』；若沒有與他校合聘，則『是否為合聘教師』一欄請填『N』）", "")
+flag_person_wide_flag18$err_expecter <- if_else(flag_person_wide_flag18$count_expecter / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "業界專家人數偏多，請再協助確認實際聘任情況，或請確認是否將專業及技術教師誤填為業界專家。", "")
+flag_person_wide_flag18$err_workexp <- if_else(flag_person_wide_flag18$count_workexp / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "一年以上與任教領域相關之業界實務工作經驗人數偏多。（請再協助確認，『是否具備一年以上與任教領域相關之業界實務工作經驗』填寫『Y』之教員，是否確依欄位說明具備此經驗）", "")
+flag_person_wide_flag18$err_study <- if_else(flag_person_wide_flag18$count_study / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "近六年內進行與專業或技術有關之研習或研究的人數偏多，請再協助確認實際聘任情況。", "")
+
+flag_person_wide_flag18$err_flag_txt <- paste(flag_person_wide_flag18$err_emptype, flag_person_wide_flag18$err_empunit, flag_person_wide_flag18$err_sertype, flag_person_wide_flag18$err_skillteacher, flag_person_wide_flag18$err_counselor, flag_person_wide_flag18$err_speteacher, flag_person_wide_flag18$err_joiteacher, flag_person_wide_flag18$err_expecter, flag_person_wide_flag18$err_workexp, flag_person_wide_flag18$err_study, sep = "")
+
+# #產生檢誤報告文字
+# flag18_temp <- flag_person_wide_flag18 %>%
+#   group_by(organization_id) %>%
+#   mutate(flag18_txt = paste(source, "需修改請假類別：", flag18_r, sep = ""), "") %>%
+#   subset(select = c(organization_id, flag18_txt)) %>%
+#   distinct(organization_id, flag18_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag18 <- flag_person_wide_flag18 %>%
+  subset(err_flag_txt != "") %>%
+  dcast(organization_id ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag18)[2 : length(colnames(flag18))]
+flag18$flag18 <- NA
+for (i in temp){
+  flag18$flag18 <- paste(flag18$flag18, flag18[[i]], sep = "； ")
+}
+flag18$flag18 <- gsub("NA； ", replacement="", flag18$flag18)
+flag18$flag18 <- gsub("； NA", replacement="", flag18$flag18)
+
+#產生檢誤報告文字
+flag18 <- flag18 %>%
+  subset(select = c(organization_id, flag18)) %>%
+  distinct(organization_id, flag18)
+
+#偵測flag18是否存在。若不存在，則產生NA行
+if('flag18' %in% ls()){
+  print("flag18")
+}else{
+  flag18 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag18$flag18 <- ""
+}
+
 
 #flag19
 flag_person <- drev_person_1
