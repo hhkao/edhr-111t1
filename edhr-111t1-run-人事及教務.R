@@ -2077,7 +2077,7 @@ flag15$flag15 <- gsub("； NA", replacement="", flag15$flag15)
 #產生檢誤報告文字
 flag15 <- flag15 %>%
   subset(select = c(organization_id, flag15)) %>%
-  distinct(organization_id, flag15)
+  distinct(organization_id, flag15) %>%
   mutate(flag15 = paste(flag15, "（校長、教師、教官、主任教官、族語老師、教學支援人員屬於服務身分別，若渠等教員未再兼任行政職務，如秘書、學務主任、生活輔導組組長等，請於兼任行政職職稱(單位)填”N” ）", sep = ""))
 
 #偵測flag15是否存在。若不存在，則產生NA行
@@ -2173,8 +2173,8 @@ flag16$flag16 <- gsub("； NA", replacement="", flag16$flag16)
 #產生檢誤報告文字
 flag16 <- flag16 %>%
   subset(select = c(organization_id, flag16)) %>%
-  distinct(organization_id, flag16)
-mutate(flag16 = paste(flag16, "（請確認請假類別，或是否屬於請假，若非屬請假請填寫 “N”）", sep = ""))
+  distinct(organization_id, flag16) %>%
+  mutate(flag16 = paste(flag16, "（請確認請假類別，或是否屬於請假，若非屬請假請填寫 “N”）", sep = ""))
   
 #偵測flag16是否存在。若不存在，則產生NA行
 if('flag16' %in% ls()){
@@ -2321,7 +2321,7 @@ flag19$flag19 <- gsub("； NA", replacement="", flag19$flag19)
 #產生檢誤報告文字
 flag19 <- flag19 %>%
   subset(select = c(organization_id, flag19)) %>%
-  distinct(organization_id, flag19)
+  distinct(organization_id, flag19) %>%
   mutate(flag19 = paste(flag19, "（請修正該員所屬國籍別）", sep = ""))
 
 #偵測flag19是否存在。若不存在，則產生NA行
@@ -2735,18 +2735,19 @@ flag_person$err_flag <- 0
 flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "NA" | flag_person$emsub == "N") & (flag_person$sertype == "教師" | flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
 flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "不分科") & (flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
 flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "教師") & (flag_person$sertype == "教師" | flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "教官") & (flag_person$sertype == "教師" | flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "主任教官") & (flag_person$sertype == "教師" | flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "副校長") & (flag_person$sertype == "教師" | flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
 
-replace err_emsub = 1 if dta_teacher == 1 & (emsub == "NA" | emsub == "N") & (sertype == "教師" | sertype == "主任教官" | sertype == "教官")
-replace err_emsub = 1 if dta_teacher == 1 & (emsub == "不分科") & (sertype == "主任教官" | sertype == "教官")
-replace err_emsub = 1 if dta_teacher == 1 & (emsub == "教師") & (sertype == "教師" | sertype == "主任教官" | sertype == "教官")
-replace err_emsub = 1 if dta_teacher == 1 & (emsub == "教官") & (sertype == "教師" | sertype == "主任教官" | sertype == "教官")
-replace err_emsub = 1 if dta_teacher == 1 & (emsub == "主任教官") & (sertype == "教師" | sertype == "主任教官" | sertype == "教官")
-replace err_emsub = 1 if dta_teacher == 1 & (emsub == "副校長") & (sertype == "教師" | sertype == "主任教官" | sertype == "教官")
+#若校長的服務身份別填錯，且聘任科別填「NA」，則flag45不呈現，在flag47呈現
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "NA" | flag_person$emsub == "N") & (flag_person$sertype == "校長"), 0, flag_person$err_flag)
+#若聘任科別填校長，需抓出
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "校長"), 1, flag_person$err_flag)
 
 #加註學士學位畢業學校名稱
 flag_person$err_flag_txt <- ""
 flag_person$err_flag_txt <- case_when(
-  flag_person$err_flag == 1 ~ paste(flag_person$name, "（學士學位畢業學校（一）：", flag_person$bdegreeu1, "）", sep = ""),
+  flag_person$err_flag == 1 ~ paste(flag_person$name, "（", flag_person$emsub, "）", sep = ""),
   TRUE ~ flag_person$err_flag_txt
 )
 
@@ -2768,7 +2769,7 @@ flag_person_wide_flag45$flag45_r <- gsub(", NA", replacement="", flag_person_wid
 #產生檢誤報告文字
 flag45_temp <- flag_person_wide_flag45 %>%
   group_by(organization_id) %>%
-  mutate(flag45_txt = paste(source, "：", flag45_r, sep = ""), "") %>%
+  mutate(flag45_txt = paste(source, "需修改聘任科別(括號內為該員所對應之聘任科別欄位內容)：", flag45_r, sep = ""), "") %>%
   subset(select = c(organization_id, flag45_txt)) %>%
   distinct(organization_id, flag45_txt)
 
@@ -2788,7 +2789,8 @@ flag45$flag45 <- gsub("； NA", replacement="", flag45$flag45)
 #產生檢誤報告文字
 flag45 <- flag45 %>%
   subset(select = c(organization_id, flag45)) %>%
-  distinct(organization_id, flag45)
+  distinct(organization_id, flag45) %>%
+  mutate(flag45 = paste(flag45, "（請依欄位說明，修正「教師」、「主任教官」、「教官」之聘任科別中文名稱，「教師」、「主任教官」、「教官」以外其他服務身分別教員之聘任科別請修正為NA。）", sep = ""))
 
 #偵測flag45是否存在。若不存在，則產生NA行
 if('flag45' %in% ls()){
