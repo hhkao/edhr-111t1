@@ -2726,3 +2726,76 @@ if('flag39' %in% ls()){
     subset(select = c(organization_id, edu_name2))
   flag39$flag39 <- ""
 }
+
+# flag45: 聘任科別應填入服務身分別為「教師」、「主任教官」、「教官」之聘任科別中文名稱。 -------------------------------------------------------------------
+flag_person <- drev_person_1
+
+#聘任科別不合理處
+flag_person$err_flag <- 0
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "NA" | flag_person$emsub == "N") & (flag_person$sertype == "教師" | flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "不分科") & (flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "教師") & (flag_person$sertype == "教師" | flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
+
+replace err_emsub = 1 if dta_teacher == 1 & (emsub == "NA" | emsub == "N") & (sertype == "教師" | sertype == "主任教官" | sertype == "教官")
+replace err_emsub = 1 if dta_teacher == 1 & (emsub == "不分科") & (sertype == "主任教官" | sertype == "教官")
+replace err_emsub = 1 if dta_teacher == 1 & (emsub == "教師") & (sertype == "教師" | sertype == "主任教官" | sertype == "教官")
+replace err_emsub = 1 if dta_teacher == 1 & (emsub == "教官") & (sertype == "教師" | sertype == "主任教官" | sertype == "教官")
+replace err_emsub = 1 if dta_teacher == 1 & (emsub == "主任教官") & (sertype == "教師" | sertype == "主任教官" | sertype == "教官")
+replace err_emsub = 1 if dta_teacher == 1 & (emsub == "副校長") & (sertype == "教師" | sertype == "主任教官" | sertype == "教官")
+
+#加註學士學位畢業學校名稱
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_flag == 1 ~ paste(flag_person$name, "（學士學位畢業學校（一）：", flag_person$bdegreeu1, "）", sep = ""),
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag45 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
+  subset(err_flag == 1) %>%
+  dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag45)[3 : length(colnames(flag_person_wide_flag45))]
+flag_person_wide_flag45$flag45_r <- NA
+for (i in temp){
+  flag_person_wide_flag45$flag45_r <- paste(flag_person_wide_flag45$flag45_r, flag_person_wide_flag45[[i]], sep = ", ")
+}
+flag_person_wide_flag45$flag45_r <- gsub("NA, ", replacement="", flag_person_wide_flag45$flag45_r)
+flag_person_wide_flag45$flag45_r <- gsub(", NA", replacement="", flag_person_wide_flag45$flag45_r)
+
+#產生檢誤報告文字
+flag45_temp <- flag_person_wide_flag45 %>%
+  group_by(organization_id) %>%
+  mutate(flag45_txt = paste(source, "：", flag45_r, sep = ""), "") %>%
+  subset(select = c(organization_id, flag45_txt)) %>%
+  distinct(organization_id, flag45_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag45 <- flag45_temp %>%
+  dcast(organization_id ~ flag45_txt, value.var = "flag45_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag45)[2 : length(colnames(flag45))]
+flag45$flag45 <- NA
+for (i in temp){
+  flag45$flag45 <- paste(flag45$flag45, flag45[[i]], sep = "； ")
+}
+flag45$flag45 <- gsub("NA； ", replacement="", flag45$flag45)
+flag45$flag45 <- gsub("； NA", replacement="", flag45$flag45)
+
+#產生檢誤報告文字
+flag45 <- flag45 %>%
+  subset(select = c(organization_id, flag45)) %>%
+  distinct(organization_id, flag45)
+
+#偵測flag45是否存在。若不存在，則產生NA行
+if('flag45' %in% ls()){
+  print("flag45")
+}else{
+  flag45 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag45$flag45 <- ""
+}
