@@ -15,12 +15,12 @@ lapply(packages, require, character.only = TRUE)
 # 匯入學校資料檔 -------------------------------------------------------------------
 # input data
 # 分頁名稱為系統指定。
-path <- "C:\\edhr-110t1\\dta\\edhr_110t1-202201\\110學年度上學期高級中等學校教育人力資源資料庫（20校人事及教務）.xlsx"
+path <- "\\\\192.168.110.244\\share_tmp\\給修恒\\1111\\edhr-111t1\\dta\\edhr_111t1-202210\\111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事）.xlsx"
 excel_sheets(path)
 
 data_teacher <- read_excel(path, sheet = "教員資料表")
 data_staff   <- read_excel(path, sheet = "職員(工)資料表")
-data_load    <- read_excel(path, sheet = "教學資料表")
+#data_load    <- read_excel(path, sheet = "教學資料表")
 #data_courseA  <- read_excel(path, sheet = "授課資料表A.有課程代碼（23碼）")
 #data_courseB  <- read_excel(path, sheet = "授課資料表B.無課程代碼（23碼）")
 
@@ -43,7 +43,7 @@ drev_person$source  <- factor(drev_person$source, levels = c(1, 2), labels = c("
 # 統計處高級中等學校科別資料 -----------------------------------------------------------
 # 統計處公布的「高級中等學校科別資料」
 # 網址：https://depart.moe.edu.tw/ED4500/News.aspx?n=5A930C32CC6C3818&sms=91B3AAE8C6388B96
-edu_path <- "C:\\edhr-110t2\\110_base2_revise.xls"
+edu_path <- "C:\\edhr-111t1\\110_base2_revise.xls"
 data_schtype <- read_excel(edu_path)
 data_schtype <- c("學校代碼", "學校名稱", "學程(等級)別", "學程(等級)名稱", "日夜別", "日夜別名稱", "群別代碼", "群別名稱", "科系代碼", "科系名稱", "班級數", "學生數") %>%
   data_schtype[, .]
@@ -69,7 +69,7 @@ data_schtype$organization_id <- recode_factor(data_schtype$organization_id,
                                        "140222" = "140401"
                                        , "400144" = "400419")
 # 參與學校名單
-try <- c("011301", "011302", "011306", "011307", "011309", "011310", "011311", "011312", "011314", "011315", "011316", "011317", "011318", "011322", "011323", "011324", "011325", "011329", "011330", "011399", "011405", "011407", "011408", "011413", "011419", "011420", "011421", "011426", "011427", "011431", "011432", "011C71", "021301", "021310", "031301", "031309", "031310", "031311", "031312", "031313", "031317", "031318", "031319", "031320", "031323", "031324", "031326", "031414", "031415", "031421", "031G91", "041303", "041305", "041306", "041307", "041401", "051302", "051305", "051306", "051307", "051408", "051411", "051412", "051413", "061301", "061306", "061309", "061310", "061311", "061313", "061314", "061315", "061316", "061317", "061318", "061319", "061321", "061322", "071311", "071317", "071318", "071413", "071414", "081311", "081312", "081313", "081314", "081409", "091307", "091308", "091311", "091312", "091316", "091318", "091319", "091320", "091410", "091414", "101303", "101304", "101405", "101406", "111313", "111320", "111321", "111322", "111323", "111326", "111419", "111427", "111G91", "121302", "121306", "121307", "121318", "121320", "121405", "121410", "121413", "121415", "121417", "131302", "131307", "131308", "131311", "131409", "131418", "141301", "141307", "141406", "151306", "151307", "151312", "151410", "151G91", "171306", "171308", "171405", "171407", "181305", "181306", "181307", "181308", "191301", "191302", "191305", "191308", "191309", "191311", "191313", "191314", "191315", "191412", "201304", "201309", "201310", "201312", "201313", "201314", "201408", "211301", "211302", "211304", "211310", "211314", "211315", "211317", "211318", "211320", "211407", "211412", "211419", "311401", "321399", "331301", "331302", "331304", "331402", "331403", "331404", "341302", "341402", "351301", "351402", "351B09", "361301", "361401", "361B09", "381301", "381302", "381303", "381304", "381305", "381306", "401301", "401302", "401303", "411301", "411302", "411303", "411401", "421301", "421302", "421303", "421404", "521301", "521303", "521401", "551301", "551303", "551402", "581301", "581302", "581401", "581402")
+try <- c("010301", "013303", "013304", "013335", "013336", "013337", "013338", "013339", "013402", "013430", "013433", "013434", "014302", "014311", "014315", "014322", "014326", "014332", "014338", "014343", "014347", "014348", "014353", "014356", "014357", "014362", "014363", "014364", "014381", "014439", "014468", "020301", "020302", "020308", "020403", "020404", "020405", "020407", "020409", "024322", "024325", "030305", "030403", "033302", "033304", "033306", "033316", "033325", "033327", "033407", "033408", "034306", "034312", "034314", "034319", "034332", "034335", "034347", "034348", "034399", "040302", "040304", "040308", "044311", "044320", "050303", "050310", "050314", "050315", "050401", "050404", "050407", "054308", "054309", "054317", "054333", "060322", "060323", "063303", "063305", "063312", "063401", "063402", "063404", "063407", "063408", "064308", "064324", "064328", "064336", "064342", "064350", "064406", "070301", "070304", "070307", "070316", "070319", "070401", "070402", "070403", "070405", "070406", "070408", "070409", "070410", "070415", "074308", "074313", "074323", "074328", "074339", "080302", "080305", "080307", "080308", "080401", "080403", "080404", "080406", "080410", "084309", "090305", "090306", "090315", "090401", "090402", "090403", "090404", "090413", "094301", "094307", "094308", "094326", "100301", "100302", "100402", "104319", "104326", "110302", "110308", "110311", "110312", "110314", "110315", "110317", "110328", "110401", "110403", "110404", "110405", "110406", "110407", "110409", "110410", "114306", "114307", "120303", "120304", "120311", "120319", "120401", "120402", "120409", "124302", "124311", "124313", "124322", "124333", "124340", "130302", "130305", "130306", "130322", "130401", "130403", "130404", "130410", "130417", "134304", "134321", "134324", "134334", "140301", "140302", "140303", "140404", "140405", "140408", "144322", "150302", "150303", "150309", "150401", "150404", "150405", "150411", "154301", "160302", "160401", "170301", "170302", "170403", "170404", "173304", "173306", "173307", "173314", "180301", "180302", "180309", "180403", "180404", "183306", "183307", "183313", "190406", "193301", "193302", "193303", "193313", "193315", "193316", "193404", "193407", "194303", "194315", "200302", "200303", "200401", "200405", "200406", "200407", "210303", "210305", "210306", "210309", "210408", "210416", "213303", "213316", "313301", "313302", "323301", "323302", "323401", "323402", "330301", "333301", "333304", "333401", "343301", "343302", "343303", "353301", "353302", "353303", "363301", "363302", "373301", "373302", "380301", "383301", "383302", "383401", "393301", "393302", "393401", "403301", "403302", "403303", "403401", "413301", "413302", "413401", "423301", "423302", "383303", "523301", "533301", "533302", "533401", "533402", "540301", "543301", "543302", "553301", "553302", "553401", "563301", "563401", "573301", "580301", "583301", "593301", "593302", "593401", "610405", "613301", "710301", "710401", "720301")
 
 data_schtype$try1 <- NA
 for (x in try){
@@ -1800,7 +1800,7 @@ flag_person <- drev_person_1
 flag_person$survey_year <- 110
 flag_person$birthy <- substr(flag_person$birthdate, 1, 3) %>% as.numeric()
 
-flag_person$age <- survey_year- birthy
+flag_person$age <- flag_person$survey_year- flag_person$birthy
 
 #錯誤標記
 flag_person$irr_year <- 0
@@ -1809,7 +1809,7 @@ flag_person$irr_year <- if_else(flag_person$age > 75, 1, flag_person$irr_year)
 flag_person$irr_year <- if_else(flag_person$age > 75 & (flag_person$emptype == "兼任" | flag_person$emptype == "長期代課" | flag_person$emptype == "專職族語老師" | flag_person$emptype == "鐘點教師" | flag_person$emptype == "約聘僱" | flag_person$emptype == "約用" | flag_person$emptype == "派遣"), 0, flag_person$irr_year)
 flag_person$irr_year <- if_else(flag_person$age > 85 & (flag_person$emptype == "兼任" | flag_person$emptype == "長期代課" | flag_person$emptype == "專職族語老師" | flag_person$emptype == "鐘點教師" | flag_person$emptype == "約聘僱" | flag_person$emptype == "約用" | flag_person$emptype == "派遣"), 1, flag_person$irr_year)
 
-flag_person$name <- if_else(flag_person$irr_year == 1, paste(flag_person$name, "（", flag_person$birthdate, "）", sep = ""), flag_person$irr_year)
+flag_person$name <- if_else(flag_person$irr_year == 1, paste(flag_person$name, "（", flag_person$birthdate, "）", sep = ""), flag_person$name)
 
 #姓名加註出生年月日
 flag_person$name <- case_when(
@@ -2078,7 +2078,7 @@ flag15$flag15 <- gsub("； NA", replacement="", flag15$flag15)
 flag15 <- flag15 %>%
   subset(select = c(organization_id, flag15)) %>%
   distinct(organization_id, flag15) %>%
-  mutate(flag15 = paste(flag15, "（校長、教師、教官、主任教官、族語老師、教學支援人員屬於服務身分別，若渠等教員未再兼任行政職務，如秘書、學務主任、生活輔導組組長等，請於兼任行政職職稱(單位)填”N” ）", sep = ""))
+  mutate(flag15 = paste(flag15, "（校長、教師、教官、主任教官、族語老師、教學支援人員屬於服務身分別，若渠等教員未再兼任行政職務，如秘書、學務主任、生活輔導組組長等，請於兼任行政職職稱(單位)填“N” ）", sep = ""))
 
 #偵測flag15是否存在。若不存在，則產生NA行
 if('flag15' %in% ls()){
@@ -2301,7 +2301,7 @@ flag_person_wide_flag19$flag19_r <- gsub(", NA", replacement="", flag_person_wid
 #產生檢誤報告文字
 flag19_temp <- flag_person_wide_flag19 %>%
   group_by(organization_id) %>%
-  mutate(flag19_txt = paste(source, "需修改請假類別：", flag19_r, sep = ""), "") %>%
+  mutate(flag19_txt = paste(source, "：", flag19_r, sep = ""), "") %>%
   subset(select = c(organization_id, flag19_txt)) %>%
   distinct(organization_id, flag19_txt)
 
@@ -2454,8 +2454,8 @@ flag_person$onbodatd <- as.numeric(flag_person$onbodatd)
 
 #本校服務年資
 flag_person$tser <- 0
-flag_person$tser <- if_else(flag_person$survey_year %% 4 != 0, ((flag_person$survey_year-1911) + 3/12 + 31/365) - (flag_person$onbodaty + (flag_person$onbodatm/12) + (flag_person$onbodatd/365)), flag_person$tser)
-flag_person$tser <- if_else(flag_person$survey_year %% 4 == 0, ((flag_person$survey_year-1911) + 3/12 + 31/366) - (flag_person$onbodaty + (flag_person$onbodatm/12) + (flag_person$onbodatd/366)), flag_person$tser)
+flag_person$tser <- if_else(flag_person$survey_year %% 4 != 0, ((flag_person$survey_year-1911) + 9/12 + 30/365) - (flag_person$onbodaty + (flag_person$onbodatm/12) + (flag_person$onbodatd/365)), flag_person$tser)
+flag_person$tser <- if_else(flag_person$survey_year %% 4 == 0, ((flag_person$survey_year-1911) + 9/12 + 30/366) - (flag_person$onbodaty + (flag_person$onbodatm/12) + (flag_person$onbodatd/366)), flag_person$tser)
 
 #本次本校任職需扣除之年資
 flag_person$desey <- substr(flag_person$desedym, 1, 2) %>% as.numeric()
@@ -2586,8 +2586,8 @@ flag_person$survey_year <- 2022
 
 #創設變項年齡（以年為單位）：age
 flag_person$age <- 0
-flag_person$age <- if_else(flag_person$survey_year %% 4 != 0, ((flag_person$survey_year-1911) + 3/12 + 31/365) - (flag_person$birthy + (flag_person$birthm/12) + (flag_person$birthd/365)), flag_person$age)
-flag_person$age <- if_else(flag_person$survey_year %% 4 == 0, ((flag_person$survey_year-1911) + 3/12 + 31/366) - (flag_person$birthy + (flag_person$birthm/12) + (flag_person$birthd/366)), flag_person$age)
+flag_person$age <- if_else(flag_person$survey_year %% 4 != 0, ((flag_person$survey_year-1911) + 9/12 + 30/365) - (flag_person$birthy + (flag_person$birthm/12) + (flag_person$birthd/365)), flag_person$age)
+flag_person$age <- if_else(flag_person$survey_year %% 4 == 0, ((flag_person$survey_year-1911) + 9/12 + 30/366) - (flag_person$birthy + (flag_person$birthm/12) + (flag_person$birthd/366)), flag_person$age)
 
 flag_person$survey_year <- 2022
 flag_person$onbodaty <- ""
@@ -2608,8 +2608,8 @@ flag_person$onbodatd <- as.numeric(flag_person$onbodatd)
 
 #本校服務年資
 flag_person$tser <- 0
-flag_person$tser <- if_else(flag_person$survey_year %% 4 != 0, ((flag_person$survey_year-1911) + 7/12 + 31/365) - (flag_person$onbodaty + (flag_person$onbodatm/12) + (flag_person$onbodatd/365)), flag_person$tser)
-flag_person$tser <- if_else(flag_person$survey_year %% 4 == 0, ((flag_person$survey_year-1911) + 7/12 + 31/366) - (flag_person$onbodaty + (flag_person$onbodatm/12) + (flag_person$onbodatd/366)), flag_person$tser)
+flag_person$tser <- if_else(flag_person$survey_year %% 4 != 0, ((flag_person$survey_year-1911) + 9/12 + 30/365) - (flag_person$onbodaty + (flag_person$onbodatm/12) + (flag_person$onbodatd/365)), flag_person$tser)
+flag_person$tser <- if_else(flag_person$survey_year %% 4 == 0, ((flag_person$survey_year-1911) + 9/12 + 30/366) - (flag_person$onbodaty + (flag_person$onbodatm/12) + (flag_person$onbodatd/366)), flag_person$tser)
 
 #本次本校任職需扣除之年資
 flag_person$desey <- substr(flag_person$desedym, 1, 2) %>% as.numeric()
@@ -2802,7 +2802,7 @@ if('flag45' %in% ls()){
   flag45$flag45 <- ""
 }
 
-# flag47: 兼任行政職職稱(一)若填寫“校長”，代表服務身分別填答有誤，故應核對服務身分別與兼任行政職職稱(一)。 -------------------------------------------------------------------
+# flag47: 兼任行政職職稱(一)若填寫“校長"，代表服務身分別填答有誤，故應核對服務身分別與兼任行政職職稱(一)。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
 #標記服務身分別不為"校長，且兼任行政職稱為"校長"
@@ -2949,4 +2949,638 @@ if('flag48' %in% ls()){
   flag48$flag48 <- ""
 }
 
-#R with github test 2
+# flag49: 1.	職員(工)的「職務名稱」不應填N（全型或半型皆不行）。-------------------------------------------------------------------
+# 2. 職員(工)的「服務單位」不應填N（全型或半型皆不行），且應入填入對應職稱的學校內部單位。
+flag_person <- drev_person_1
+
+#標記職務名稱、服務單位為N或非學校內部單位
+flag_person$err_adm1 <- 1
+flag_person$err_adm1 <- if_else(grepl("組", flag_person$adminunit0), 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(grepl("室", flag_person$adminunit0), 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(grepl("科", flag_person$adminunit0), 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(grepl("中心", flag_person$adminunit0), 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(grepl("部", flag_person$adminunit0), 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(grepl("辦公室", flag_person$adminunit0), 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(grepl("館", flag_person$adminunit0), 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(grepl("處", flag_person$adminunit0), 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(grepl("部", flag_person$adminunit0), 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(grepl("^社區大學$", flag_person$adminunit0), 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(flag_person$adminunit0 == "", 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(flag_person$adminunit0 == "董事會", 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(flag_person$adminunit0 == "實習農場", 0, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(flag_person$adminunit0 == "NA", 1, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(flag_person$adminunit0 == "n", 1, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(flag_person$adminunit0 == "N", 1, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(flag_person$adminunit0 == "Ｎ", 1, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(flag_person$adminunit0 == "國教署", 1, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(flag_person$adminunit0 == "y", 1, flag_person$err_adm1)
+flag_person$err_adm1 <- if_else(flag_person$adminunit0 == "Y", 1, flag_person$err_adm1)
+
+flag_person$err_adm2 <- 0
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "NA", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "N", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "Ｎ", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "n", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "Y", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "y", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(grepl("Ｎ", flag_person$admintitle0), 1, flag_person$err_adm2)
+
+flag_person$err_flag <- flag_person$err_adm1 + flag_person$err_adm2
+flag_person$err_adm <- 0
+flag_person$err_adm <- if_else(flag_person$err_flag != 0 & flag_person$source == "職員工資料表", 1, flag_person$err_adm)
+
+#加註
+flag_person$name <- paste(flag_person$name, "（", sep = "")
+flag_person$name <- if_else(flag_person$err_adm2 != 0, paste(flag_person$name, "職務名稱：", flag_person$admintitle0, "；", sep = ""), flag_person$name)
+flag_person$name <- if_else(flag_person$err_adm1 != 0, paste(flag_person$name, "服務單位：", flag_person$admintitle0, "；", sep = ""), flag_person$name)
+flag_person$name <- paste(flag_person$name, "）", sep = "")
+flag_person$name <- gsub("；）", replacement = "）", flag_person$name)
+flag_person$name <- gsub("（）", replacement = "", flag_person$name)
+
+
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_adm == 1 ~ flag_person$name,
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag49 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_adm)) %>%
+  subset(err_adm == 1) %>%
+  dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag49)[3 : length(colnames(flag_person_wide_flag49))]
+flag_person_wide_flag49$flag49_r <- NA
+for (i in temp){
+  flag_person_wide_flag49$flag49_r <- paste(flag_person_wide_flag49$flag49_r, flag_person_wide_flag49[[i]], sep = ", ")
+}
+flag_person_wide_flag49$flag49_r <- gsub("NA, ", replacement="", flag_person_wide_flag49$flag49_r)
+flag_person_wide_flag49$flag49_r <- gsub(", NA", replacement="", flag_person_wide_flag49$flag49_r)
+
+#產生檢誤報告文字
+flag49_temp <- flag_person_wide_flag49 %>%
+  group_by(organization_id) %>%
+  mutate(flag49_txt = paste(source, "：", flag49_r, sep = ""), "") %>%
+  subset(select = c(organization_id, flag49_txt)) %>%
+  distinct(organization_id, flag49_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag49 <- flag49_temp %>%
+  dcast(organization_id ~ flag49_txt, value.var = "flag49_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag49)[2 : length(colnames(flag49))]
+flag49$flag49 <- NA
+for (i in temp){
+  flag49$flag49 <- paste(flag49$flag49, flag49[[i]], sep = "； ")
+}
+flag49$flag49 <- gsub("NA； ", replacement="", flag49$flag49)
+flag49$flag49 <- gsub("； NA", replacement="", flag49$flag49)
+
+#產生檢誤報告文字
+flag49 <- flag49 %>%
+  subset(select = c(organization_id, flag49)) %>%
+  distinct(organization_id, flag49) %>%
+  mutate(flag49 = paste(flag49, "（請確認『職務名稱』、『服務單位』）", sep = ""))
+
+#偵測flag49是否存在。若不存在，則產生NA行
+if('flag49' %in% ls()){
+  print("flag49")
+}else{
+  flag49 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag49$flag49 <- ""
+}
+
+# flag50: 留職停薪原因為「應徵入伍留職停薪」、「奉派協助友邦留職停薪」、「育嬰留職停薪」、「侍親留職停薪」、「依親留職停薪」、「出國進修或研究留職停薪」、「易服勞役留職停薪」、「延長留職停薪」、「照護配偶或子女留職停薪」、「國內外進修期滿延長留職停薪」、「延長病假期滿留職停薪」、「因公傷病公假期滿留職停薪」、「留職停薪/停聘」、「其他情事留職停薪」，在借調類別應填寫N。 -------------------------------------------------------------------
+flag_person <- drev_person_1
+
+flag_person$brtype <- if_else(flag_person$brtype == "NA", "N", flag_person$brtype)
+
+#留職停薪原因不合理處
+flag_person$err_lev <- 0
+flag_person$err_lev <- if_else(flag_person$levpay == "應徵入伍留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "奉派協助友邦留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "育嬰留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "侍親留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "依親留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "出國進修或研究留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "易服勞役留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "延長留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "易服勞役留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "照護配偶或子女留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "國內外進修期滿延長留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "延長病假期滿留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "留職停薪/停聘" & flag_person$brtype != "N", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$levpay == "其他情事留職停薪" & flag_person$brtype != "N", 1, flag_person$err_lev)
+
+#呈現姓名
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_lev == 1 ~ flag_person$name,
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag50 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_lev)) %>%
+  subset(err_lev == 1) %>%
+  dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag50)[3 : length(colnames(flag_person_wide_flag50))]
+flag_person_wide_flag50$flag50_r <- NA
+for (i in temp){
+  flag_person_wide_flag50$flag50_r <- paste(flag_person_wide_flag50$flag50_r, flag_person_wide_flag50[[i]], sep = ", ")
+}
+flag_person_wide_flag50$flag50_r <- gsub("NA, ", replacement="", flag_person_wide_flag50$flag50_r)
+flag_person_wide_flag50$flag50_r <- gsub(", NA", replacement="", flag_person_wide_flag50$flag50_r)
+
+#產生檢誤報告文字
+flag50_temp <- flag_person_wide_flag50 %>%
+  group_by(organization_id) %>%
+  mutate(flag50_txt = paste(source, "需核對「留職停薪原因」與「借調類別」：", flag50_r, sep = ""), "") %>%
+  subset(select = c(organization_id, flag50_txt)) %>%
+  distinct(organization_id, flag50_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag50 <- flag50_temp %>%
+  dcast(organization_id ~ flag50_txt, value.var = "flag50_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag50)[2 : length(colnames(flag50))]
+flag50$flag50 <- NA
+for (i in temp){
+  flag50$flag50 <- paste(flag50$flag50, flag50[[i]], sep = "； ")
+}
+flag50$flag50 <- gsub("NA； ", replacement="", flag50$flag50)
+flag50$flag50 <- gsub("； NA", replacement="", flag50$flag50)
+
+#產生檢誤報告文字
+flag50 <- flag50 %>%
+  subset(select = c(organization_id, flag50)) %>%
+  distinct(organization_id, flag50) %>%
+  mutate(flag50 = paste(flag50, "", sep = ""))
+
+#偵測flag50是否存在。若不存在，則產生NA行
+if('flag50' %in% ls()){
+  print("flag50")
+}else{
+  flag50 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag50$flag50 <- ""
+}
+
+# flag51: 原則上，「留職停薪原因」與「借調類別」填寫應相符:1.	借調公民營事業機構留職停薪↔借調至公民營事業機構 2.	借調行政法人機關留職停薪↔借調至行政法人機關 3.借調法定實驗學校留職停薪↔借調至法定實驗學校-------------------------------------------------------------------
+flag_person <- drev_person_1
+
+#「留職停薪原因」與「借調類別」不合理處
+flag_person$err_lev <- 0
+flag_person$err_lev <- if_else(flag_person$brtype == "借調至公民營事業機構"  & flag_person$levpay != "借調公民營事業機構留職停薪", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$brtype == "借調至行政法人機關"  & flag_person$levpay != "借調行政法人機關留職停薪", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$brtype == "借調至法定實驗學校"  & flag_person$levpay != "借調法定實驗學校留職停薪", 1, flag_person$err_lev)
+
+flag_person$err_lev <- if_else(flag_person$brtype != "借調至公民營事業機構"  & flag_person$levpay == "借調公民營事業機構留職停薪", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$brtype != "借調至行政法人機關"  & flag_person$levpay == "借調行政法人機關留職停薪", 1, flag_person$err_lev)
+flag_person$err_lev <- if_else(flag_person$brtype != "借調至法定實驗學校"  & flag_person$levpay == "借調法定實驗學校留職停薪", 1, flag_person$err_lev)
+
+#呈現姓名
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_lev == 1 ~ flag_person$name,
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag51 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_lev)) %>%
+  subset(err_lev == 1) %>%
+  dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag51)[3 : length(colnames(flag_person_wide_flag51))]
+flag_person_wide_flag51$flag51_r <- NA
+for (i in temp){
+  flag_person_wide_flag51$flag51_r <- paste(flag_person_wide_flag51$flag51_r, flag_person_wide_flag51[[i]], sep = ", ")
+}
+flag_person_wide_flag51$flag51_r <- gsub("NA, ", replacement="", flag_person_wide_flag51$flag51_r)
+flag_person_wide_flag51$flag51_r <- gsub(", NA", replacement="", flag_person_wide_flag51$flag51_r)
+
+#產生檢誤報告文字
+flag51_temp <- flag_person_wide_flag51 %>%
+  group_by(organization_id) %>%
+  mutate(flag51_txt = paste(source, "需核對「留職停薪原因」與「借調類別」：", flag51_r, sep = ""), "") %>%
+  subset(select = c(organization_id, flag51_txt)) %>%
+  distinct(organization_id, flag51_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag51 <- flag51_temp %>%
+  dcast(organization_id ~ flag51_txt, value.var = "flag51_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag51)[2 : length(colnames(flag51))]
+flag51$flag51 <- NA
+for (i in temp){
+  flag51$flag51 <- paste(flag51$flag51, flag51[[i]], sep = "； ")
+}
+flag51$flag51 <- gsub("NA； ", replacement="", flag51$flag51)
+flag51$flag51 <- gsub("； NA", replacement="", flag51$flag51)
+
+#產生檢誤報告文字
+flag51 <- flag51 %>%
+  subset(select = c(organization_id, flag51)) %>%
+  distinct(organization_id, flag51) %>%
+  mutate(flag51 = paste(flag51, "", sep = ""))
+
+#偵測flag51是否存在。若不存在，則產生NA行
+if('flag51' %in% ls()){
+  print("flag51")
+}else{
+  flag51 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag51$flag51 <- ""
+}
+
+# flag52: 留職停薪原因若填寫「應徵入伍留職停薪」、「奉派協助友邦留職停薪」、「育嬰留職停薪」、「侍親留職停薪」、「依親留職停薪」、「出國進修或研究留職停薪」、「易服勞役留職停薪」、「延長留職停薪」、「照護配偶或子女留職停薪」、「國內外進修期滿延長留職停薪」、「延長病假期滿留職停薪」、「因公傷病公假期滿留職停薪」、「留職停薪/停聘」、「其他情事留職停薪」、「借調公務機關留職停薪」、「借調公民營事業機構留職停薪」、「借調行政法人機關留職停薪」、「借調法定實驗學校留職停薪」，在商借類別應填寫N。 -------------------------------------------------------------------
+flag_person <- drev_person_1
+
+flag_person$levpay <- if_else(flag_person$levpay == "NA", "N", flag_person$levpay)
+flag_person$negle <- if_else(flag_person$negle == "NA", "N", flag_person$negle)
+
+#「留職停薪原因」、「商借類別」不合理處
+flag_person$err_lev <- 0
+flag_person$err_lev <- if_else(flag_person$levpay != "N"  & flag_person$negle != "N" & flag_person$source == "教員資料表", 1, flag_person$err_lev)
+
+#呈現姓名
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_lev == 1 ~ flag_person$name,
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag52 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_lev)) %>%
+  subset(err_lev == 1) %>%
+  dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag52)[3 : length(colnames(flag_person_wide_flag52))]
+flag_person_wide_flag52$flag52_r <- NA
+for (i in temp){
+  flag_person_wide_flag52$flag52_r <- paste(flag_person_wide_flag52$flag52_r, flag_person_wide_flag52[[i]], sep = ", ")
+}
+flag_person_wide_flag52$flag52_r <- gsub("NA, ", replacement="", flag_person_wide_flag52$flag52_r)
+flag_person_wide_flag52$flag52_r <- gsub(", NA", replacement="", flag_person_wide_flag52$flag52_r)
+
+#產生檢誤報告文字
+flag52_temp <- flag_person_wide_flag52 %>%
+  group_by(organization_id) %>%
+  mutate(flag52_txt = paste(source, "需核對「留職停薪原因」與「商借類別」：", flag52_r, sep = ""), "") %>%
+  subset(select = c(organization_id, flag52_txt)) %>%
+  distinct(organization_id, flag52_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag52 <- flag52_temp %>%
+  dcast(organization_id ~ flag52_txt, value.var = "flag52_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag52)[2 : length(colnames(flag52))]
+flag52$flag52 <- NA
+for (i in temp){
+  flag52$flag52 <- paste(flag52$flag52, flag52[[i]], sep = "； ")
+}
+flag52$flag52 <- gsub("NA； ", replacement="", flag52$flag52)
+flag52$flag52 <- gsub("； NA", replacement="", flag52$flag52)
+
+#產生檢誤報告文字
+flag52 <- flag52 %>%
+  subset(select = c(organization_id, flag52)) %>%
+  distinct(organization_id, flag52) %>%
+  mutate(flag52 = paste(flag52, "", sep = ""))
+
+#偵測flag52是否存在。若不存在，則產生NA行
+if('flag52' %in% ls()){
+  print("flag52")
+}else{
+  flag52 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag52$flag52 <- ""
+}
+
+# flag57: 學歷資料各學位別畢業學校國別/校名/科系所之（一）與（二）內容不應相同，請依學位取得實際情況修正。-------------------------------------------------------------------
+flag_person <- drev_person_1
+
+#「留職停薪原因」與「借調類別」不合理處
+flag_person$err_degree <- 0
+flag_person$err_degree <- if_else((flag_person$ddegreen1 == flag_person$ddegreen2 & flag_person$ddegreen1 != "N") & (flag_person$ddegreeu1 == flag_person$ddegreeu2 & flag_person$ddegreeu1 != "N") & (flag_person$ddegreeg1 == flag_person$ddegreeg2 & flag_person$ddegreeg1 != "N"), 1, flag_person$err_degree)
+flag_person$err_degree <- if_else((flag_person$mdegreen1 == flag_person$mdegreen2 & flag_person$mdegreen1 != "N") & (flag_person$mdegreeu1 == flag_person$ddegreeu2 & flag_person$mdegreeu1 != "N") & (flag_person$mdegreeg1 == flag_person$ddegreeg2 & flag_person$mdegreeg1 != "N"), 1, flag_person$err_degree)
+flag_person$err_degree <- if_else((flag_person$bdegreen1 == flag_person$bdegreen2 & flag_person$bdegreen1 != "N") & (flag_person$bdegreeu1 == flag_person$bdegreeu2 & flag_person$bdegreeu1 != "N") & (flag_person$bdegreeg1 == flag_person$bdegreeg2 & flag_person$bdegreeg1 != "N"), 1, flag_person$err_degree)
+flag_person$err_degree <- if_else((flag_person$adegreen1 == flag_person$adegreen2 & flag_person$adegreen1 != "N") & (flag_person$adegreeu1 == flag_person$adegreeu2 & flag_person$adegreeu1 != "N") & (flag_person$adegreeg1 == flag_person$adegreeg2 & flag_person$adegreeg1 != "N"), 1, flag_person$err_degree)
+
+#呈現姓名
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_degree == 1 ~ flag_person$name,
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag57 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_degree)) %>%
+  subset(err_degree == 1) %>%
+  dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag57)[3 : length(colnames(flag_person_wide_flag57))]
+flag_person_wide_flag57$flag57_r <- NA
+for (i in temp){
+  flag_person_wide_flag57$flag57_r <- paste(flag_person_wide_flag57$flag57_r, flag_person_wide_flag57[[i]], sep = ", ")
+}
+flag_person_wide_flag57$flag57_r <- gsub("NA, ", replacement="", flag_person_wide_flag57$flag57_r)
+flag_person_wide_flag57$flag57_r <- gsub(", NA", replacement="", flag_person_wide_flag57$flag57_r)
+
+#產生檢誤報告文字
+flag57_temp <- flag_person_wide_flag57 %>%
+  group_by(organization_id) %>%
+  mutate(flag57_txt = paste("請檢視修正學歷資訊內容：", source, "：", flag57_r, sep = ""), "") %>%
+  subset(select = c(organization_id, flag57_txt)) %>%
+  distinct(organization_id, flag57_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag57 <- flag57_temp %>%
+  dcast(organization_id ~ flag57_txt, value.var = "flag57_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag57)[2 : length(colnames(flag57))]
+flag57$flag57 <- NA
+for (i in temp){
+  flag57$flag57 <- paste(flag57$flag57, flag57[[i]], sep = "； ")
+}
+flag57$flag57 <- gsub("NA； ", replacement="", flag57$flag57)
+flag57$flag57 <- gsub("； NA", replacement="", flag57$flag57)
+
+#產生檢誤報告文字
+flag57 <- flag57 %>%
+  subset(select = c(organization_id, flag57)) %>%
+  distinct(organization_id, flag57) %>%
+  mutate(flag57 = paste(flag57, "", sep = ""))
+
+#偵測flag57是否存在。若不存在，則產生NA行
+if('flag57' %in% ls()){
+  print("flag57")
+}else{
+  flag57 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag57$flag57 <- ""
+}
+
+
+# flag59: 校長之聘任類別需為「專任」。-------------------------------------------------------------------
+flag_person <- drev_person_1
+
+#校長之聘任類別不為專任 不合理
+flag_person$err_flag <- 0
+flag_person$err_flag <- if_else(flag_person$sertype == "校長" & flag_person$emptype != "專任", 1, flag_person$err_flag)
+#師大附中及高師大附中校長為兼任
+flag_person$err_flag <- if_else(flag_person$organization_id == "330301" | flag_person$organization_id == "580301", 0, flag_person$err_flag)
+
+#呈現姓名
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_flag == 1 ~ flag_person$name,
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag59 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
+  subset(err_flag == 1) %>%
+  dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag59)[3 : length(colnames(flag_person_wide_flag59))]
+flag_person_wide_flag59$flag59_r <- NA
+for (i in temp){
+  flag_person_wide_flag59$flag59_r <- paste(flag_person_wide_flag59$flag59_r, flag_person_wide_flag59[[i]], sep = ", ")
+}
+flag_person_wide_flag59$flag59_r <- gsub("NA, ", replacement="", flag_person_wide_flag59$flag59_r)
+flag_person_wide_flag59$flag59_r <- gsub(", NA", replacement="", flag_person_wide_flag59$flag59_r)
+
+#產生檢誤報告文字
+flag59_temp <- flag_person_wide_flag59 %>%
+  group_by(organization_id) %>%
+  mutate(flag59_txt = paste("校長之聘任類別需為「專任」。", sep = ""), "") %>%
+  subset(select = c(organization_id, flag59_txt)) %>%
+  distinct(organization_id, flag59_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag59 <- flag59_temp %>%
+  dcast(organization_id ~ flag59_txt, value.var = "flag59_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag59)[2 : length(colnames(flag59))]
+flag59$flag59 <- NA
+for (i in temp){
+  flag59$flag59 <- paste(flag59$flag59, flag59[[i]], sep = "； ")
+}
+flag59$flag59 <- gsub("NA； ", replacement="", flag59$flag59)
+flag59$flag59 <- gsub("； NA", replacement="", flag59$flag59)
+
+#產生檢誤報告文字
+flag59 <- flag59 %>%
+  subset(select = c(organization_id, flag59)) %>%
+  distinct(organization_id, flag59) %>%
+  mutate(flag59 = paste(flag59, "", sep = ""))
+
+#偵測flag59是否存在。若不存在，則產生NA行
+if('flag59' %in% ls()){
+  print("flag59")
+}else{
+  flag59 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag59$flag59 <- ""
+}
+
+# flag62: 職務名稱及兼任行政職職稱（一）～（三）資料內容是否完整正確。-------------------------------------------------------------------
+#如：1.	職務名稱及兼任行政職職稱（一）～（三）填入非職稱內容。
+#2.	服務單位及兼任行政職服務單位（一）～（三）填入非服務單位內容。
+#3.	校長、教官、主任教官屬於教員，故應填至教員資料表。
+#職員工的「職務名稱」不應有教師、老師等非行政工作之名稱。
+flag_person <- drev_person_1
+
+#標記職務名稱、服務單位為N或非學校內部單位
+flag_person$admintitle0 <- 1
+flag_person$admintitle0 <- if_else(grepl("主任$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("佐理員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("助理$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("人員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("助理員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("技士", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("技工", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("技佐", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("防護員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("組長$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("組員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("管理員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("管理師$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("輔導員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("工友$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^約僱", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^約聘", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^書記$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("幹事", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^學務創新", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("創新人力", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("營養師$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^職輔員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("護士$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("護理師$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^均質化承辦人$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^均職化承辦人$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^優質化協辦人$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("校安$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("心理師$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("技術員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("職輔員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("廚工$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("編制外行政人力$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("司機$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("秘書$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("祕書$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("舍監$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("辦事員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("職務代理$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("職代$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("職務代理人$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("救生員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("值機員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("監督$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("三副$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("社工師$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("校護$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("專員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("雇員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("僱員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^充實行政人力$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("1", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("工讀生$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("警衛$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^實習餐廳經理$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^清潔員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^清潔$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("佐理$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^會計員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^水電$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^總機$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^園藝$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("電工$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^木工$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^守衛$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("校長", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^副校長$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("館員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^出納$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("庶務$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("環保$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("體衛$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^書院Coach$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("執行長$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("顧問$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^助教$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^督導$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("教師$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("老師$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("導師$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("教學支援人員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("^董事長$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("指導員$", flag_person$adminunit0), 0, flag_person$admintitle0)
+flag_person$admintitle0 <- if_else(grepl("補充行政人力$", flag_person$adminunit0), 0, flag_person$admintitle0)
+
+flag_person$err_adm2 <- 0
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "NA", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "N", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "Ｎ", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "n", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "Y", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(flag_person$admintitle0 == "y", 1, flag_person$err_adm2)
+flag_person$err_adm2 <- if_else(grepl("Ｎ", flag_person$admintitle0), 1, flag_person$err_adm2)
+
+flag_person$err_flag <- flag_person$err_adm1 + flag_person$err_adm2
+flag_person$err_adm <- 0
+flag_person$err_adm <- if_else(flag_person$err_flag != 0 & flag_person$source == "職員工資料表", 1, flag_person$err_adm)
+
+#加註
+flag_person$name <- paste(flag_person$name, "（", sep = "")
+flag_person$name <- if_else(flag_person$err_adm2 != 0, paste(flag_person$name, "職務名稱：", flag_person$admintitle0, "；", sep = ""), flag_person$name)
+flag_person$name <- if_else(flag_person$err_adm1 != 0, paste(flag_person$name, "服務單位：", flag_person$admintitle0, "；", sep = ""), flag_person$name)
+flag_person$name <- paste(flag_person$name, "）", sep = "")
+flag_person$name <- gsub("；）", replacement = "）", flag_person$name)
+flag_person$name <- gsub("（）", replacement = "", flag_person$name)
+
+
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_adm == 1 ~ flag_person$name,
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag49 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_adm)) %>%
+  subset(err_adm == 1) %>%
+  dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag49)[3 : length(colnames(flag_person_wide_flag49))]
+flag_person_wide_flag49$flag49_r <- NA
+for (i in temp){
+  flag_person_wide_flag49$flag49_r <- paste(flag_person_wide_flag49$flag49_r, flag_person_wide_flag49[[i]], sep = ", ")
+}
+flag_person_wide_flag49$flag49_r <- gsub("NA, ", replacement="", flag_person_wide_flag49$flag49_r)
+flag_person_wide_flag49$flag49_r <- gsub(", NA", replacement="", flag_person_wide_flag49$flag49_r)
+
+#產生檢誤報告文字
+flag49_temp <- flag_person_wide_flag49 %>%
+  group_by(organization_id) %>%
+  mutate(flag49_txt = paste(source, "：", flag49_r, sep = ""), "") %>%
+  subset(select = c(organization_id, flag49_txt)) %>%
+  distinct(organization_id, flag49_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag49 <- flag49_temp %>%
+  dcast(organization_id ~ flag49_txt, value.var = "flag49_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag49)[2 : length(colnames(flag49))]
+flag49$flag49 <- NA
+for (i in temp){
+  flag49$flag49 <- paste(flag49$flag49, flag49[[i]], sep = "； ")
+}
+flag49$flag49 <- gsub("NA； ", replacement="", flag49$flag49)
+flag49$flag49 <- gsub("； NA", replacement="", flag49$flag49)
+
+#產生檢誤報告文字
+flag49 <- flag49 %>%
+  subset(select = c(organization_id, flag49)) %>%
+  distinct(organization_id, flag49) %>%
+  mutate(flag49 = paste(flag49, "（請確認『職務名稱』、『服務單位』）", sep = ""))
+
+#偵測flag49是否存在。若不存在，則產生NA行
+if('flag49' %in% ls()){
+  print("flag49")
+}else{
+  flag49 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag49$flag49 <- ""
+}
+
