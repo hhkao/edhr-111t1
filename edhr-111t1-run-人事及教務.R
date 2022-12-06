@@ -4251,3 +4251,94 @@ if('flag64' %in% ls()){
     subset(select = c(organization_id, edu_name2))
   flag64$flag64 <- ""
 }
+
+# flag80: 代理教師、兼任教師、鐘點教師、長期代課教師、約用教師、約聘僱教師的「本校到職日期」非屬本學期，請再確認。-------------------------------------------------------------------
+flag_person <- drev_person_1
+
+#代理教師、兼任教師、長期代課教師、鐘點教師、約聘僱教師、約用教師到職日過早
+
+#兼任教師、長期代課教師、鐘點教師、約聘僱教師、約用教師到職日應為上一個學期開學日(每學期(年)需修改emp_year、emp_mon的時間)
+flag_person$emp_year1 <- 111
+flag_person$emp_mon1 <- 2
+
+flag_person$arvy1 <- substr(flag_person$onbodat, 1, 3) %>% as.numeric()
+flag_person$arvm1 <- substr(flag_person$onbodat, 4, 5) %>% as.numeric()
+
+flag_person$err_emp1 <- if_else(((flag_person$emptype == "兼任" | flag_person$emptype == "長期代課" | flag_person$emptype == "鐘點教師" | flag_person$emptype == "約聘僱" | flag_person$emptype == "約用") & flag_person$sertype == "教師") & (flag_person$arvy1 * 12 + flag_person$arvm1) < (flag_person$emp_year1 * 12 + flag_person$emp_mon1), 1, 0)
+
+#代理教師到職日應為上一個學期開學日-2年，依法規代理教師得續聘2次(每學期(年)需修改emp_year、emp_mon的時間)
+flag_person$emp_year2 <- flag_person$emp_year1 - 2
+flag_person$emp_mon2 <- flag_person$emp_mon1
+
+flag_person$arvy2 <- substr(flag_person$onbodat, 1, 3) %>% as.numeric()
+flag_person$arvm2 <- substr(flag_person$onbodat, 4, 5) %>% as.numeric()
+
+flag_person$err_emp2 <- if_else((flag_person$emptype == "代理" & flag_person$sertype == "教師") & (flag_person$arvy2 * 12 + flag_person$arvm2) < (flag_person$emp_year2 * 12 + flag_person$emp_mon2), 1, 0)
+
+flag_person$emptypesertype <- paste(flag_person$emptype, flag_person$sertype, sep = "")
+flag_person$emptypesertype <- if_else(flag_person$emptypesertype == "鐘點教師教師", "鐘點教師", flag_person$emptypesertype)
+
+flag_person$err_flag <- if_else(flag_person$err_emp1 == 1 | flag_person$err_emp2 == 1, 1, 0)
+
+#加註
+flag_person$name <- paste(flag_person$name, "（", flag_person$emptypesertype, " 到職日:", flag_person$onbodat, "）", sep = "")
+flag_person$name <- gsub("；）", replacement = "）", flag_person$name)
+flag_person$name <- gsub("（）", replacement = "", flag_person$name)
+
+#呈現姓名
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_flag == 1 ~ flag_person$name,
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag80 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
+  subset(err_flag == 1) %>%
+  dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag80)[3 : length(colnames(flag_person_wide_flag80))]
+flag_person_wide_flag80$flag80_r <- NA
+for (i in temp){
+  flag_person_wide_flag80$flag80_r <- paste(flag_person_wide_flag80$flag80_r, flag_person_wide_flag80[[i]], sep = ", ")
+}
+flag_person_wide_flag80$flag80_r <- gsub("NA, ", replacement="", flag_person_wide_flag80$flag80_r)
+flag_person_wide_flag80$flag80_r <- gsub(", NA", replacement="", flag_person_wide_flag80$flag80_r)
+
+#產生檢誤報告文字
+flag80_temp <- flag_person_wide_flag80 %>%
+  group_by(organization_id) %>%
+  mutate(flag80_txt = paste(source, "需核對「本校到職日期」：",flag80_r, sep = ""), "") %>%
+  subset(select = c(organization_id, flag80_txt)) %>%
+  distinct(organization_id, flag80_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag80 <- flag80_temp %>%
+  dcast(organization_id ~ flag80_txt, value.var = "flag80_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag80)[2 : length(colnames(flag80))]
+flag80$flag80 <- NA
+for (i in temp){
+  flag80$flag80 <- paste(flag80$flag80, flag80[[i]], sep = "； ")
+}
+flag80$flag80 <- gsub("NA； ", replacement="", flag80$flag80)
+flag80$flag80 <- gsub("； NA", replacement="", flag80$flag80)
+
+#產生檢誤報告文字
+flag80 <- flag80 %>%
+  subset(select = c(organization_id, flag80)) %>%
+  distinct(organization_id, flag80) %>%
+  mutate(flag80 = paste(flag80, "", sep = ""))
+
+#偵測flag80是否存在。若不存在，則產生NA行
+if('flag80' %in% ls()){
+  print("flag80")
+}else{
+  flag80 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag80$flag80 <- ""
+}
