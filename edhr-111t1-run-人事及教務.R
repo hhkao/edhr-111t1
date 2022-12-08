@@ -7188,9 +7188,9 @@ flag_person <- drev_P_retire_merge_pre %>%
   rename(name = name.x, name_retire = name, edu_name2 = edu_name2.x)
 
 #抓出:有出現在上一期資料，但在本次填報已被刪除，但退休資料表沒有出現的專任人員
-#只出現在上一期(pre = 1 & now = 0)   且為專任    但本次離退表卻沒有出現(空白)(retire = 0)   只留本次已上傳(gender == .)
+#只出現在上一期(pre = 1 & now = NA)   且為專任    但本次離退表卻沒有出現(空白)(retire = NA)
 flag_person$err_flag <- 0
-flag_person$err_flag <- if_else(flag_person$pre == 1 & is.na(flag_person$now) & is.na(flag_person$retire) & flag_person$emptype.y == "專任" & is.na(flag_person$gender.x), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$pre == 1 & is.na(flag_person$now) & is.na(flag_person$retire) & flag_person$emptype.y == "專任", 1, flag_person$err_flag)
 
 #呈現姓名
 flag_person$err_flag_txt <- ""
