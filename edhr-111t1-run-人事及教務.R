@@ -23,6 +23,7 @@ data_staff   <- read_excel(path, sheet = "職員(工)資料表")
 #data_load    <- read_excel(path, sheet = "教學資料表")
 #data_courseA  <- read_excel(path, sheet = "授課資料表A.有課程代碼（23碼）")
 #data_courseB  <- read_excel(path, sheet = "授課資料表B.無課程代碼（23碼）")
+data_retire   <- read_excel(path, sheet = "離退教職員(工)資料表")
 
 # 合併人事資料表 ----------------------------------------------------------------
 data_teacher <- data_teacher %>%
@@ -1268,7 +1269,7 @@ drev_person_1 <- data_schtype_wide %>%
     # ^xxx$：搜尋完全符合xxx的字串
 
 #調整英文字母大小寫
-temp <- c("idnumber", "implcls", "skillteacher", "counselor", "speteacher", "joiteacher", "expecter", "study", "bdegreen1", "bdegreeu1", "bdegreeg1", "bdegreen2", "bdegreeu2", "bdegreeg2", "mdegreen1", "mdegreeu1", "mdegreeg1", "mdegreen2", "mdegreeu2", "mdegreeg2", "bdegreen1", "bdegreeu1", "bdegreeg1", "bdegreen2", "bdegreeu2", "bdegreeg2", "adegreen1", "adegreeu1", "adegreeg1", "adegreen2", "adegreeu2", "adegreeg2", "leave", "admintitle", "adminunit", "admintitle1", "adminunit1", "admintitle2", "adminunit2", "admintitle3", "adminunit3")
+temp <- c("idnumber", "implcls", "skillteacher", "counselor", "speteacher", "joiteacher", "expecter", "study", "ddegreen1", "ddegreeu1", "ddegreeg1", "ddegreen2", "ddegreeu2", "ddegreeg2", "mdegreen1", "mdegreeu1", "mdegreeg1", "mdegreen2", "mdegreeu2", "mdegreeg2", "bdegreen1", "bdegreeu1", "bdegreeg1", "bdegreen2", "bdegreeu2", "bdegreeg2", "adegreen1", "adegreeu1", "adegreeg1", "adegreen2", "adegreeu2", "adegreeg2", "leave", "admintitle", "adminunit", "admintitle1", "adminunit1", "admintitle2", "adminunit2", "admintitle3", "adminunit3")
 for (x in temp) {
   drev_person_1[[x]] <- drev_person_1[[x]] %>% toupper()
 }
@@ -1281,7 +1282,7 @@ trim <- function (x){
 #刪除空格 "\\s+"
 #刪除字串前面或者字串後面的空格 "^\\s+|\\s+$"
 temp <- names(drev_person)
-temp1 <- c("name","bdegreen1", "bdegreeu1", "bdegreeg1", "bdegreen2", "bdegreeu2", "bdegreeg2", "mdegreen1", "mdegreeu1", "mdegreeg1", "mdegreen2", "mdegreeu2", "mdegreeg2", "bdegreen1", "bdegreeu1", "bdegreeg1", "bdegreen2", "bdegreeu2", "bdegreeg2", "adegreen1", "adegreeu1", "adegreeg1", "adegreen2", "adegreeu2", "adegreeg2", "source", "edu_name", "edu_name2")
+temp1 <- c("name","ddegreen1", "ddegreeu1", "ddegreeg1", "ddegreen2", "ddegreeu2", "ddegreeg2", "mdegreen1", "mdegreeu1", "mdegreeg1", "mdegreen2", "mdegreeu2", "mdegreeg2", "bdegreen1", "bdegreeu1", "bdegreeg1", "bdegreen2", "bdegreeu2", "bdegreeg2", "adegreen1", "adegreeu1", "adegreeg1", "adegreen2", "adegreeu2", "adegreeg2", "source", "edu_name", "edu_name2")
 for (i in temp1){
   temp <- temp[-which(temp == i)]
 }
@@ -1306,7 +1307,7 @@ for (x in temp){
 }	
 
 #國籍別、畢業學校國別
-temp <- c("nation", "bdegreen1", "bdegreen2", "mdegreen1", "mdegreen2", "bdegreen1", "bdegreen2", "adegreen1", "adegreen2")
+temp <- c("nation", "ddegreen1", "ddegreen2", "mdegreen1", "mdegreen2", "bdegreen1", "bdegreen2", "adegreen1", "adegreen2")
 for (x in temp){
   drev_person_1[[x]][grep("^本國籍$", drev_person_1[[x]])] <- "本國"
   drev_person_1[[x]][grep("^澳洲$", drev_person_1[[x]])] <- "澳大利亞"
@@ -1333,6 +1334,9 @@ drev_person_1[["bdegreeg1"]][grep("^化妝品應⽤管理系$", drev_person_1[["
 #將gender由字串轉成數字
 drev_person_1 <- drev_person_1 %>% 
   transform(gender = as.numeric(gender))
+
+# 人事資料表與離退教職員(工)資料表合併 -----------------------------------------------------------
+drev_P_retire <- merge(x = drev_person_1, y = data_retire, by = c("organization_id", "idnumber"), all.x = TRUE, all.y = TRUE)
 
 # 人事資料表與教學資料表合併 -----------------------------------------------------------
 drev_P_load <- merge(x = drev_person_1, y = data_load, by = c("organization_id", "idnumber"), all.x = TRUE, all.y = TRUE)
@@ -1939,14 +1943,14 @@ if('flag8' %in% ls()){
 flag_person <- drev_person_1
 
 #檢視畢業學校國別欄位字元數不為3
-view_flag9 <- distinct(flag_person, bdegreen1, bdegreen2, mdegreen1, mdegreen2, bdegreen1, bdegreen2, adegreen1, adegreen2, .keep_all = TRUE) %>%
-  subset(nchar(bdegreen1) != 3 | nchar(bdegreen2) != 3 | nchar(mdegreen1) != 3 | nchar(mdegreen2) != 3 | nchar(bdegreen1) != 3 | nchar(bdegreen2) != 3 | nchar(adegreen1) != 3 | nchar(adegreen2) != 3) %>%
-  subset(select = c(organization_id, idnumber, bdegreen1, bdegreen2, mdegreen1, mdegreen2, bdegreen1, bdegreen2, adegreen1, adegreen2, edu_name2, source))
+view_flag9 <- distinct(flag_person, ddegreen1, ddegreen2, mdegreen1, mdegreen2, bdegreen1, bdegreen2, adegreen1, adegreen2, .keep_all = TRUE) %>%
+  subset(nchar(ddegreen1) != 3 | nchar(ddegreen2) != 3 | nchar(mdegreen1) != 3 | nchar(mdegreen2) != 3 | nchar(bdegreen1) != 3 | nchar(bdegreen2) != 3 | nchar(adegreen1) != 3 | nchar(adegreen2) != 3) %>%
+  subset(select = c(organization_id, idnumber, ddegreen1, ddegreen2, mdegreen1, mdegreen2, bdegreen1, bdegreen2, adegreen1, adegreen2, edu_name2, source))
 
 #"本國美國"標記為1
 flag_person$err_flag <- case_when(
-  flag_person$bdegreen1 == "本國美國" | flag_person$bdegreen2 == "本國美國" | flag_person$mdegreen1 == "本國美國" | flag_person$mdegreen2 == "本國美國" | flag_person$bdegreen1 == "本國美國" | flag_person$bdegreen2 == "本國美國" | flag_person$adegreen1 == "本國美國" | flag_person$adegreen2 == "本國美國" ~ 1,
-  TRUE ~ 0
+  flag_person$ddegreen1 == "本國美國" | flag_person$ddegreen2 == "本國美國" | flag_person$mdegreen1 == "本國美國" | flag_person$mdegreen2 == "本國美國" | flag_person$bdegreen1 == "本國美國" | flag_person$bdegreen2 == "本國美國" | flag_person$adegreen1 == "本國美國" | flag_person$adegreen2 == "本國美國" ~ 1,
+    TRUE ~ 0
 )
   #---
 
@@ -3279,8 +3283,8 @@ flag_person <- drev_person_1
 
 #「留職停薪原因」與「借調類別」不合理處
 flag_person$err_degree <- 0
-flag_person$err_degree <- if_else((flag_person$bdegreen1 == flag_person$bdegreen2 & flag_person$bdegreen1 != "N") & (flag_person$bdegreeu1 == flag_person$bdegreeu2 & flag_person$bdegreeu1 != "N") & (flag_person$bdegreeg1 == flag_person$bdegreeg2 & flag_person$bdegreeg1 != "N"), 1, flag_person$err_degree)
-flag_person$err_degree <- if_else((flag_person$mdegreen1 == flag_person$mdegreen2 & flag_person$mdegreen1 != "N") & (flag_person$mdegreeu1 == flag_person$bdegreeu2 & flag_person$mdegreeu1 != "N") & (flag_person$mdegreeg1 == flag_person$bdegreeg2 & flag_person$mdegreeg1 != "N"), 1, flag_person$err_degree)
+flag_person$err_degree <- if_else((flag_person$ddegreen1 == flag_person$ddegreen2 & flag_person$ddegreen1 != "N") & (flag_person$ddegreeu1 == flag_person$ddegreeu2 & flag_person$ddegreeu1 != "N") & (flag_person$ddegreeg1 == flag_person$ddegreeg2 & flag_person$ddegreeg1 != "N"), 1, flag_person$err_degree)
+flag_person$err_degree <- if_else((flag_person$mdegreen1 == flag_person$mdegreen2 & flag_person$mdegreen1 != "N") & (flag_person$mdegreeu1 == flag_person$ddegreeu2 & flag_person$mdegreeu1 != "N") & (flag_person$mdegreeg1 == flag_person$ddegreeg2 & flag_person$mdegreeg1 != "N"), 1, flag_person$err_degree)
 flag_person$err_degree <- if_else((flag_person$bdegreen1 == flag_person$bdegreen2 & flag_person$bdegreen1 != "N") & (flag_person$bdegreeu1 == flag_person$bdegreeu2 & flag_person$bdegreeu1 != "N") & (flag_person$bdegreeg1 == flag_person$bdegreeg2 & flag_person$bdegreeg1 != "N"), 1, flag_person$err_degree)
 flag_person$err_degree <- if_else((flag_person$adegreen1 == flag_person$adegreen2 & flag_person$adegreen1 != "N") & (flag_person$adegreeu1 == flag_person$adegreeu2 & flag_person$adegreeu1 != "N") & (flag_person$adegreeg1 == flag_person$adegreeg2 & flag_person$adegreeg1 != "N"), 1, flag_person$err_degree)
 
@@ -4807,9 +4811,6 @@ if('spe5' %in% ls()){
 # 7.	碩士學位欄位若填列「逕讀博士」，應填列博士學位（不應為N）。
 
 flag_person <- drev_person_1
-
-flag_person$name <- gsub("温", replacemant = "溫", flag_person$name)
-flag_person$name <- gsub("凃", replacemant = "涂", flag_person$name)
 
 #博士學位畢業學校國別（一）
 flag_person$err_ddegreen1 <- 0
@@ -6786,4 +6787,71 @@ if('spe6' %in% ls()){
     distinct(organization_id, .keep_all = TRUE) %>%
     subset(select = c(organization_id, edu_name2))
   spe6$spe6 <- ""
+}
+
+# flag83: 離退教職員（工）資料表所列人員，不應填列為本次教員資料表或職員（工）資料表之專任或代理人員。 -------------------------------------------------------------------
+flag_person <- drev_P_retire %>%
+  rename(name = name.x, name_retire = name.y)
+
+#離退教職員(工)資料表所列人員，不應填列為本次教員資料表或職員（工）資料表之專任或代理人員。(與本期資料比對)
+#抓出:離退人員有出現在教員資料表、職員工資料表，且為專任或代理
+flag_person$err_flag <- 0
+flag_person$err_flag <- if_else(!is.na(flag_person$name_retire) & (flag_person$emptype == "專任" | flag_person$emptype == "代理"), 1, flag_person$err_flag)
+
+#呈現姓名
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_flag == 1 ~ flag_person$name,
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag83 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
+  subset(err_flag == 1) %>%
+  dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag83)[3 : length(colnames(flag_person_wide_flag83))]
+flag_person_wide_flag83$flag83_r <- NA
+for (i in temp){
+  flag_person_wide_flag83$flag83_r <- paste(flag_person_wide_flag83$flag83_r, flag_person_wide_flag83[[i]], sep = ", ")
+}
+flag_person_wide_flag83$flag83_r <- gsub("NA, ", replacement="", flag_person_wide_flag83$flag83_r)
+flag_person_wide_flag83$flag83_r <- gsub(", NA", replacement="", flag_person_wide_flag83$flag83_r)
+
+#產生檢誤報告文字
+flag83_temp <- flag_person_wide_flag83 %>%
+  group_by(organization_id) %>%
+  mutate(flag83_txt = paste(source, "：", flag83_r, sep = ""), "") %>%
+  subset(select = c(organization_id, flag83_txt)) %>%
+  distinct(organization_id, flag83_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag83 <- flag83_temp %>%
+  dcast(organization_id ~ flag83_txt, value.var = "flag83_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag83)[2 : length(colnames(flag83))]
+flag83$flag83 <- NA
+for (i in temp){
+  flag83$flag83 <- paste(flag83$flag83, flag83[[i]], sep = "； ")
+}
+flag83$flag83 <- gsub("NA； ", replacement="", flag83$flag83)
+flag83$flag83 <- gsub("； NA", replacement="", flag83$flag83)
+
+#產生檢誤報告文字
+flag83 <- flag83 %>%
+  subset(select = c(organization_id, flag83)) %>%
+  distinct(organization_id, flag83) %>%
+  mutate(flag83 = paste(flag83, "（請確認上述人員是否退休、退伍或因故離職，若是，則不需填列至本次教員資料表或職員（工）資料表）", sep = ""))
+
+#偵測flag83是否存在。若不存在，則產生NA行
+if('flag83' %in% ls()){
+  print("flag83")
+}else{
+  flag83 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id, edu_name2))
+  flag83$flag83 <- ""
 }
