@@ -1661,8 +1661,8 @@ flag1 <- flag_person %>%
   mutate(flag1 = paste("尚待增補之學校主管：", admin1_txt, admin2_txt, admin3_txt, admin4_txt, admin5_txt, admin6_txt, admin7_txt, admin8_txt, admin9_txt, sep = " ")) %>%
   mutate(flag1 = recode(gsub("\\s+", " ", flag1), `尚待增補之學校主管： ` = "")) %>%
   mutate(flag1 = if_else(flag1 != "", paste(flag1, "（貴校如未設置上開處室或人員，請來電告知）", sep = ""), flag1)) %>%
-  subset(select = c(organization_id, edu_name2, flag1)) %>%
-  distinct(organization_id, edu_name2, flag1)
+  subset(select = c(organization_id, flag1)) %>%
+  distinct(organization_id, flag1)
 
 #偵測flag1是否存在。若不存在，則產生NA行
 if('flag1' %in% ls()){
@@ -1701,8 +1701,8 @@ flag2 <- flag_person %>%
   group_by(organization_id) %>%
   mutate(err_flag = min(err_flag)) %>%
   mutate(flag2 = if_else(err_flag == 1,"請學校確認是否設置科主任或學程主任", "")) %>%
-  subset(select = c(organization_id, edu_name2, flag2)) %>%
-  distinct(organization_id, edu_name2, flag2)
+  subset(select = c(organization_id, flag2)) %>%
+  distinct(organization_id, flag2)
 
 #偵測flag2是否存在。若不存在，則產生NA行
 if('flag2' %in% ls()){
@@ -1745,8 +1745,8 @@ flag3 <- flag_person %>%
   group_by(organization_id) %>%
   mutate(err_flag = min(err_flag)) %>%
   mutate(flag3 = if_else(err_flag == 1,"請學校確認是否設置學程主任", "")) %>%
-  subset(select = c(organization_id, edu_name2, flag3)) %>%
-  distinct(organization_id, edu_name2, flag3)
+  subset(select = c(organization_id, flag3)) %>%
+  distinct(organization_id, flag3)
 
 #偵測flag3是否存在。若不存在，則產生NA行
 if('flag3' %in% ls()){
@@ -1823,7 +1823,7 @@ if('flag6' %in% ls()){
 }else{
   flag6 <- drev_person_1 %>%
   distinct(organization_id, .keep_all = TRUE) %>%
-  subset(select = c(organization_id, edu_name2))
+  subset(select = c(organization_id))
   flag6$flag6 <- ""
 }
 
@@ -1897,7 +1897,7 @@ if('flag7' %in% ls()){
 }else{
   flag7 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag7$flag7 <- ""
 }
 
@@ -1963,7 +1963,7 @@ if('flag8' %in% ls()){
 }else{
   flag8 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag8$flag8 <- ""
 }
 
@@ -2029,7 +2029,7 @@ if('flag9' %in% ls()){
 }else{
   flag9 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag9$flag9 <- ""
 }
 
@@ -2119,7 +2119,7 @@ if('flag15' %in% ls()){
 }else{
   flag15 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag15$flag15 <- ""
 }
   
@@ -2215,7 +2215,7 @@ if('flag16' %in% ls()){
 }else{
   flag16 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag16$flag16 <- ""
 }
 
@@ -2293,7 +2293,7 @@ if('flag18' %in% ls()){
 }else{
   flag18 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag18$flag18 <- ""
 }
 
@@ -2363,7 +2363,7 @@ if('flag19' %in% ls()){
 }else{
   flag19 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag19$flag19 <- ""
 }
 
@@ -2461,7 +2461,7 @@ if('flag20' %in% ls()){
 }else{
   flag20 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag20$flag20 <- ""
 }
 
@@ -2591,7 +2591,7 @@ if('flag24' %in% ls()){
 }else{
   flag24 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag24$flag24 <- ""
 }
 
@@ -2756,7 +2756,7 @@ if('flag39' %in% ls()){
 }else{
   flag39 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag39$flag39 <- ""
 }
 
@@ -2831,7 +2831,7 @@ if('flag45' %in% ls()){
 }else{
   flag45 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag45$flag45 <- ""
 }
 
@@ -2896,7 +2896,7 @@ if('flag47' %in% ls()){
 }else{
   flag47 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag47$flag47 <- ""
 }
 
@@ -2978,7 +2978,7 @@ if('flag48' %in% ls()){
 }else{
   flag48 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag48$flag48 <- ""
 }
 
@@ -3084,7 +3084,7 @@ if('flag49' %in% ls()){
 }else{
   flag49 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag49$flag49 <- ""
 }
 
@@ -3164,7 +3164,7 @@ if('flag50' %in% ls()){
 }else{
   flag50 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag50$flag50 <- ""
 }
 
@@ -3235,7 +3235,7 @@ if('flag51' %in% ls()){
 }else{
   flag51 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag51$flag51 <- ""
 }
 
@@ -3303,7 +3303,7 @@ if('flag52' %in% ls()){
 }else{
   flag52 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag52$flag52 <- ""
 }
 
@@ -3371,7 +3371,7 @@ if('flag57' %in% ls()){
 }else{
   flag57 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag57$flag57 <- ""
 }
 
@@ -3439,7 +3439,7 @@ if('flag59' %in% ls()){
 }else{
   flag59 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag59$flag59 <- ""
 }
 
@@ -4231,7 +4231,7 @@ if('flag62' %in% ls()){
 }else{
   flag62 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag62$flag62 <- ""
 }
 
@@ -4281,7 +4281,7 @@ if('flag64' %in% ls()){
 }else{
   flag64 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag64$flag64 <- ""
 }
 
@@ -4372,7 +4372,7 @@ if('flag80' %in% ls()){
 }else{
   flag80 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag80$flag80 <- ""
 }
 
@@ -4445,7 +4445,7 @@ if('flag82' %in% ls()){
 }else{
   flag82 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag82$flag82 <- ""
 }
 
@@ -4511,7 +4511,7 @@ if('flag89' %in% ls()){
 }else{
   flag89 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag89$flag89 <- ""
 }
 
@@ -4586,7 +4586,7 @@ if('flag90' %in% ls()){
 }else{
   flag90 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag90$flag90 <- ""
 }
 
@@ -4660,7 +4660,7 @@ if('flag94' %in% ls()){
 }else{
   flag94 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag94$flag94 <- ""
 }
 
@@ -4735,7 +4735,7 @@ if('spe3' %in% ls()){
 }else{
   spe3 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   spe3$spe3 <- ""
 }
 
@@ -4825,7 +4825,7 @@ if('spe5' %in% ls()){
 }else{
   spe5 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   spe5$spe5 <- ""
 }
 
@@ -6814,7 +6814,7 @@ if('spe6' %in% ls()){
 }else{
   spe6 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   spe6$spe6 <- ""
 }
 
@@ -6881,7 +6881,7 @@ if('flag83' %in% ls()){
 }else{
   flag83 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag83$flag83 <- ""
 }
 
@@ -6952,7 +6952,7 @@ if('flag92' %in% ls()){
 }else{
   flag92 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag92$flag92 <- ""
 }
 
@@ -7019,7 +7019,7 @@ if('flag84' %in% ls()){
 }else{
   flag84 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag84$flag84 <- ""
 }
 
@@ -7111,7 +7111,7 @@ if('flag85' %in% ls()){
 }else{
   flag85 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag85$flag85 <- ""
 }
 
@@ -7179,7 +7179,7 @@ if('flag93' %in% ls()){
 }else{
   flag93 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag93$flag93 <- ""
 }
 
@@ -7246,7 +7246,132 @@ if('flag86' %in% ls()){
 }else{
   flag86 <- drev_person_1 %>%
     distinct(organization_id, .keep_all = TRUE) %>%
-    subset(select = c(organization_id, edu_name2))
+    subset(select = c(organization_id))
   flag86$flag86 <- ""
 }
 
+# flag91: 本學期離退教職員（工）資料表比對上一學年（期）教員/職員（工）資料表，同一身分識別碼所對應的姓名不同。 -------------------------------------------------------------------
+flag_person <- drev_P_retire_merge_pre %>%
+  rename(name = name.x, name_pre = name.y, name_retire = name, edu_name2 = edu_name2.x)
+
+#本學期離退教職員（工）資料表比對上一學年（期）教員/職員（工）資料表，同一身分識別碼所對應的姓名不同。
+flag_person$err_flag <- 0
+flag_person$err_flag <- if_else(flag_person$pre == 1 & is.na(flag_person$now) & flag_person$retire == 1 & flag_person$name_pre != flag_person$name_retire, 1, flag_person$err_flag)
+
+#加註
+flag_person$name <- paste(flag_person$name_pre, "/", flag_person$name_retire, sep = "")
+flag_person$name <- gsub("；）", replacement = "）", flag_person$name)
+flag_person$name <- gsub("（）", replacement = "", flag_person$name)
+
+#呈現姓名
+flag_person$err_flag_txt <- ""
+flag_person$err_flag_txt <- case_when(
+  flag_person$err_flag == 1 ~ flag_person$name,
+  TRUE ~ flag_person$err_flag_txt
+)
+
+#根據organization_id + source，展開成寬資料(wide)
+flag_person_wide_flag91 <- flag_person %>%
+  subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, err_flag)) %>%
+  subset(err_flag == 1) %>%
+  dcast(organization_id ~ err_flag_txt, value.var = "err_flag_txt")
+
+#合併所有name
+temp <- colnames(flag_person_wide_flag91)[3 : length(colnames(flag_person_wide_flag91))]
+flag_person_wide_flag91$flag91_r <- NA
+for (i in temp){
+  flag_person_wide_flag91$flag91_r <- paste(flag_person_wide_flag91$flag91_r, flag_person_wide_flag91[[i]], sep = ", ")
+}
+flag_person_wide_flag91$flag91_r <- gsub("NA, ", replacement="", flag_person_wide_flag91$flag91_r)
+flag_person_wide_flag91$flag91_r <- gsub(", NA", replacement="", flag_person_wide_flag91$flag91_r)
+
+#產生檢誤報告文字
+flag91_temp <- flag_person_wide_flag91 %>%
+  group_by(organization_id) %>%
+  mutate(flag91_txt = paste("請確認：", flag91_r, sep = ""), "") %>%
+  subset(select = c(organization_id, flag91_txt)) %>%
+  distinct(organization_id, flag91_txt)
+
+#根據organization_id，展開成寬資料(wide)
+flag91 <- flag91_temp %>%
+  dcast(organization_id ~ flag91_txt, value.var = "flag91_txt")
+
+#合併教員資料表及職員(工)資料表報告文字
+temp <- colnames(flag91)[2 : length(colnames(flag91))]
+flag91$flag91 <- NA
+for (i in temp){
+  flag91$flag91 <- paste(flag91$flag91, flag91[[i]], sep = "； ")
+}
+flag91$flag91 <- gsub("NA； ", replacement="", flag91$flag91)
+flag91$flag91 <- gsub("； NA", replacement="", flag91$flag91)
+
+#產生檢誤報告文字
+flag91 <- flag91 %>%
+  subset(select = c(organization_id, flag91)) %>%
+  distinct(organization_id, flag91) %>%
+  mutate(flag91 = paste(flag91, "（離退人員於上一期資料填報姓名不相同。如已更名，請來電告知）", sep = ""))
+
+#偵測flag91是否存在。若不存在，則產生NA行
+if('flag91' %in% ls()){
+  print("flag91")
+}else{
+  flag91 <- drev_person_1 %>%
+    distinct(organization_id, .keep_all = TRUE) %>%
+    subset(select = c(organization_id))
+  flag91$flag91 <- ""
+}
+
+
+# 建立合併列印檔 -------------------------------------------------------------------
+temp <- c("flag2", "flag3", "flag6", "flag7", "flag8", "flag9", "flag15", "flag16", "flag18", "flag19", "flag20", "flag24", "flag39", "flag45", "flag47", "flag48", "flag49", "flag50", "flag51", "flag52", "flag57", "flag59", "flag62", "flag64", "flag80", "flag82", "flag83", "flag84", "flag85", "flag86", "flag89", "flag90", "flag91", "flag92", "flag93", "flag94", "sp3", "sp5", "sp6")
+check02 <- merge(x = edu_name2, y = flag1, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag2, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag3, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag6, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag7, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag8, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag9, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag15, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag16, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag18, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag19, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag20, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag24, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag39, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag45, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag47, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag48, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag49, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag50, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag51, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag52, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag57, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag59, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag62, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag64, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag80, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag82, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag83, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag84, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag85, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag86, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag89, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag90, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag91, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag92, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag93, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = flag94, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = spe3, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = spe5, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+check02 <- merge(x = check02, y = spe6, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
+
+save C:\edhr-111t1\edhr-111t1-check02-人事.dta, replace
+
+# 計畫端個案處理 -------------------------------------------------------------------
+check02$err_flag <- 0
+
+temp <- c("flag1", "flag2", "flag3", "flag6", "flag7", "flag8", "flag9", "flag15", "flag16", "flag18", "flag19", "flag20", "flag24", "flag39", "flag45", "flag47", "flag48", "flag49", "flag50", "flag51", "flag52", "flag57", "flag59", "flag62", "flag64", "flag80", "flag82", "flag83", "flag84", "flag85", "flag86", "flag89", "flag90", "flag91", "flag92", "flag93", "flag94", "spe3", "spe5", "spe6")
+for (i in temp){
+  check02[[i]] <- if_else(is.na(check02[[i]]), "", check02[[i]])
+  check02$err_flag <- if_else(nchar(check02[[i]]) != 0, 1, check02$err_flag)
+}
