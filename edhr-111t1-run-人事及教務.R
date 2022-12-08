@@ -6944,8 +6944,8 @@ if('flag92' %in% ls()){
 
 # flag84: 離退教職員（工）資料表所列人員，應為上一學年（期）專任教職員（工）。 -------------------------------------------------------------------
 flag_person <- drev_P_retire_pre %>%
+  subset(!is.na(drev_P_retire_pre$name.y)) %>%
   rename(name = name.x, name_retire = name.y) %>%
-  subset(!is.na(flag_person$name_retire)) %>%
   left_join(edu_name2, by = c("organization_id"))
 
 #填寫在「離退教職員(工)資料表」之人員，聘任類別需為「專任」。(與上一期資料比對)
