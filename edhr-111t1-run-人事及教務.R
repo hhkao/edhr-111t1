@@ -1879,17 +1879,17 @@ flag1 <- flag_person %>%
          admin8 = max(admin8),
          admin9 = max(admin9)) %>%
   mutate(admin1_txt = if_else(admin1 == 0, "校長", ""),
-         admin2_txt = if_else(admin2 == 0, "教務處主任", ""),
-         admin3_txt = if_else(admin3 == 0, "學務處主任", ""),
-         admin4_txt = if_else(admin4 == 0, "總務處主任", ""),
-         admin5_txt = if_else(admin5 == 0, "輔導室主任", ""),
-         admin6_txt = if_else(admin6 == 0, "圖書館主任", ""),
-         admin7_txt = if_else(admin7 == 0, "實習處主任", ""),
-         admin8_txt = if_else(admin8 == 0, "人事室主任", ""),
-         admin9_txt = if_else(admin9 == 0, "主（會）計室主任", "")) %>%
+         admin2_txt = if_else(admin2 == 0, "教務處主管", ""),
+         admin3_txt = if_else(admin3 == 0, "學務處主管", ""),
+         admin4_txt = if_else(admin4 == 0, "總務處主管", ""),
+         admin5_txt = if_else(admin5 == 0, "輔導室主管", ""),
+         admin6_txt = if_else(admin6 == 0, "圖書館主管", ""),
+         admin7_txt = if_else(admin7 == 0, "實習處主管", ""),
+         admin8_txt = if_else(admin8 == 0, "人事室主管", ""),
+         admin9_txt = if_else(admin9 == 0, "主（會）計室主管", "")) %>%
   mutate(flag1 = paste("尚待增補之學校主管：", admin1_txt, admin2_txt, admin3_txt, admin4_txt, admin5_txt, admin6_txt, admin7_txt, admin8_txt, admin9_txt, sep = " ")) %>%
   mutate(flag1 = recode(gsub("\\s+", " ", flag1), `尚待增補之學校主管： ` = "")) %>%
-  mutate(flag1 = if_else(flag1 != "", paste(flag1, "（貴校如未設置上開處室或人員，請來電告知）", sep = ""), flag1)) %>%
+  mutate(flag1 = if_else(flag1 != "", paste(flag1, "（請確認是否填報完整名單，倘貴校***主任尚未到職，請來電告知）", sep = ""), flag1)) %>%
   subset(select = c(organization_id, flag1)) %>%
   distinct(organization_id, flag1)
 
@@ -3003,6 +3003,38 @@ flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_
 flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "教官") & (flag_person$sertype == "教師" | flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
 flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "主任教官") & (flag_person$sertype == "教師" | flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
 flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "副校長") & (flag_person$sertype == "教師" | flag_person$sertype == "主任教官" | flag_person$sertype == "教官"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("室$", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("處$", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^資處$", flag_person$emsub), 0, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("教官室", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("教務處", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("學務處", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("人事室", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("總務處", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("會計室", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("輔導室", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("實習處", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("圖書館", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("校長室", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("(全時支援他校)", flag_person$emsub), 0, flag_person$err_flag)
+
+#社團 聘任類別為"鐘點教師"或"兼任"
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^社團$", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("社$", flag_person$emsub), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^管樂$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^合唱$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^中正之家$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^熱門音樂$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^吉他$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^魔術$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^話劇$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^國術$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^劍道$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^飛盤$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^機器人研究$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^儀隊$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & grepl("^滑板$", flag_person$emsub) & (flag_person$emptype == "鐘點教師" | flag_person$emptype == "兼任"), 1, flag_person$err_flag)
+#「專門」指導學生「社團活動」之外聘指導教員，暫不納入填報。請依欄位說明，確認貴校教職員工名單是否正確。
 
 #若校長的服務身份別填錯，且聘任科別填「NA」，則flag45不呈現，在flag47呈現
 flag_person$err_flag <- if_else(flag_person$source == "教員資料表" & (flag_person$emsub == "NA" | flag_person$emsub == "N") & (flag_person$sertype == "校長"), 0, flag_person$err_flag)
