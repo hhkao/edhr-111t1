@@ -268,7 +268,7 @@ data_staff <- data_staff %>%
 
 drev_person <- bind_rows(data_teacher, data_staff)
 
-drev_person$source  <- factor(drev_person$source, levels = c(1, 2), labels = c("教員資料表", "職員工資料表"))
+drev_person$source  <- factor(drev_person$source, levels = c(1, 2), labels = c("教員資料表", "職員(工)資料表"))
 #這行在更改source的1和2為教員資料表及職員工資料表，levels是排序依據.
 
 
@@ -1889,9 +1889,13 @@ flag1 <- flag_person %>%
          admin9_txt = if_else(admin9 == 0, "主（會）計室主管", "")) %>%
   mutate(flag1 = paste("尚待增補之學校主管：", admin1_txt, admin2_txt, admin3_txt, admin4_txt, admin5_txt, admin6_txt, admin7_txt, admin8_txt, admin9_txt, sep = " ")) %>%
   mutate(flag1 = recode(gsub("\\s+", " ", flag1), `尚待增補之學校主管： ` = "")) %>%
-  mutate(flag1 = if_else(flag1 != "", paste(flag1, "（請確認是否填報完整名單，倘貴校***主任尚未到職，請來電告知）", sep = ""), flag1)) %>%
+  mutate(flag1 = if_else(flag1 != "", paste(flag1, "（請確認是否填報完整名單，倘貴校###主任尚未到職，請來電告知）", sep = ""), flag1)) %>%
   subset(select = c(organization_id, flag1)) %>%
   distinct(organization_id, flag1)
+
+flag1$flag1 <- gsub("： ", replacement="：", flag1$flag1)
+flag1$flag1 <- gsub(" （", replacement="（", flag1$flag1)
+
 
 #偵測flag1是否存在。若不存在，則產生NA行
 if('flag1' %in% ls()){
@@ -1996,15 +2000,13 @@ view_flag6 <- distinct(flag_person, name, .keep_all = TRUE) %>%
   subset(nchar(name) != 3) %>%
   subset(select = c(organization_id, idnumber, name, edu_name2, source))
 
-#數字、特殊符號標記為1
+#數字、特殊符號標記為1，原住民姓名可能出現．
 flag_person$err_flag <- case_when(
   grepl("\\d", flag_person$name) ~ 1,
   grepl("[[:punct:]]", flag_person$name) ~ 1,
+  grepl("．", flag_person$name) ~ 0,
   TRUE ~ 0
 )
-#特殊情形給過
-flag_person$err_flag <- if_else(flag_person$name == "Liam O'Flanagan", 0, flag_person$err_flag)
-  #---
 
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag6 <- flag_person %>%
@@ -2517,6 +2519,13 @@ flag18 <- flag18 %>%
   subset(select = c(organization_id, flag18)) %>%
   distinct(organization_id, flag18)
 
+#刪除字串最後異常空格
+trim_t <- function (x){
+  gsub("\\s+|\\s+$", "", x)
+}
+
+flag18$flag18 <- trim_t(flag18$flag18) ##test
+
 #偵測flag18是否存在。若不存在，則產生NA行
 if('flag18' %in% ls()){
   print("flag18")
@@ -2526,6 +2535,8 @@ if('flag18' %in% ls()){
     subset(select = c(organization_id))
   flag18$flag18 <- ""
 }
+
+
 
 # flag19: 填寫外來人口統一證號者，國籍別應非「本國籍」。 -------------------------------------------------------------------
 flag_person <- drev_person_1
@@ -2615,7 +2626,7 @@ flag_person$err_flag_bdegreeu1 <- if_else(grepl("家專", flag_person$bdegreeu1)
 flag_person$err_flag_bdegreeu1 <- if_else(grepl("行專", flag_person$bdegreeu1), 1, flag_person$err_flag_bdegreeu1)
 flag_person$err_flag_bdegreeu1 <- if_else(grepl("師專", flag_person$bdegreeu1), 1, flag_person$err_flag_bdegreeu1)
 flag_person$err_flag_bdegreeu1 <- if_else(grepl("藥專", flag_person$bdegreeu1), 1, flag_person$err_flag_bdegreeu1)
-flag_person$err_flag_bdegreeu1 <- if_else(grepl("^台南家專學校財團法人台南應用科技大學$", flag_person$bdegreeu1), 1, flag_person$err_flag_bdegreeu1)
+flag_person$err_flag_bdegreeu1 <- if_else(grepl("^台南家專學校財團法人台南應用科技大學$", flag_person$bdegreeu1), 0, flag_person$err_flag_bdegreeu1)
 #陸軍官校專科班為學士學位
 flag_person$err_flag_bdegreeu1 <- if_else(grepl("^陸軍官校專科班$", flag_person$bdegreeu1), 0, flag_person$err_flag_bdegreeu1)
 
@@ -2633,7 +2644,7 @@ flag_person$err_flag_bdegreeu2 <- if_else(grepl("家專", flag_person$bdegreeu2)
 flag_person$err_flag_bdegreeu2 <- if_else(grepl("行專", flag_person$bdegreeu2), 1, flag_person$err_flag_bdegreeu2)
 flag_person$err_flag_bdegreeu2 <- if_else(grepl("師專", flag_person$bdegreeu2), 1, flag_person$err_flag_bdegreeu2)
 flag_person$err_flag_bdegreeu2 <- if_else(grepl("藥專", flag_person$bdegreeu2), 1, flag_person$err_flag_bdegreeu2)
-flag_person$err_flag_bdegreeu2 <- if_else(grepl("^台南家專學校財團法人台南應用科技大學$", flag_person$bdegreeu2), 1, flag_person$err_flag_bdegreeu2)
+flag_person$err_flag_bdegreeu2 <- if_else(grepl("^台南家專學校財團法人台南應用科技大學$", flag_person$bdegreeu2), 0, flag_person$err_flag_bdegreeu2)
 #陸軍官校專科班為學士學位
 flag_person$err_flag_bdegreeu2 <- if_else(grepl("^陸軍官校專科班$", flag_person$bdegreeu2), 0, flag_person$err_flag_bdegreeu2)
 
@@ -6997,12 +7008,12 @@ flag_person$name <- if_else(flag_person$err_bdegreeg1 != 0, paste(flag_person$na
 flag_person$name <- if_else(flag_person$err_bdegreen2 != 0, paste(flag_person$name, "學士學位畢業學校國別（二）：", flag_person$bdegreen2, "；", sep = ""), flag_person$name)
 flag_person$name <- if_else(flag_person$err_bdegreeu2 != 0, paste(flag_person$name, "學士學位畢業學校（二）：", flag_person$bdegreeu2, "；", sep = ""), flag_person$name)
 flag_person$name <- if_else(flag_person$err_bdegreeg2 != 0, paste(flag_person$name, "學士學位畢業科系（二）：", flag_person$bdegreeg2, "；", sep = ""), flag_person$name)
-flag_person$name <- if_else(flag_person$err_adegreen1 != 0, paste(flag_person$name, "副學士學位畢業學校國別（一）：", flag_person$adegreen1, "；", sep = ""), flag_person$name)
-flag_person$name <- if_else(flag_person$err_adegreeu1 != 0, paste(flag_person$name, "副學士學位畢業學校（一）：", flag_person$adegreeu1, "；", sep = ""), flag_person$name)
-flag_person$name <- if_else(flag_person$err_adegreeg1 != 0, paste(flag_person$name, "副學士學位畢業科系（一）：", flag_person$adegreeg1, "；", sep = ""), flag_person$name)
-flag_person$name <- if_else(flag_person$err_adegreen2 != 0, paste(flag_person$name, "副學士學位畢業學校國別（二）：", flag_person$adegreen2, "；", sep = ""), flag_person$name)
-flag_person$name <- if_else(flag_person$err_adegreeu2 != 0, paste(flag_person$name, "副學士學位畢業學校（二）：", flag_person$adegreeu2, "；", sep = ""), flag_person$name)
-flag_person$name <- if_else(flag_person$err_adegreeg2 != 0, paste(flag_person$name, "副學士學位畢業科系（二）：", flag_person$adegreeg2, "；", sep = ""), flag_person$name)
+flag_person$name <- if_else(flag_person$err_adegreen1 != 0, paste(flag_person$name, "副學士或專科畢業學校國別（一）：", flag_person$adegreen1, "；", sep = ""), flag_person$name)
+flag_person$name <- if_else(flag_person$err_adegreeu1 != 0, paste(flag_person$name, "副學士或專科畢業學校（一）：", flag_person$adegreeu1, "；", sep = ""), flag_person$name)
+flag_person$name <- if_else(flag_person$err_adegreeg1 != 0, paste(flag_person$name, "副學士或專科畢業科系（一）：", flag_person$adegreeg1, "；", sep = ""), flag_person$name)
+flag_person$name <- if_else(flag_person$err_adegreen2 != 0, paste(flag_person$name, "副學士或專科畢業學校國別（二）：", flag_person$adegreen2, "；", sep = ""), flag_person$name)
+flag_person$name <- if_else(flag_person$err_adegreeu2 != 0, paste(flag_person$name, "副學士或專科畢業學校（二）：", flag_person$adegreeu2, "；", sep = ""), flag_person$name)
+flag_person$name <- if_else(flag_person$err_adegreeg2 != 0, paste(flag_person$name, "副學士或專科畢業科系（二）：", flag_person$adegreeg2, "；", sep = ""), flag_person$name)
 flag_person$name <- if_else(flag_person$err_bdeade != 0, paste(flag_person$name, "副學士或專科畢業學校國別（一）：", flag_person$adegreen1, "、副學士或專科畢業學校（一）：", flag_person$adegreeu1, "、副學士或專科畢業科系（一）：",  flag_person$adegreeg1, " (若逕讀碩士，副學士或專科畢業資訊應不為N)", sep = ""), flag_person$name)
 flag_person$name <- if_else(flag_person$err_bdeade2 != 0, paste(flag_person$name, "(若逕讀博士，學士畢業資訊應不為N)", sep = ""), flag_person$name)
 flag_person$name <- if_else(flag_person$err_bdeade3 != 0, paste(flag_person$name, "(若逕讀博士，學士或專科畢業資訊應不為逕讀博士)", sep = ""), flag_person$name)
@@ -7052,7 +7063,7 @@ flag_person_wide_spe6$spe6_r <- gsub(" NA", replacement="", flag_person_wide_spe
 #產生檢誤報告文字
 spe6_temp <- flag_person_wide_spe6 %>%
   group_by(organization_id) %>%
-  mutate(spe6_txt = paste(source, "：", spe6_r, sep = ""), "") %>%
+  mutate(spe6_txt = paste(source, "之大學（學士）以上各教育階段學歷資料不完整或不正確：", spe6_r, sep = ""), "") %>%
   subset(select = c(organization_id, spe6_txt)) %>%
   distinct(organization_id, spe6_txt)
 
@@ -7634,6 +7645,438 @@ check02 <- merge(x = check02, y = spe6, by = c("organization_id"), all.x = TRUE,
 save C:\edhr-111t1\edhr-111t1-check02-人事.dta, replace
 
 # 計畫端個案處理 -------------------------------------------------------------------
+#國立中央大學附屬中壢高中(030305)
+  #謝窘木 陳觀柏 曾庭芝 景泰秀 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "030305", "", check02$flag86)
+
+#國立北科大附屬桃園農工(030403)
+  #同等學力
+  check02$spe6 <- if_else(check02$spe6 == "職員(工)資料表之大學（學士）以上各教育階段學歷資料不完整或不正確：歐奕廷（副學士或專科畢業學校（一）：同等學歷）" & check02$organization_id == "030403", "", check02$spe6)
+      #林美豪 李後翰 蔡宗奮 郭金山 翁菁穗 林殷兆 許日進 呂竺昇 吳聖傑 李國釗 呂阿祝 黃華彩 蘇佳恩 房增財 黃婉婷 陳坤松  皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "030403", "", check02$flag86)
+
+#市立龍潭高中(033302)
+  #邱憶茹 吳瑞芬 黃秀娟 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "033302", "", check02$flag86)
+
+#市立武陵高中(033306)
+  #黃政揚 林雅惠 康金花 李志成 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "033306", "", check02$flag86)
+
+#市立楊梅高中(033316)
+  #陳建旺 楊孝媛 楊凱婷 王慧真 陳宏宗 張瑋秦 江美珠 黃鈴芳 黃建堉 陳逸帆 張藝馨 陳素修 羅筱恩 袁素卿 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "033316", "", check02$flag86)
+
+#市立陽明高中(033325)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "033325", "", check02$flag80)
+  #黎玉蘭 CABRERA MARLOWE CAALAMA 郭育華 朱秀容 顏中山 黃淑敏 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "033325", "", check02$flag86)
+
+#市立中壢家商(033408)
+  #陳楙開 李昱旼 黃麗芬 邱玥紜 許美倫 何淑貞 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "033408", "", check02$flag86)
+
+#市立南崁高中(034306)
+  #吳素玉 彭冠學 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "034306", "", check02$flag86)
+
+#市立壽山高中(034314)
+  #原住民姓名無誤
+  check02$flag6 <- if_else(check02$flag6 == "職員(工)資料表需修改姓名處：纚固.妮卡兒" & check02$organization_id == "034314", "", check02$flag6)
+  #確實沒有主（會）計室主管
+  check02$flag1 <- if_else(check02$flag1 == "尚待增補之學校主管：主（會）計室主管（請確認是否填報完整名單，倘貴校###主任尚未到職，請來電告知）" & check02$organization_id == "034314", "", check02$flag1)
+    #徐宗盛 苗天霞 簡瑞葶 李惠珍 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "034314", "", check02$flag86)
+
+#市立觀音高中(034332)
+  #曾麗文 劉禎芸 莊竣翔 黃順斌 張鳳玲 林玉瓊 吳宜珍 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "034332", "", check02$flag86)
+
+#市立新屋高級中等學校(034335)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "034335", "", check02$flag80)
+  #黃國峰 賀春暉 陳癸月 黃嬿瑄 蔡慧茵 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "034335", "", check02$flag86)
+
+#市立永豐高中(034347)
+  #代理教師連續聘任沒有中斷
+  #check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "034347", "", check02$flag80)
+  #杜冠毅 陳麗婷 林美秋 皆非本學期退休或因故離職人員
+  #check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "034347", "", check02$flag86)
+
+#市立大園國際高中(034399)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "034399", "", check02$flag80)
+  #蕭辰桓 莊孟淳 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "034399", "", check02$flag86)
+
+#國立彰化女中(070301)
+  #楊明祥 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070301", "", check02$flag86)
+
+#國立員林高中(070304)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "070304", "", check02$flag80)
+
+#國立彰化高中(070307)
+  #呂健嘉 林胤國 林沛玲 呂興忠 柯鐙鐊 陳冠佑 施柏宇 邱建凱 陳品妤 皆非本學期退休或因故離職人員
+  #check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070307", "", check02$flag86)
+
+#國立鹿港高中(070316)
+  #職員(工)資料表：蔡奉育54歲，但學校工作總年資有38年（約16歲開始工作）這是正確的
+  check02$flag39 <- if_else(check02$flag39 == "請確認該員之「本校到職日期」、「本校任職需扣除之年資」、「本校到職前學校服務總年資」，職員(工)資料表：蔡奉育54歲，但學校工作總年資有38年（約16歲開始工作）" & check02$organization_id == "070316", "", check02$flag39)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "070316", "", check02$flag80)
+  #廖逵宸 林政興 李蕙菁 許笠 張雅如 陳佳麟 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070316", "", check02$flag86)
+
+#國立溪湖高中(070319)
+  #沒有設置學程主任
+  check02$flag3 <- if_else(check02$flag3 == "請學校確認是否設置學程主任" & check02$organization_id == "070319", "", check02$flag3)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "070319", "", check02$flag80)
+  #林意珊 卓宏祺 洪維謙 吳旭薇 劉珮如 楊家因 林宗賢 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070319", "", check02$flag86)
+
+#國立彰師附工(070401)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "070401", "", check02$flag80)
+  #蘇俊榮 周照棠 柯姿羽 陳凱勛 梁文瀞 洪武詮 林益瑋 吳武峰 施雄敏 林浚彬 林侑辰 梁祐祥 柯東佑 高駿雲 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070401", "", check02$flag86)
+
+#國立永靖高工(070402)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "070402", "", check02$flag80)
+  #林欣慧 廖惠娜 李秋蘭 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070402", "", check02$flag86)
+
+#國立二林工商(070403)
+  #無設置學程主任
+  check02$flag3 <- if_else(check02$flag3 == "請學校確認是否設置學程主任" & check02$organization_id == "070403", "", check02$flag3)
+  #林恒毅 黃舜牧 王子殷 黃梓彥 張玲菁 黃焜地 葉紋彬 鄭伊均 陳映軒 廖如茵 徐文振 呂宛儒 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070403", "", check02$flag86)
+
+#國立秀水高工(070405)
+  #梁奕魁 陳淵源 施忠良 陳文瑋 林黃莉雯 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070405", "", check02$flag86)
+
+#國立彰化高商(070406)
+  #盧諝程 黃碧雲 吳志信 何政衛 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070406", "", check02$flag86)
+
+#國立員林農工(070408)
+  #同等學力
+  check02$spe6 <- if_else(check02$spe6 == "職員(工)資料表之大學（學士）以上各教育階段學歷資料不完整或不正確：王如亮（副學士或專科畢業學校（一）：同等學力）" & check02$organization_id == "070408", "", check02$spe6)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "070408", "", check02$flag80)
+  #燕美黎 蘇盈嘉 葉俊賢 梁煌坤 王怡詠 宋崇銘 黃俊偉 游麗珍 賴宥如 黃小屏 許振維 張永承 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070408", "", check02$flag86)
+
+#國立員林崇實高工(070409)
+  #職員(工)資料表：王麗粧55歲，但學校工作總年資有40年（約15歲開始工作）這是正確的
+  check02$flag39 <- if_else(check02$flag39 == "請確認該員之「本校到職日期」、「本校任職需扣除之年資」、「本校到職前學校服務總年資」，職員(工)資料表：王麗粧55歲，但學校工作總年資有40年（約15歲開始工作）" & check02$organization_id == "070409", "", check02$flag39)
+  #魏延斌 許意山 洪俊林 蘇忠祥 陳玥彤 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070409", "", check02$flag86)
+
+#國立員林家商(070410)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "070410", "", check02$flag80)
+  #黃竫茵 許庭瑜 張淑芳 蓋琪君 黃美鳳 陳定宏 孫雅玲 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070410", "", check02$flag86)
+
+#國立北斗家商(070415)
+  #張耕濃 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070415", "", check02$flag86)
+
+#縣立彰化藝術高中(074308)
+  #職員(工)資料表：賈慶貞57歲，但學校工作總年資有41年（約16歲開始工作）這是正確的
+  check02$flag39 <- if_else(check02$flag39 == "請確認該員之「本校到職日期」、「本校任職需扣除之年資」、「本校到職前學校服務總年資」，職員(工)資料表：賈慶貞57歲，但學校工作總年資有41年（約16歲開始工作）" & check02$organization_id == "074308", "", check02$flag39)
+  #李宥婕 李東祐 歐陽沐靈 鄭綜聖 陳清彬 尤建勝 蕭麗娜 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "074308", "", check02$flag86)
+
+#縣立田中高中(074328)
+  #江祥場 代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "074328", "", check02$flag80)
+  #廖采頻 程惠珍 方效國 禤建國 鄭凱元 李柏萱 蕭慧儀 洪村展 艾翹楚 楊子鐳 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "074328", "", check02$flag86)
+
+#縣立成功高中(074339)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "074339", "", check02$flag80)
+  #李孟珍 林俊樂 張明仁 沈麗琴 鄭純琪 方美滿 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "074339", "", check02$flag86)
+
+#國立中興高中(080305)
+  #職員(工)資料表：李美紅58歲，但學校工作總年資有41年（約17歲開始工作） 黃鳳微64歲，但學校工作總年資有48年（約16歲開始工作）這是正確的
+  check02$flag39 <- if_else(check02$flag39 == "請確認該員之「本校到職日期」、「本校任職需扣除之年資」、「本校到職前學校服務總年資」，職員(工)資料表：李美紅58歲，但學校工作總年資有41年（約17歲開始工作） 黃鳳微64歲，但學校工作總年資有48年（約16歲開始工作）" & check02$organization_id == "080305", "", check02$flag39)
+  #翁廷豪 任以真 黃碧霞 紀松佐 鍾昊宏 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "080305", "", check02$flag86)
+
+#國立竹山高中(080307)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "080307", "", check02$flag80)
+
+#國立暨大附中(080308)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "080308", "", check02$flag80)
+  #張正彥 吳毓蕙 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "080308", "", check02$flag86)
+
+#國立埔里高工(080403)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "080403", "", check02$flag80)
+  #安蘭台 陳郁文 孫兆霞 王淑珊 林秀賢 江雅如 魏廷卉 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "080403", "", check02$flag86)
+
+#國立南投高商(080404)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "080404", "", check02$flag80)
+  #陳志修 余玉鳳 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "080404", "", check02$flag86)
+
+#國立草屯商工(080406)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "080406", "", check02$flag80)
+  #姚美慧 廖大銓 黃國軒 劉沛劼 黃方伯 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "080406", "", check02$flag86)
+
+#國立水里商工(080410)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "080410", "", check02$flag80)
+  #古欣卉 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "080410", "", check02$flag86)
+
+#縣立旭光高中(084309)
+  #張玲莉 蔣計芬 黃素珍 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "084309", "", check02$flag86)
+
+#國立臺東女中(140302)
+  #李兆起 羅忠雄 陳淑惠 吳佳純 黃淑芳 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "140302", "", check02$flag86)
+
+#國立臺東高中(140303)
+  #廖珠伶 黃玲娜 宗明珊 蔡文貴 張勝發 羅青松 吳麗香 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "140303", "", check02$flag86)
+
+#國立關山工商(140404)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "140404", "", check02$flag80)
+  #黃延泰 張仁輔 莊佩璋 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "140404", "", check02$flag86)
+
+#國立臺東高商(140405)
+  #丁英桔 楊芷筠 林弘毅 曾振華 古梅花 李立方 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "140405", "", check02$flag86)
+
+#縣立蘭嶼高中(144322)
+  #確實沒有圖書館主管
+  check02$flag1 <- if_else(check02$flag1 == "尚待增補之學校主管：圖書館主管（請確認是否填報完整名單，倘貴校###主任尚未到職，請來電告知）" & check02$organization_id == "144322", "", check02$flag1)
+  #劉俞伶 傅桂 劉康文 鍾蘭芬 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "144322", "", check02$flag86)
+
+#國立基隆女中(170301)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "170301", "", check02$flag80)
+  #田派霖 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "170301", "", check02$flag86)
+
+#市立安樂高中(173306)
+  #高麗玲 游文毅 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "173306", "", check02$flag86)
+
+#市立八斗高中(173314)
+  #陳璿文 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "173314", "", check02$flag86)
+
+#國立海洋大學附屬基隆海事(170403)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "170403", "", check02$flag80)
+  #華志德 徐秀珠 蘇世昌 劉俊妤 劉姵妏 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "170403", "", check02$flag86)
+
+#國立基隆商工(170404)
+  #陳景堅 宋元傑 盧韻如 余沂家 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "170404", "", check02$flag86)
+
+#市立中崙高中(313302)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "313302", "", check02$flag80)
+  #陳瓊珍 陳清吉 呂育娟 上學年聘任類別填錯 應為"兼任"人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "313302", "", check02$flag86)
+
+#市立松山高中(323301)
+  #江心瑜 朱玉華 羅世焜 莊明煌 黃金雄 陶韻如 李鎂英 王筱惠 陳惠華 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "323301", "", check02$flag86)
+
+#市立永春高中(323302)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "323302", "", check02$flag80)
+  #許詠智 易台玉 上學年聘任類別填錯 應為"兼任"人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "323302", "", check02$flag86)
+
+#市立松山家商(323401)
+  #劉勇成 潘廷敏 陳彥傑 林麗華 邱雅萍 葉芝鱗 劉安妮 楊世昌 蕭雅馨 李玟頤 姚智翊 趙忠明 非本學期退休或因故離職人員
+  #check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "323401", "", check02$flag86)
+
+#市立松山工農(323402)
+  #吳兆芳 尤筱潔 林怡君 陳盈如 莊昀鑫 林安琪 陳忠裕 曾家盈 江玉珍 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "323402", "", check02$flag86)
+
+#國立師大附中(330301)
+  #陳采妍 朱佩瑾 莊錦毓 林秀芬 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "330301", "", check02$flag86)
+
+#市立和平高中(333301)
+  #職員(工)資料表：潘麗卿54歲，但學校工作總年資有37年（約17歲開始工作）這是正確的
+  check02$flag39 <- if_else(check02$flag39 == "請確認該員之「本校到職日期」、「本校任職需扣除之年資」、「本校到職前學校服務總年資」，職員(工)資料表：潘麗卿54歲，但學校工作總年資有37年（約17歲開始工作）" & check02$organization_id == "333301", "", check02$flag39)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "333301", "", check02$flag80)
+  #林炤美 李財友 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "333301", "", check02$flag86)
+
+#臺北市芳和實驗中學(333304)
+  #該校行政單位較特別 原則上有填列各處室主管
+  check02$flag1 <- if_else(check02$flag1 != "" & check02$organization_id == "333304", "", check02$flag1)
+  #馮思妤 張顥瀚 宋湘媛 黃正宗 黎慧欣 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "333304", "", check02$flag86)
+
+#市立大安高工(333401)
+  #趙晋海 高添貴 孔祥璿 陳揚翔 潘虹竹 田育台 陳亮君 林俊岳 何元皓 黃柏文 楊運祥 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "333401", "", check02$flag86)
+
+#市立中山女中(343301)
+  #吳季勳 廖登山 徐志豪 陳秀鳳 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "343301", "", check02$flag86)
+
+#市立大同高中(343302)
+  #談得聖 莊靜怡 曾如玉 劉育伶 趙彥凱 莊智鈞 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "343302", "", check02$flag86)
+
+#市立大直高中(343303)
+  #張藝馨 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "343303", "", check02$flag86)
+
+#市立建國中學(353301)
+  #賴啟林 林素華 林純妙 朱軒樑 黃儷慧 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "353301", "", check02$flag86)
+
+#市立北一女中(353303)
+  #廖珈琪 上一學年聘任類別應為"約聘雇"
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "353303", "", check02$flag86)
+
+#市立明倫高中(363301)
+  #吳蕙惠 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "363301", "", check02$flag86)
+
+#市立成淵高中(363302)
+  #沈碧麗16歲開始工作無誤
+  check02$flag39 <- if_else(check02$flag39 == "請確認該員之「本校到職日期」、「本校任職需扣除之年資」、「本校到職前學校服務總年資」，職員(工)資料表：沈碧麗61歲，但學校工作總年資有45年（約16歲開始工作）" & check02$organization_id == "363302", "", check02$flag39)
+  #連詠順 林佳音 陳婉萍 吳淑絹 游璧僑 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "363302", "", check02$flag86)
+
+#市立華江高中(373301)
+  #林怡君 黃佳茵 羅媛馨 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "373301", "", check02$flag86)
+
+#國立政大附中(380301)
+  #盧碧英 謝欣恬 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "380301", "", check02$flag86)
+
+#市立景美女中(383301)
+  #確實沒有主（會）計室主管
+  check02$flag1 <- if_else(check02$flag1 == "尚待增補之學校主管：主（會）計室主管（請確認是否填報完整名單，倘貴校###主任尚未到職，請來電告知）" & check02$organization_id == "383301", "", check02$flag1)
+  #扣除年資不為零的人數確實偏高
+  check02$flag64 <- if_else(check02$flag64 == "扣除年資不為零的人數偏高，請再依欄位說明確認。" & check02$organization_id == "383301", "", check02$flag64)
+  #楊永祿 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "383301", "", check02$flag86)
+
+#市立萬芳高中(383302)
+  #教官 拿到退伍令 故退休
+  check02$flag85 <- if_else(check02$flag85 == "教員資料表：周建賢（該員年齡似低於最低法定退休年齡，敬請再協助確認）" & check02$organization_id == "383302", "", check02$flag85)
+  #陳裕隆 黃一庭 劉貞利 劉佳怡 許雅筑 陳淑伶 蘇苑瑜 陳怡廷 錢欽嫄 吳金蘭 施富祥 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "383302", "", check02$flag86)
+
+#市立數位實驗高中(383303)
+  #校長 教務處主管 學輔處主管 總務處主管 人事室主管 主（會）計室主管 皆為外校借調入 人事室沒有這些人員的人事資料 暫先讓學校通過
+  check02$flag1 <- if_else(check02$flag1 == "尚待增補之學校主管：校長 教務處主管 學務處主管 總務處主管 輔導室主管 圖書館主管 實習處主管 人事室主管 主（會）計室主管（請確認是否填報完整名單，倘貴校###主任尚未到職，請來電告知）" & check02$organization_id == "383303", "", check02$flag1)
+  #3位職員皆為約聘僱 暫先讓學校通過
+  check02$flag18 <- if_else(check02$flag18 == "職員(工)資料表專任人員人數偏低，請再協助確認實際聘任情況，或請確認是否填報完整職員(工)名單資料。" & check02$organization_id == "383303", "", check02$flag18)
+
+#市立木柵高工(383401)
+  #陳憲章 陳秀娥 黃奕榤 鄭芷昀 蔡美季 王秀琪 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "383401", "", check02$flag86)
+
+#市立南港高中(393301)
+  #原住民姓名無誤
+  check02$flag6 <- if_else(check02$flag6 == "教員資料表需修改姓名處：以柏．亞告" & check02$organization_id == "393301", "", check02$flag6)
+  #林柏祥 林德明 黃苓毓 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "393301", "", check02$flag86)
+
+#市立育成高中(393302)
+  #確實沒有主（會）計室主管
+  check02$flag1 <- if_else(check02$flag1 == "尚待增補之學校主管：主（會）計室主管（請確認是否填報完整名單，倘貴校###主任尚未到職，請來電告知）" & check02$organization_id == "393302", "", check02$flag1)
+  #陳昱蓁 李展源 曹念儒 張政豪 張芳瑜 蔣漢旗 洪清好 林姿綿 鍾一良 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "393302", "", check02$flag86)
+
+#市立南港高工(393401)
+  #揭朝平 王上林 王錦輝 江長遠 謝荺琪 陳宗暘 何岳珈 柯炳州 吳素惠 陳泰羽 李瑄 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "393401", "", check02$flag86)
+
+#市立內湖高中(403301)
+  #原住民姓名無誤
+  check02$flag6 <- if_else(check02$flag6 == "教員資料表需修改姓名處：古拉斯‧達那哈 烏巴赫‧尤紀" & check02$organization_id == "403301", "", check02$flag6)
+
+#市立麗山高中(403302)
+  #陳逸弘 邱曉淇 柯明樹 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "403302", "", check02$flag86)
+
+#市立南湖高中(403303)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "403303", "", check02$flag80)
+  #王翊軒 董家莒 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "403303", "", check02$flag86)
+
+#市立內湖高工(403401)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "403401", "", check02$flag80)
+  #錢柄匡 丁宇沛 楊秀鳳 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "403401", "", check02$flag86)
+
+#市立陽明高中(413301)
+  #林柏佑 邱嘉芳 王文玲 陳至義 羅聖涵 吳蓓欣 饒秀娟 簡淑玲 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "413301", "", check02$flag86)
+
+#市立百齡高中(413302)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "413302", "", check02$flag80)
+  #王廉今 陳依君 李宜蓁 蔡麗惠 段建強 陳玟瑾 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "413302", "", check02$flag86)
+
+#市立士林高商(413401)
+  #黃玉婷16歲開始工作無誤
+  check02$flag39 <- if_else(check02$flag39 == "請確認該員之「本校到職日期」、「本校任職需扣除之年資」、「本校到職前學校服務總年資」，職員(工)資料表：黃玉婷46歲，但學校工作總年資有30年（約16歲開始工作）" & check02$organization_id == "413401", "", check02$flag39)
+  #彭柏鈞 俞相榕 范筠軒 曾薇潔 黃佳淦 蔣明峰 蔣德馨 涂嘉妤 詹孟菁 施乃華 孫振華 陳美芳 姜金桂 非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "413401", "", check02$flag86)
+
+#市立復興高中(423301)
+  #閔懿 張黎明 蔡莉莉 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "423301", "", check02$flag86)
+
+#市立中正高中(423302)
+  #林憶君 王傳忠 林家豪 陳梵煦 林于雅 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "423302", "", check02$flag86)
+
+#國立馬祖高中(720301)
+  #沒有設置學程主任
+  check02$flag3 <- if_else(check02$flag3 == "請學校確認是否設置學程主任" & check02$organization_id == "720301", "", check02$flag3)
+  #原住民姓名無誤
+  check02$flag6 <- if_else(check02$flag6 != "" & check02$organization_id == "720301", "", check02$flag6)
+  #代理教師連續聘任沒有中斷
+  check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "720301", "", check02$flag80)
+  #陳怡文 陳宜道 皆非本學期退休或因故離職人員
+  check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "720301", "", check02$flag86)
+
 
 
 check02$err_flag <- 0
