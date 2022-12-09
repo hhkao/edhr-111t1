@@ -2016,10 +2016,10 @@ flag_person_wide_flag6 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag6)[3 : length(colnames(flag_person_wide_flag6))]
 flag_person_wide_flag6$flag6_r <- NA
 for (i in temp){
-  flag_person_wide_flag6$flag6_r <- paste(flag_person_wide_flag6$flag6_r, flag_person_wide_flag6[[i]], sep = ", ")
+  flag_person_wide_flag6$flag6_r <- paste(flag_person_wide_flag6$flag6_r, flag_person_wide_flag6[[i]], sep = " ")
 }
-flag_person_wide_flag6$flag6_r <- gsub("NA, ", replacement="", flag_person_wide_flag6$flag6_r)
-flag_person_wide_flag6$flag6_r <- gsub(", NA", replacement="", flag_person_wide_flag6$flag6_r)
+flag_person_wide_flag6$flag6_r <- gsub("NA ", replacement="", flag_person_wide_flag6$flag6_r)
+flag_person_wide_flag6$flag6_r <- gsub(" NA", replacement="", flag_person_wide_flag6$flag6_r)
 
 #產生檢誤報告文字
 flag6_temp <- flag_person_wide_flag6 %>%
@@ -2089,10 +2089,10 @@ flag_person_flag7 <- flag_person %>%
 temp <- colnames(flag_person_flag7)[3 : length(colnames(flag_person_flag7))]
 flag_person_flag7$flag7_r <- NA
 for (i in temp){
-  flag_person_flag7$flag7_r <- paste(flag_person_flag7$flag7_r, flag_person_flag7[[i]], sep = ", ")
+  flag_person_flag7$flag7_r <- paste(flag_person_flag7$flag7_r, flag_person_flag7[[i]], sep = " ")
 }
-flag_person_flag7$flag7_r <- gsub("NA, ", replacement="", flag_person_flag7$flag7_r)
-flag_person_flag7$flag7_r <- gsub(", NA", replacement="", flag_person_flag7$flag7_r)
+flag_person_flag7$flag7_r <- gsub("NA ", replacement="", flag_person_flag7$flag7_r)
+flag_person_flag7$flag7_r <- gsub(" NA", replacement="", flag_person_flag7$flag7_r)
 
 #產生檢誤報告文字
 flag7_temp <- flag_person_flag7 %>%
@@ -2156,10 +2156,10 @@ flag_person_wide_flag8 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag8)[3 : length(colnames(flag_person_wide_flag8))]
 flag_person_wide_flag8$flag8_r <- NA
 for (i in temp){
-  flag_person_wide_flag8$flag8_r <- paste(flag_person_wide_flag8$flag8_r, flag_person_wide_flag8[[i]], sep = ", ")
+  flag_person_wide_flag8$flag8_r <- paste(flag_person_wide_flag8$flag8_r, flag_person_wide_flag8[[i]], sep = " ")
 }
-flag_person_wide_flag8$flag8_r <- gsub("NA, ", replacement="", flag_person_wide_flag8$flag8_r)
-flag_person_wide_flag8$flag8_r <- gsub(", NA", replacement="", flag_person_wide_flag8$flag8_r)
+flag_person_wide_flag8$flag8_r <- gsub("NA ", replacement="", flag_person_wide_flag8$flag8_r)
+flag_person_wide_flag8$flag8_r <- gsub(" NA", replacement="", flag_person_wide_flag8$flag8_r)
 
 #產生檢誤報告文字
 flag8_temp <- flag_person_wide_flag8 %>%
@@ -2222,10 +2222,10 @@ flag_person_wide_flag9 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag9)[3 : length(colnames(flag_person_wide_flag9))]
 flag_person_wide_flag9$flag9_r <- NA
 for (i in temp){
-  flag_person_wide_flag9$flag9_r <- paste(flag_person_wide_flag9$flag9_r, flag_person_wide_flag9[[i]], sep = ", ")
+  flag_person_wide_flag9$flag9_r <- paste(flag_person_wide_flag9$flag9_r, flag_person_wide_flag9[[i]], sep = " ")
 }
-flag_person_wide_flag9$flag9_r <- gsub("NA, ", replacement="", flag_person_wide_flag9$flag9_r)
-flag_person_wide_flag9$flag9_r <- gsub(", NA", replacement="", flag_person_wide_flag9$flag9_r)
+flag_person_wide_flag9$flag9_r <- gsub("NA ", replacement="", flag_person_wide_flag9$flag9_r)
+flag_person_wide_flag9$flag9_r <- gsub(" NA", replacement="", flag_person_wide_flag9$flag9_r)
 
 #產生檢誤報告文字
 flag9_temp <- flag_person_wide_flag9 %>%
@@ -2311,10 +2311,10 @@ flag_person_wide_flag15 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag15)[3 : length(colnames(flag_person_wide_flag15))]
 flag_person_wide_flag15$flag15_r <- NA
 for (i in temp){
-  flag_person_wide_flag15$flag15_r <- paste(flag_person_wide_flag15$flag15_r, flag_person_wide_flag15[[i]], sep = ", ")
+  flag_person_wide_flag15$flag15_r <- paste(flag_person_wide_flag15$flag15_r, flag_person_wide_flag15[[i]], sep = " ")
 }
-flag_person_wide_flag15$flag15_r <- gsub("NA, ", replacement="", flag_person_wide_flag15$flag15_r)
-flag_person_wide_flag15$flag15_r <- gsub(", NA", replacement="", flag_person_wide_flag15$flag15_r)
+flag_person_wide_flag15$flag15_r <- gsub("NA ", replacement="", flag_person_wide_flag15$flag15_r)
+flag_person_wide_flag15$flag15_r <- gsub(" NA", replacement="", flag_person_wide_flag15$flag15_r)
 
 #產生檢誤報告文字
 flag15_temp <- flag_person_wide_flag15 %>%
@@ -2408,10 +2408,10 @@ flag_person_wide_flag16 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag16)[3 : length(colnames(flag_person_wide_flag16))]
 flag_person_wide_flag16$flag16_r <- NA
 for (i in temp){
-  flag_person_wide_flag16$flag16_r <- paste(flag_person_wide_flag16$flag16_r, flag_person_wide_flag16[[i]], sep = ", ")
+  flag_person_wide_flag16$flag16_r <- paste(flag_person_wide_flag16$flag16_r, flag_person_wide_flag16[[i]], sep = " ")
 }
-flag_person_wide_flag16$flag16_r <- gsub("NA, ", replacement="", flag_person_wide_flag16$flag16_r)
-flag_person_wide_flag16$flag16_r <- gsub(", NA", replacement="", flag_person_wide_flag16$flag16_r)
+flag_person_wide_flag16$flag16_r <- gsub("NA ", replacement="", flag_person_wide_flag16$flag16_r)
+flag_person_wide_flag16$flag16_r <- gsub(" NA", replacement="", flag_person_wide_flag16$flag16_r)
   
 #產生檢誤報告文字
 flag16_temp <- flag_person_wide_flag16 %>%
@@ -2489,7 +2489,7 @@ flag_person_wide_flag18$err_expecter <- if_else(flag_person_wide_flag18$count_ex
 flag_person_wide_flag18$err_workexp <- if_else(flag_person_wide_flag18$count_workexp / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "一年以上與任教領域相關之業界實務工作經驗人數偏多。（請再協助確認，『是否具備一年以上與任教領域相關之業界實務工作經驗』填寫『Y』之教員，是否確依欄位說明具備此經驗）", "")
 flag_person_wide_flag18$err_study <- if_else(flag_person_wide_flag18$count_study / flag_person_wide_flag18$jj < 0.5 & flag_person_wide_flag18$source == "教員資料表", "近六年內進行與專業或技術有關之研習或研究的人數偏多，請再協助確認實際聘任情況。", "")
 
-flag_person_wide_flag18$err_flag_txt <- paste(flag_person_wide_flag18$err_emptype, flag_person_wide_flag18$err_empunit, flag_person_wide_flag18$err_sertype, flag_person_wide_flag18$err_skillteacher, flag_person_wide_flag18$err_counselor, flag_person_wide_flag18$err_speteacher, flag_person_wide_flag18$err_joiteacher, flag_person_wide_flag18$err_expecter, flag_person_wide_flag18$err_workexp, flag_person_wide_flag18$err_study, sep = "")
+flag_person_wide_flag18$err_flag_txt <- paste(flag_person_wide_flag18$err_emptype, flag_person_wide_flag18$err_empunit, flag_person_wide_flag18$err_sertype, flag_person_wide_flag18$err_skillteacher, flag_person_wide_flag18$err_counselor, flag_person_wide_flag18$err_speteacher, flag_person_wide_flag18$err_joiteacher, flag_person_wide_flag18$err_expecter, flag_person_wide_flag18$err_workexp, flag_person_wide_flag18$err_study, sep = " ")
 
 # #產生檢誤報告文字
 # flag18_temp <- flag_person_wide_flag18 %>%
@@ -2500,7 +2500,7 @@ flag_person_wide_flag18$err_flag_txt <- paste(flag_person_wide_flag18$err_emptyp
 
 #根據organization_id，展開成寬資料(wide)
 flag18 <- flag_person_wide_flag18 %>%
-  subset(err_flag_txt != "") %>%
+  subset(grepl("\\S", flag_person_wide_flag18$err_flag_txt)) %>%
   dcast(organization_id ~ err_flag_txt, value.var = "err_flag_txt")
 
 #合併教員資料表及職員(工)資料表報告文字
@@ -2556,10 +2556,10 @@ flag_person_wide_flag19 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag19)[3 : length(colnames(flag_person_wide_flag19))]
 flag_person_wide_flag19$flag19_r <- NA
 for (i in temp){
-  flag_person_wide_flag19$flag19_r <- paste(flag_person_wide_flag19$flag19_r, flag_person_wide_flag19[[i]], sep = ", ")
+  flag_person_wide_flag19$flag19_r <- paste(flag_person_wide_flag19$flag19_r, flag_person_wide_flag19[[i]], sep = " ")
 }
-flag_person_wide_flag19$flag19_r <- gsub("NA, ", replacement="", flag_person_wide_flag19$flag19_r)
-flag_person_wide_flag19$flag19_r <- gsub(", NA", replacement="", flag_person_wide_flag19$flag19_r)
+flag_person_wide_flag19$flag19_r <- gsub("NA ", replacement="", flag_person_wide_flag19$flag19_r)
+flag_person_wide_flag19$flag19_r <- gsub(" NA", replacement="", flag_person_wide_flag19$flag19_r)
 
 #產生檢誤報告文字
 flag19_temp <- flag_person_wide_flag19 %>%
@@ -2657,10 +2657,10 @@ flag_person_wide_flag20 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag20)[3 : length(colnames(flag_person_wide_flag20))]
 flag_person_wide_flag20$flag20_r <- NA
 for (i in temp){
-  flag_person_wide_flag20$flag20_r <- paste(flag_person_wide_flag20$flag20_r, flag_person_wide_flag20[[i]], sep = ", ")
+  flag_person_wide_flag20$flag20_r <- paste(flag_person_wide_flag20$flag20_r, flag_person_wide_flag20[[i]], sep = " ")
 }
-flag_person_wide_flag20$flag20_r <- gsub("NA, ", replacement="", flag_person_wide_flag20$flag20_r)
-flag_person_wide_flag20$flag20_r <- gsub(", NA", replacement="", flag_person_wide_flag20$flag20_r)
+flag_person_wide_flag20$flag20_r <- gsub("NA ", replacement="", flag_person_wide_flag20$flag20_r)
+flag_person_wide_flag20$flag20_r <- gsub(" NA", replacement="", flag_person_wide_flag20$flag20_r)
 
 #產生檢誤報告文字
 flag20_temp <- flag_person_wide_flag20 %>%
@@ -2786,10 +2786,10 @@ flag_person_wide_flag24 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag24)[3 : length(colnames(flag_person_wide_flag24))]
 flag_person_wide_flag24$flag24_r <- NA
 for (i in temp){
-  flag_person_wide_flag24$flag24_r <- paste(flag_person_wide_flag24$flag24_r, flag_person_wide_flag24[[i]], sep = ", ")
+  flag_person_wide_flag24$flag24_r <- paste(flag_person_wide_flag24$flag24_r, flag_person_wide_flag24[[i]], sep = " ")
 }
-flag_person_wide_flag24$flag24_r <- gsub("NA, ", replacement="", flag_person_wide_flag24$flag24_r)
-flag_person_wide_flag24$flag24_r <- gsub(", NA", replacement="", flag_person_wide_flag24$flag24_r)
+flag_person_wide_flag24$flag24_r <- gsub("NA ", replacement="", flag_person_wide_flag24$flag24_r)
+flag_person_wide_flag24$flag24_r <- gsub(" NA", replacement="", flag_person_wide_flag24$flag24_r)
 
 #產生檢誤報告文字
 flag24_temp <- flag_person_wide_flag24 %>%
@@ -2951,10 +2951,10 @@ flag_person_wide_flag39 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag39)[3 : length(colnames(flag_person_wide_flag39))]
 flag_person_wide_flag39$flag39_r <- NA
 for (i in temp){
-  flag_person_wide_flag39$flag39_r <- paste(flag_person_wide_flag39$flag39_r, flag_person_wide_flag39[[i]], sep = ", ")
+  flag_person_wide_flag39$flag39_r <- paste(flag_person_wide_flag39$flag39_r, flag_person_wide_flag39[[i]], sep = " ")
 }
-flag_person_wide_flag39$flag39_r <- gsub("NA, ", replacement="", flag_person_wide_flag39$flag39_r)
-flag_person_wide_flag39$flag39_r <- gsub(", NA", replacement="", flag_person_wide_flag39$flag39_r)
+flag_person_wide_flag39$flag39_r <- gsub("NA ", replacement="", flag_person_wide_flag39$flag39_r)
+flag_person_wide_flag39$flag39_r <- gsub(" NA", replacement="", flag_person_wide_flag39$flag39_r)
 
 #產生檢誤報告文字
 flag39_temp <- flag_person_wide_flag39 %>%
@@ -3058,10 +3058,10 @@ flag_person_wide_flag45 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag45)[3 : length(colnames(flag_person_wide_flag45))]
 flag_person_wide_flag45$flag45_r <- NA
 for (i in temp){
-  flag_person_wide_flag45$flag45_r <- paste(flag_person_wide_flag45$flag45_r, flag_person_wide_flag45[[i]], sep = ", ")
+  flag_person_wide_flag45$flag45_r <- paste(flag_person_wide_flag45$flag45_r, flag_person_wide_flag45[[i]], sep = " ")
 }
-flag_person_wide_flag45$flag45_r <- gsub("NA, ", replacement="", flag_person_wide_flag45$flag45_r)
-flag_person_wide_flag45$flag45_r <- gsub(", NA", replacement="", flag_person_wide_flag45$flag45_r)
+flag_person_wide_flag45$flag45_r <- gsub("NA ", replacement="", flag_person_wide_flag45$flag45_r)
+flag_person_wide_flag45$flag45_r <- gsub(" NA", replacement="", flag_person_wide_flag45$flag45_r)
 
 #產生檢誤報告文字
 flag45_temp <- flag_person_wide_flag45 %>%
@@ -3123,10 +3123,10 @@ flag_person_wide_flag47 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag47)[3 : length(colnames(flag_person_wide_flag47))]
 flag_person_wide_flag47$flag47_r <- NA
 for (i in temp){
-  flag_person_wide_flag47$flag47_r <- paste(flag_person_wide_flag47$flag47_r, flag_person_wide_flag47[[i]], sep = ", ")
+  flag_person_wide_flag47$flag47_r <- paste(flag_person_wide_flag47$flag47_r, flag_person_wide_flag47[[i]], sep = " ")
 }
-flag_person_wide_flag47$flag47_r <- gsub("NA, ", replacement="", flag_person_wide_flag47$flag47_r)
-flag_person_wide_flag47$flag47_r <- gsub(", NA", replacement="", flag_person_wide_flag47$flag47_r)
+flag_person_wide_flag47$flag47_r <- gsub("NA ", replacement="", flag_person_wide_flag47$flag47_r)
+flag_person_wide_flag47$flag47_r <- gsub(" NA", replacement="", flag_person_wide_flag47$flag47_r)
 
 #產生檢誤報告文字
 flag47_temp <- flag_person_wide_flag47 %>%
@@ -3201,10 +3201,10 @@ flag_person_wide_flag48 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag48)[3 : length(colnames(flag_person_wide_flag48))]
 flag_person_wide_flag48$flag48_r <- NA
 for (i in temp){
-  flag_person_wide_flag48$flag48_r <- paste(flag_person_wide_flag48$flag48_r, flag_person_wide_flag48[[i]], sep = ", ")
+  flag_person_wide_flag48$flag48_r <- paste(flag_person_wide_flag48$flag48_r, flag_person_wide_flag48[[i]], sep = " ")
 }
-flag_person_wide_flag48$flag48_r <- gsub("NA, ", replacement="", flag_person_wide_flag48$flag48_r)
-flag_person_wide_flag48$flag48_r <- gsub(", NA", replacement="", flag_person_wide_flag48$flag48_r)
+flag_person_wide_flag48$flag48_r <- gsub("NA ", replacement="", flag_person_wide_flag48$flag48_r)
+flag_person_wide_flag48$flag48_r <- gsub(" NA", replacement="", flag_person_wide_flag48$flag48_r)
 
 #產生檢誤報告文字
 flag48_temp <- flag_person_wide_flag48 %>%
@@ -3311,10 +3311,10 @@ flag_person_wide_flag49 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag49)[3 : length(colnames(flag_person_wide_flag49))]
 flag_person_wide_flag49$flag49_r <- NA
 for (i in temp){
-  flag_person_wide_flag49$flag49_r <- paste(flag_person_wide_flag49$flag49_r, flag_person_wide_flag49[[i]], sep = ", ")
+  flag_person_wide_flag49$flag49_r <- paste(flag_person_wide_flag49$flag49_r, flag_person_wide_flag49[[i]], sep = " ")
 }
-flag_person_wide_flag49$flag49_r <- gsub("NA, ", replacement="", flag_person_wide_flag49$flag49_r)
-flag_person_wide_flag49$flag49_r <- gsub(", NA", replacement="", flag_person_wide_flag49$flag49_r)
+flag_person_wide_flag49$flag49_r <- gsub("NA ", replacement="", flag_person_wide_flag49$flag49_r)
+flag_person_wide_flag49$flag49_r <- gsub(" NA", replacement="", flag_person_wide_flag49$flag49_r)
 
 #產生檢誤報告文字
 flag49_temp <- flag_person_wide_flag49 %>%
@@ -3391,10 +3391,10 @@ flag_person_wide_flag50 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag50)[3 : length(colnames(flag_person_wide_flag50))]
 flag_person_wide_flag50$flag50_r <- NA
 for (i in temp){
-  flag_person_wide_flag50$flag50_r <- paste(flag_person_wide_flag50$flag50_r, flag_person_wide_flag50[[i]], sep = ", ")
+  flag_person_wide_flag50$flag50_r <- paste(flag_person_wide_flag50$flag50_r, flag_person_wide_flag50[[i]], sep = " ")
 }
-flag_person_wide_flag50$flag50_r <- gsub("NA, ", replacement="", flag_person_wide_flag50$flag50_r)
-flag_person_wide_flag50$flag50_r <- gsub(", NA", replacement="", flag_person_wide_flag50$flag50_r)
+flag_person_wide_flag50$flag50_r <- gsub("NA ", replacement="", flag_person_wide_flag50$flag50_r)
+flag_person_wide_flag50$flag50_r <- gsub(" NA", replacement="", flag_person_wide_flag50$flag50_r)
 
 #產生檢誤報告文字
 flag50_temp <- flag_person_wide_flag50 %>%
@@ -3462,10 +3462,10 @@ flag_person_wide_flag51 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag51)[3 : length(colnames(flag_person_wide_flag51))]
 flag_person_wide_flag51$flag51_r <- NA
 for (i in temp){
-  flag_person_wide_flag51$flag51_r <- paste(flag_person_wide_flag51$flag51_r, flag_person_wide_flag51[[i]], sep = ", ")
+  flag_person_wide_flag51$flag51_r <- paste(flag_person_wide_flag51$flag51_r, flag_person_wide_flag51[[i]], sep = " ")
 }
-flag_person_wide_flag51$flag51_r <- gsub("NA, ", replacement="", flag_person_wide_flag51$flag51_r)
-flag_person_wide_flag51$flag51_r <- gsub(", NA", replacement="", flag_person_wide_flag51$flag51_r)
+flag_person_wide_flag51$flag51_r <- gsub("NA ", replacement="", flag_person_wide_flag51$flag51_r)
+flag_person_wide_flag51$flag51_r <- gsub(" NA", replacement="", flag_person_wide_flag51$flag51_r)
 
 #產生檢誤報告文字
 flag51_temp <- flag_person_wide_flag51 %>%
@@ -3530,10 +3530,10 @@ flag_person_wide_flag52 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag52)[3 : length(colnames(flag_person_wide_flag52))]
 flag_person_wide_flag52$flag52_r <- NA
 for (i in temp){
-  flag_person_wide_flag52$flag52_r <- paste(flag_person_wide_flag52$flag52_r, flag_person_wide_flag52[[i]], sep = ", ")
+  flag_person_wide_flag52$flag52_r <- paste(flag_person_wide_flag52$flag52_r, flag_person_wide_flag52[[i]], sep = " ")
 }
-flag_person_wide_flag52$flag52_r <- gsub("NA, ", replacement="", flag_person_wide_flag52$flag52_r)
-flag_person_wide_flag52$flag52_r <- gsub(", NA", replacement="", flag_person_wide_flag52$flag52_r)
+flag_person_wide_flag52$flag52_r <- gsub("NA ", replacement="", flag_person_wide_flag52$flag52_r)
+flag_person_wide_flag52$flag52_r <- gsub(" NA", replacement="", flag_person_wide_flag52$flag52_r)
 
 #產生檢誤報告文字
 flag52_temp <- flag_person_wide_flag52 %>%
@@ -3598,10 +3598,10 @@ flag_person_wide_flag57 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag57)[3 : length(colnames(flag_person_wide_flag57))]
 flag_person_wide_flag57$flag57_r <- NA
 for (i in temp){
-  flag_person_wide_flag57$flag57_r <- paste(flag_person_wide_flag57$flag57_r, flag_person_wide_flag57[[i]], sep = ", ")
+  flag_person_wide_flag57$flag57_r <- paste(flag_person_wide_flag57$flag57_r, flag_person_wide_flag57[[i]], sep = " ")
 }
-flag_person_wide_flag57$flag57_r <- gsub("NA, ", replacement="", flag_person_wide_flag57$flag57_r)
-flag_person_wide_flag57$flag57_r <- gsub(", NA", replacement="", flag_person_wide_flag57$flag57_r)
+flag_person_wide_flag57$flag57_r <- gsub("NA ", replacement="", flag_person_wide_flag57$flag57_r)
+flag_person_wide_flag57$flag57_r <- gsub(" NA", replacement="", flag_person_wide_flag57$flag57_r)
 
 #產生檢誤報告文字
 flag57_temp <- flag_person_wide_flag57 %>%
@@ -3666,10 +3666,10 @@ flag_person_wide_flag59 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag59)[3 : length(colnames(flag_person_wide_flag59))]
 flag_person_wide_flag59$flag59_r <- NA
 for (i in temp){
-  flag_person_wide_flag59$flag59_r <- paste(flag_person_wide_flag59$flag59_r, flag_person_wide_flag59[[i]], sep = ", ")
+  flag_person_wide_flag59$flag59_r <- paste(flag_person_wide_flag59$flag59_r, flag_person_wide_flag59[[i]], sep = " ")
 }
-flag_person_wide_flag59$flag59_r <- gsub("NA, ", replacement="", flag_person_wide_flag59$flag59_r)
-flag_person_wide_flag59$flag59_r <- gsub(", NA", replacement="", flag_person_wide_flag59$flag59_r)
+flag_person_wide_flag59$flag59_r <- gsub("NA ", replacement="", flag_person_wide_flag59$flag59_r)
+flag_person_wide_flag59$flag59_r <- gsub(" NA", replacement="", flag_person_wide_flag59$flag59_r)
 
 #產生檢誤報告文字
 flag59_temp <- flag_person_wide_flag59 %>%
@@ -4458,10 +4458,10 @@ flag_person_wide_flag62 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag62)[3 : length(colnames(flag_person_wide_flag62))]
 flag_person_wide_flag62$flag62_r <- NA
 for (i in temp){
-  flag_person_wide_flag62$flag62_r <- paste(flag_person_wide_flag62$flag62_r, flag_person_wide_flag62[[i]], sep = ", ")
+  flag_person_wide_flag62$flag62_r <- paste(flag_person_wide_flag62$flag62_r, flag_person_wide_flag62[[i]], sep = " ")
 }
-flag_person_wide_flag62$flag62_r <- gsub("NA, ", replacement="", flag_person_wide_flag62$flag62_r)
-flag_person_wide_flag62$flag62_r <- gsub(", NA", replacement="", flag_person_wide_flag62$flag62_r)
+flag_person_wide_flag62$flag62_r <- gsub("NA ", replacement="", flag_person_wide_flag62$flag62_r)
+flag_person_wide_flag62$flag62_r <- gsub(" NA", replacement="", flag_person_wide_flag62$flag62_r)
 
 #產生檢誤報告文字
 flag62_temp <- flag_person_wide_flag62 %>%
@@ -4599,10 +4599,10 @@ flag_person_wide_flag80 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag80)[3 : length(colnames(flag_person_wide_flag80))]
 flag_person_wide_flag80$flag80_r <- NA
 for (i in temp){
-  flag_person_wide_flag80$flag80_r <- paste(flag_person_wide_flag80$flag80_r, flag_person_wide_flag80[[i]], sep = ", ")
+  flag_person_wide_flag80$flag80_r <- paste(flag_person_wide_flag80$flag80_r, flag_person_wide_flag80[[i]], sep = " ")
 }
-flag_person_wide_flag80$flag80_r <- gsub("NA, ", replacement="", flag_person_wide_flag80$flag80_r)
-flag_person_wide_flag80$flag80_r <- gsub(", NA", replacement="", flag_person_wide_flag80$flag80_r)
+flag_person_wide_flag80$flag80_r <- gsub("NA ", replacement="", flag_person_wide_flag80$flag80_r)
+flag_person_wide_flag80$flag80_r <- gsub(" NA", replacement="", flag_person_wide_flag80$flag80_r)
 
 #產生檢誤報告文字
 flag80_temp <- flag_person_wide_flag80 %>%
@@ -4672,10 +4672,10 @@ flag_person_wide_flag82 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag82)[3 : length(colnames(flag_person_wide_flag82))]
 flag_person_wide_flag82$flag82_r <- NA
 for (i in temp){
-  flag_person_wide_flag82$flag82_r <- paste(flag_person_wide_flag82$flag82_r, flag_person_wide_flag82[[i]], sep = ", ")
+  flag_person_wide_flag82$flag82_r <- paste(flag_person_wide_flag82$flag82_r, flag_person_wide_flag82[[i]], sep = " ")
 }
-flag_person_wide_flag82$flag82_r <- gsub("NA, ", replacement="", flag_person_wide_flag82$flag82_r)
-flag_person_wide_flag82$flag82_r <- gsub(", NA", replacement="", flag_person_wide_flag82$flag82_r)
+flag_person_wide_flag82$flag82_r <- gsub("NA ", replacement="", flag_person_wide_flag82$flag82_r)
+flag_person_wide_flag82$flag82_r <- gsub(" NA", replacement="", flag_person_wide_flag82$flag82_r)
 
 #產生檢誤報告文字
 flag82_temp <- flag_person_wide_flag82 %>%
@@ -4738,10 +4738,10 @@ flag_person_wide_flag89 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag89)[3 : length(colnames(flag_person_wide_flag89))]
 flag_person_wide_flag89$flag89_r <- NA
 for (i in temp){
-  flag_person_wide_flag89$flag89_r <- paste(flag_person_wide_flag89$flag89_r, flag_person_wide_flag89[[i]], sep = ", ")
+  flag_person_wide_flag89$flag89_r <- paste(flag_person_wide_flag89$flag89_r, flag_person_wide_flag89[[i]], sep = " ")
 }
-flag_person_wide_flag89$flag89_r <- gsub("NA, ", replacement="", flag_person_wide_flag89$flag89_r)
-flag_person_wide_flag89$flag89_r <- gsub(", NA", replacement="", flag_person_wide_flag89$flag89_r)
+flag_person_wide_flag89$flag89_r <- gsub("NA ", replacement="", flag_person_wide_flag89$flag89_r)
+flag_person_wide_flag89$flag89_r <- gsub(" NA", replacement="", flag_person_wide_flag89$flag89_r)
 
 #產生檢誤報告文字
 flag89_temp <- flag_person_wide_flag89 %>%
@@ -4813,10 +4813,10 @@ flag_person_wide_flag90 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag90)[3 : length(colnames(flag_person_wide_flag90))]
 flag_person_wide_flag90$flag90_r <- NA
 for (i in temp){
-  flag_person_wide_flag90$flag90_r <- paste(flag_person_wide_flag90$flag90_r, flag_person_wide_flag90[[i]], sep = ", ")
+  flag_person_wide_flag90$flag90_r <- paste(flag_person_wide_flag90$flag90_r, flag_person_wide_flag90[[i]], sep = " ")
 }
-flag_person_wide_flag90$flag90_r <- gsub("NA, ", replacement="", flag_person_wide_flag90$flag90_r)
-flag_person_wide_flag90$flag90_r <- gsub(", NA", replacement="", flag_person_wide_flag90$flag90_r)
+flag_person_wide_flag90$flag90_r <- gsub("NA ", replacement="", flag_person_wide_flag90$flag90_r)
+flag_person_wide_flag90$flag90_r <- gsub(" NA", replacement="", flag_person_wide_flag90$flag90_r)
 
 #產生檢誤報告文字
 flag90_temp <- flag_person_wide_flag90 %>%
@@ -4887,10 +4887,10 @@ flag_person_wide_flag94 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag94)[3 : length(colnames(flag_person_wide_flag94))]
 flag_person_wide_flag94$flag94_r <- NA
 for (i in temp){
-  flag_person_wide_flag94$flag94_r <- paste(flag_person_wide_flag94$flag94_r, flag_person_wide_flag94[[i]], sep = ", ")
+  flag_person_wide_flag94$flag94_r <- paste(flag_person_wide_flag94$flag94_r, flag_person_wide_flag94[[i]], sep = " ")
 }
-flag_person_wide_flag94$flag94_r <- gsub("NA, ", replacement="", flag_person_wide_flag94$flag94_r)
-flag_person_wide_flag94$flag94_r <- gsub(", NA", replacement="", flag_person_wide_flag94$flag94_r)
+flag_person_wide_flag94$flag94_r <- gsub("NA ", replacement="", flag_person_wide_flag94$flag94_r)
+flag_person_wide_flag94$flag94_r <- gsub(" NA", replacement="", flag_person_wide_flag94$flag94_r)
 
 #產生檢誤報告文字
 flag94_temp <- flag_person_wide_flag94 %>%
@@ -4962,10 +4962,10 @@ flag_person_wide_spe3 <- flag_person %>%
 temp <- colnames(flag_person_wide_spe3)[3 : length(colnames(flag_person_wide_spe3))]
 flag_person_wide_spe3$spe3_r <- NA
 for (i in temp){
-  flag_person_wide_spe3$spe3_r <- paste(flag_person_wide_spe3$spe3_r, flag_person_wide_spe3[[i]], sep = ", ")
+  flag_person_wide_spe3$spe3_r <- paste(flag_person_wide_spe3$spe3_r, flag_person_wide_spe3[[i]], sep = " ")
 }
-flag_person_wide_spe3$spe3_r <- gsub("NA, ", replacement="", flag_person_wide_spe3$spe3_r)
-flag_person_wide_spe3$spe3_r <- gsub(", NA", replacement="", flag_person_wide_spe3$spe3_r)
+flag_person_wide_spe3$spe3_r <- gsub("NA ", replacement="", flag_person_wide_spe3$spe3_r)
+flag_person_wide_spe3$spe3_r <- gsub(" NA", replacement="", flag_person_wide_spe3$spe3_r)
 
 #產生檢誤報告文字
 spe3_temp <- flag_person_wide_spe3 %>%
@@ -5053,10 +5053,10 @@ flag_person_wide_spe5 <- flag_person %>%
 temp <- colnames(flag_person_wide_spe5)[3 : length(colnames(flag_person_wide_spe5))]
 flag_person_wide_spe5$spe5_r <- NA
 for (i in temp){
-  flag_person_wide_spe5$spe5_r <- paste(flag_person_wide_spe5$spe5_r, flag_person_wide_spe5[[i]], sep = ", ")
+  flag_person_wide_spe5$spe5_r <- paste(flag_person_wide_spe5$spe5_r, flag_person_wide_spe5[[i]], sep = " ")
 }
-flag_person_wide_spe5$spe5_r <- gsub("NA, ", replacement="", flag_person_wide_spe5$spe5_r)
-flag_person_wide_spe5$spe5_r <- gsub(", NA", replacement="", flag_person_wide_spe5$spe5_r)
+flag_person_wide_spe5$spe5_r <- gsub("NA ", replacement="", flag_person_wide_spe5$spe5_r)
+flag_person_wide_spe5$spe5_r <- gsub(" NA", replacement="", flag_person_wide_spe5$spe5_r)
 
 #產生檢誤報告文字
 spe5_temp <- flag_person_wide_spe5 %>%
@@ -7044,10 +7044,10 @@ flag_person_wide_spe6 <- flag_person %>%
 temp <- colnames(flag_person_wide_spe6)[3 : length(colnames(flag_person_wide_spe6))]
 flag_person_wide_spe6$spe6_r <- NA
 for (i in temp){
-  flag_person_wide_spe6$spe6_r <- paste(flag_person_wide_spe6$spe6_r, flag_person_wide_spe6[[i]], sep = ", ")
+  flag_person_wide_spe6$spe6_r <- paste(flag_person_wide_spe6$spe6_r, flag_person_wide_spe6[[i]], sep = " ")
 }
-flag_person_wide_spe6$spe6_r <- gsub("NA, ", replacement="", flag_person_wide_spe6$spe6_r)
-flag_person_wide_spe6$spe6_r <- gsub(", NA", replacement="", flag_person_wide_spe6$spe6_r)
+flag_person_wide_spe6$spe6_r <- gsub("NA ", replacement="", flag_person_wide_spe6$spe6_r)
+flag_person_wide_spe6$spe6_r <- gsub(" NA", replacement="", flag_person_wide_spe6$spe6_r)
 
 #產生檢誤報告文字
 spe6_temp <- flag_person_wide_spe6 %>%
@@ -7110,10 +7110,10 @@ flag_person_wide_flag83 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag83)[3 : length(colnames(flag_person_wide_flag83))]
 flag_person_wide_flag83$flag83_r <- NA
 for (i in temp){
-  flag_person_wide_flag83$flag83_r <- paste(flag_person_wide_flag83$flag83_r, flag_person_wide_flag83[[i]], sep = ", ")
+  flag_person_wide_flag83$flag83_r <- paste(flag_person_wide_flag83$flag83_r, flag_person_wide_flag83[[i]], sep = " ")
 }
-flag_person_wide_flag83$flag83_r <- gsub("NA, ", replacement="", flag_person_wide_flag83$flag83_r)
-flag_person_wide_flag83$flag83_r <- gsub(", NA", replacement="", flag_person_wide_flag83$flag83_r)
+flag_person_wide_flag83$flag83_r <- gsub("NA ", replacement="", flag_person_wide_flag83$flag83_r)
+flag_person_wide_flag83$flag83_r <- gsub(" NA", replacement="", flag_person_wide_flag83$flag83_r)
 
 #產生檢誤報告文字
 flag83_temp <- flag_person_wide_flag83 %>%
@@ -7181,10 +7181,10 @@ flag_person_wide_flag92 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag92)[3 : length(colnames(flag_person_wide_flag92))]
 flag_person_wide_flag92$flag92_r <- NA
 for (i in temp){
-  flag_person_wide_flag92$flag92_r <- paste(flag_person_wide_flag92$flag92_r, flag_person_wide_flag92[[i]], sep = ", ")
+  flag_person_wide_flag92$flag92_r <- paste(flag_person_wide_flag92$flag92_r, flag_person_wide_flag92[[i]], sep = " ")
 }
-flag_person_wide_flag92$flag92_r <- gsub("NA, ", replacement="", flag_person_wide_flag92$flag92_r)
-flag_person_wide_flag92$flag92_r <- gsub(", NA", replacement="", flag_person_wide_flag92$flag92_r)
+flag_person_wide_flag92$flag92_r <- gsub("NA ", replacement="", flag_person_wide_flag92$flag92_r)
+flag_person_wide_flag92$flag92_r <- gsub(" NA", replacement="", flag_person_wide_flag92$flag92_r)
 
 #產生檢誤報告文字
 flag92_temp <- flag_person_wide_flag92 %>%
@@ -7248,10 +7248,10 @@ flag_person_wide_flag84 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag84)[3 : length(colnames(flag_person_wide_flag84))]
 flag_person_wide_flag84$flag84_r <- NA
 for (i in temp){
-  flag_person_wide_flag84$flag84_r <- paste(flag_person_wide_flag84$flag84_r, flag_person_wide_flag84[[i]], sep = ", ")
+  flag_person_wide_flag84$flag84_r <- paste(flag_person_wide_flag84$flag84_r, flag_person_wide_flag84[[i]], sep = " ")
 }
-flag_person_wide_flag84$flag84_r <- gsub("NA, ", replacement="", flag_person_wide_flag84$flag84_r)
-flag_person_wide_flag84$flag84_r <- gsub(", NA", replacement="", flag_person_wide_flag84$flag84_r)
+flag_person_wide_flag84$flag84_r <- gsub("NA ", replacement="", flag_person_wide_flag84$flag84_r)
+flag_person_wide_flag84$flag84_r <- gsub(" NA", replacement="", flag_person_wide_flag84$flag84_r)
 
 #產生檢誤報告文字
 flag84_temp <- flag_person_wide_flag84 %>%
@@ -7340,10 +7340,10 @@ flag_person_wide_flag85 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag85)[3 : length(colnames(flag_person_wide_flag85))]
 flag_person_wide_flag85$flag85_r <- NA
 for (i in temp){
-  flag_person_wide_flag85$flag85_r <- paste(flag_person_wide_flag85$flag85_r, flag_person_wide_flag85[[i]], sep = ", ")
+  flag_person_wide_flag85$flag85_r <- paste(flag_person_wide_flag85$flag85_r, flag_person_wide_flag85[[i]], sep = " ")
 }
-flag_person_wide_flag85$flag85_r <- gsub("NA, ", replacement="", flag_person_wide_flag85$flag85_r)
-flag_person_wide_flag85$flag85_r <- gsub(", NA", replacement="", flag_person_wide_flag85$flag85_r)
+flag_person_wide_flag85$flag85_r <- gsub("NA ", replacement="", flag_person_wide_flag85$flag85_r)
+flag_person_wide_flag85$flag85_r <- gsub(" NA", replacement="", flag_person_wide_flag85$flag85_r)
 
 #產生檢誤報告文字
 flag85_temp <- flag_person_wide_flag85 %>%
@@ -7408,10 +7408,10 @@ flag_person_wide_flag93 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag93)[3 : length(colnames(flag_person_wide_flag93))]
 flag_person_wide_flag93$flag93_r <- NA
 for (i in temp){
-  flag_person_wide_flag93$flag93_r <- paste(flag_person_wide_flag93$flag93_r, flag_person_wide_flag93[[i]], sep = ", ")
+  flag_person_wide_flag93$flag93_r <- paste(flag_person_wide_flag93$flag93_r, flag_person_wide_flag93[[i]], sep = " ")
 }
-flag_person_wide_flag93$flag93_r <- gsub("NA, ", replacement="", flag_person_wide_flag93$flag93_r)
-flag_person_wide_flag93$flag93_r <- gsub(", NA", replacement="", flag_person_wide_flag93$flag93_r)
+flag_person_wide_flag93$flag93_r <- gsub("NA ", replacement="", flag_person_wide_flag93$flag93_r)
+flag_person_wide_flag93$flag93_r <- gsub(" NA", replacement="", flag_person_wide_flag93$flag93_r)
 
 #產生檢誤報告文字
 flag93_temp <- flag_person_wide_flag93 %>%
@@ -7475,10 +7475,10 @@ flag_person_wide_flag86 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag86)[3 : length(colnames(flag_person_wide_flag86))]
 flag_person_wide_flag86$flag86_r <- NA
 for (i in temp){
-  flag_person_wide_flag86$flag86_r <- paste(flag_person_wide_flag86$flag86_r, flag_person_wide_flag86[[i]], sep = ", ")
+  flag_person_wide_flag86$flag86_r <- paste(flag_person_wide_flag86$flag86_r, flag_person_wide_flag86[[i]], sep = " ")
 }
-flag_person_wide_flag86$flag86_r <- gsub("NA, ", replacement="", flag_person_wide_flag86$flag86_r)
-flag_person_wide_flag86$flag86_r <- gsub(", NA", replacement="", flag_person_wide_flag86$flag86_r)
+flag_person_wide_flag86$flag86_r <- gsub("NA ", replacement="", flag_person_wide_flag86$flag86_r)
+flag_person_wide_flag86$flag86_r <- gsub(" NA", replacement="", flag_person_wide_flag86$flag86_r)
 
 #產生檢誤報告文字
 flag86_temp <- flag_person_wide_flag86 %>%
@@ -7546,10 +7546,10 @@ flag_person_wide_flag91 <- flag_person %>%
 temp <- colnames(flag_person_wide_flag91)[3 : length(colnames(flag_person_wide_flag91))]
 flag_person_wide_flag91$flag91_r <- NA
 for (i in temp){
-  flag_person_wide_flag91$flag91_r <- paste(flag_person_wide_flag91$flag91_r, flag_person_wide_flag91[[i]], sep = ", ")
+  flag_person_wide_flag91$flag91_r <- paste(flag_person_wide_flag91$flag91_r, flag_person_wide_flag91[[i]], sep = " ")
 }
-flag_person_wide_flag91$flag91_r <- gsub("NA, ", replacement="", flag_person_wide_flag91$flag91_r)
-flag_person_wide_flag91$flag91_r <- gsub(", NA", replacement="", flag_person_wide_flag91$flag91_r)
+flag_person_wide_flag91$flag91_r <- gsub("NA ", replacement="", flag_person_wide_flag91$flag91_r)
+flag_person_wide_flag91$flag91_r <- gsub(" NA", replacement="", flag_person_wide_flag91$flag91_r)
 
 #產生檢誤報告文字
 flag91_temp <- flag_person_wide_flag91 %>%
