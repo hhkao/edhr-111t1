@@ -2004,7 +2004,6 @@ view_flag6 <- distinct(flag_person, name, .keep_all = TRUE) %>%
 flag_person$err_flag <- case_when(
   grepl("\\d", flag_person$name) ~ 1,
   grepl("[[:punct:]]", flag_person$name) ~ 1,
-  grepl("．", flag_person$name) ~ 0,
   TRUE ~ 0
 )
 
