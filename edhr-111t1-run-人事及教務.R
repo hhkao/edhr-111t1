@@ -2000,7 +2000,7 @@ view_flag6 <- distinct(flag_person, name, .keep_all = TRUE) %>%
   subset(nchar(name) != 3) %>%
   subset(select = c(organization_id, idnumber, name, edu_name2, source))
 
-#數字、特殊符號標記為1，原住民姓名可能出現．
+#數字、特殊符號標記為1
 flag_person$err_flag <- case_when(
   grepl("\\d", flag_person$name) ~ 1,
   grepl("[[:punct:]]", flag_person$name) ~ 1,
