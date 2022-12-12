@@ -258,6 +258,8 @@ drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "Q222500292" & dr
 drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "H224770876" & drev_person_pre$organization_id == "033408", "教師", drev_person_pre$sertype)
 drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "K221339311" & drev_person_pre$organization_id == "033408", "教師", drev_person_pre$sertype)
 
+#記錄時間
+time_now <- Sys.time()
 
 # 合併人事資料表 ----------------------------------------------------------------
 data_teacher <- data_teacher %>%
@@ -7667,8 +7669,8 @@ check02 <- merge(x = check02, y = spe3, by = c("organization_id"), all.x = TRUE,
 check02 <- merge(x = check02, y = spe5, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
 check02 <- merge(x = check02, y = spe6, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
 
-#autochecking_personnel 第168行改成 C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx
-#autochecking_personnel 第182, 257行改成 C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xls
+#autochecking_personnel 第168行改成      dim(teacher)[1] == 0 & dim(staff)[1] == 0
+#autochecking_personnel 第182, 257行改成 readxl :: read_excel("C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx")
 
 # 計畫端個案處理 -------------------------------------------------------------------
 #國立中央大學附屬中壢高中(030305)
@@ -8143,4 +8145,532 @@ check02 <- check02 %>%
   subset(select = -c(err_flag, err_flag_P, err_flag_Ps))
 }else{
 openxlsx :: write.xlsx(check02, file = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx", rowNames = FALSE, overwrite = TRUE)
+}
+
+#####自動化檢誤#####
+#若全部學校皆未上傳(教員資料表及職員工資料表皆無資料)，以下皆不執行
+if(dim(teacher)[1] == 0 & dim(staff)[1] == 0)
+{
+  print("所有學校皆尚未上傳資料")
+}else
+{
+  #####自動化信件通知 - 每小時通知<本次上傳學校名單、需補正學校名單、三階檢通過學校名單>#####
+  #初次執行需建立pre_list_agree和pre_correct_list兩個xlsx檔，用if else來做
+  #若xlsx檔不存在，建立檔案
+  if(!file.exists("C:/edhr-111t1/dta/edhr_111t1-202210/pre_list_agree_人事.xlsx"))
+  {
+    #建立pre_list_agree.xlsx
+    pre_list_agree <- list_agree
+    openxlsx :: write.xlsx(pre_list_agree, file = "C:/edhr-111t1/dta/edhr_111t1-202210/pre_list_agree_人事.xlsx", rowNames = FALSE, overwrite = TRUE)
+    #建立pre_correct_list.xlsx
+    correct_list <- readxl :: read_excel("C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx") %>% #本次需補正學校
+      subset(select = c(organization_id, edu_name2))
+    correct_list$edu_name2 <- paste(correct_list$edu_name2, "(", correct_list$organization_id, ")", sep = "")
+    correct_list <- correct_list %>%
+      mutate(pre_correct = 1)
+    #以下是為了解決無法合併的問題
+    if(dim(correct_list)[1] == 0)
+    {
+      correct_list[1, 1 : 2] = "0"
+      colnames(correct_list) <- c("organization_id", "edu_name2", "pre_correct")
+    }else
+    {
+      correct_list = correct_list
+    }
+    openxlsx :: write.xlsx(correct_list, file = "C:/edhr-111t1/dta/edhr_111t1-202210/pre_correct_list_人事.xlsx", rowNames = FALSE, overwrite = TRUE)
+  }else
+  {
+    print("pre_list_agree和pre_correct_list兩個xlsx檔存在，繼續執行")
+  }
+  
+  #若xlsx檔存在，執行
+  if(file.exists("C:/edhr-111t1/dta/edhr_111t1-202210/pre_list_agree_人事.xlsx"))
+  {
+    #讀取上次名單
+    pre_list_agree <- readxl :: read_excel("C:/edhr-111t1/dta/edhr_111t1-202210/pre_list_agree_人事.xlsx")
+    pre_list_agree$organization_id <- as.character(pre_list_agree$organization_id)
+    pre_correct_list <- readxl :: read_excel("C:/edhr-111t1/dta/edhr_111t1-202210/pre_correct_list_人事.xlsx")
+    pre_correct_list <- mutate(pre_correct_list, pre_correct = 1)
+    #以下是為了解決pre_list_agree無法合併的問題(若出現此問題只會發生在list_agree為空 且 pre_list_agree為空)
+    if(dim(pre_list_agree)[1] == 0 & dim(list_agree)[1] == 0)
+    {
+      pre_list_agree <- list_agree
+    }else
+    {
+      pre_list_agree = pre_list_agree
+    }
+    
+    #本次上傳 - 本次出現但上次沒出現
+    organization <- dbGetQuery(edhr, "SELECT a.id as organization_id, b.name
+  FROM
+  (SELECT id, max(year) as year
+  FROM [plat5_edhr].[dbo].[organization_details]
+  group by id) a LEFT JOIN (SELECT id, year, name
+							FROM [plat5_edhr].[dbo].[organization_details]) b ON a.id = b.id AND a.year = b.year
+  where (substring(a.id, 4, 1) = '1' OR substring(a.id, 4, 1) = '2' OR substring(a.id, 4, 1) = '3' OR substring(a.id, 4, 1) = '4' OR substring(a.id, 4, 1) = 'B' OR substring(a.id, 4, 1) = 'C' OR substring(a.id, 4, 1) = 'F' OR substring(a.id, 4, 1) = 'G')")
+    compare_list <- left_join(list_agree, pre_list_agree, by = c("organization_id")) %>%
+      subset(is.na(agree.y))
+    compare_list <- merge(x = compare_list, y = organization, by = "organization_id", all.x = TRUE)
+    #以下是為了解決compare_list為0
+    if(dim(compare_list)[1] == 0)
+    {
+      compare_list[1, 1 : 4] = 0
+    }else
+    {
+      compare_list = compare_list
+    }
+    compare_list$name <- paste(compare_list$name, "(", compare_list$organization_id, ")", sep = "")
+    
+    #本次上傳 - 本次出現且上次出現且出現在上次需修正名單(compare_correct_list的意思是在這次上傳期間未處理上次未通過的學校)
+    compare_correct_list <- left_join(list_agree, pre_correct_list, by = c("organization_id")) %>%
+      subset(pre_correct == 1)
+    #以下是為了解決compare_correct_list為0
+    if(dim(compare_correct_list)[1] == 0)
+    {
+      compare_correct_list[1, 1 : 4] = 0
+    }else
+    {
+      compare_correct_list = compare_correct_list
+    }
+    
+    #compare_correct_list$edu_name2 <- paste(compare_correct_list$edu_name2, "(", compare_correct_list$organization_id, ")", sep = "")
+    #另存'本次已上傳名單"，以便於與下次名單比對
+    pre_list_agree <- list_agree
+    openxlsx :: write.xlsx(pre_list_agree, file = "C:/edhr-111t1/dta/edhr_111t1-202210/pre_list_agree_人事.xlsx", rowNames = FALSE, overwrite = TRUE)
+    
+    correct_list <- readxl :: read_excel("C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx") %>% #本次需補正學校
+      subset(select = c(organization_id, edu_name2))
+    correct_list_c <- correct_list %>%
+      subset(select = c(organization_id))
+    correct_list$edu_name2 <- paste(correct_list$edu_name2, "(", correct_list$organization_id, ")", sep = "")
+
+    #處理correct_list為tibble的問題
+    if(dim(correct_list)[1] == 0){
+      correct_list <- data.frame(
+      organization_id = c(""), 
+      edu_name2 = c("")
+    )
+    correct_list <- correct_list[-1, ]
+    }else{
+      correct_list <- correct_list
+    }
+    #將correct_list_c 變數的data type改為char
+    if(is.character(correct_list_c$organization_id)){
+      correct_list_c <- correct_list_c
+    }else{
+    correct_list_c <- correct_list_c %>% mutate(across(organization_id, as.character))
+    }
+      correct_list <- left_join(compare_list, correct_list, by = c("organization_id")) %>%
+      subset(select = c(organization_id, edu_name2)) %>%
+      subset(!is.na(edu_name2))
+    correct_list_2 <- left_join(correct_list_c, compare_correct_list, by = c("organization_id")) %>%
+      subset(select = c(organization_id, edu_name2, pre_correct)) %>%
+      subset(pre_correct == 1)
+    correct_list <- bind_rows(correct_list, correct_list_2)
+    correct <- apply(as.data.frame(correct_list$edu_name2), 2, paste, collapse = ", ")
+    
+    #用stata將學校三階檢未通過改為通過之處理
+    #出現在上次需修正名單(pre_correct_list) 且未出現在本次需修正名單(correct_list) 且出現在compare_correct_list，則從compare_correct_list刪除
+    #也就是我不要pre_correct_list == 1 & is.na(correct_list) & compare_correct_list == 1
+    compare_correct_list <- compare_correct_list %>%
+      mutate(compare_correct_list = 1)
+    pre_correct_list_c <- pre_correct_list %>%
+      mutate(pre_correct_list = 1)
+    correct_list_c <- correct_list
+    #以下是為了解決correct_list_c無法合併的問題
+    if(dim(correct_list_c)[1] == 0)
+    {
+      correct_list_c[1, 1 : 2] = 0
+      colnames(correct_list_c) <- c("organization_id", "edu_name2", "pre_correct")
+    }else
+    {
+      correct_list_c = correct_list_c
+    }
+    correct_list_c <- correct_list_c %>%
+      mutate(correct_list = 1)
+    compare_correct_list <- merge(x = compare_correct_list, y = pre_correct_list_c, by = "organization_id", all = TRUE)
+    compare_correct_list <- merge(x = compare_correct_list, y = correct_list_c, by = "organization_id", all = TRUE)
+    compare_correct_list <- compare_correct_list %>%
+      subset(compare_correct_list != 1 | pre_correct != 1 | !is.na(correct_list)) #By De Morgan' s Laws, (A交集B交集C)的補集合 = A補集合或B補集合或C補集合
+    compare_correct_list <- compare_correct_list %>%
+      subset(select = c(organization_id, agree, edu_name2.x, pre_correct.x)) %>%
+      rename(edu_name2 = edu_name2.x, pre_correct = pre_correct.x)
+    
+    #以下是為了解決無法合併的問題
+    if(dim(correct_list)[1] == 0)
+    {
+      correct_list[1, 1 : 2] = 0
+      colnames(correct_list) <- c("organization_id", "edu_name2", "pre_correct")
+    }else
+    {
+      correct_list = correct_list
+    }
+    
+    #以下是為了解決correct開頭為","
+    str_corr <- str_locate(correct, ",")[ ,1]
+    
+    if(is.na(str_corr))
+    {
+      str_corr = " "
+    }else
+    {
+      str_corr = str_corr
+    }
+    
+    if(str_corr == 1)
+    {
+      correct = substr(correct, start = 2, stop = nchar(correct))  
+    }else
+    {
+      correct = correct
+    }
+    
+    #建立信件內容會用到的學校名單
+    now <- apply(as.data.frame(compare_list$name), 2, paste, collapse = ", ") #本次上傳學校
+    #以下是為了解決now為0(0)
+    if(now == "0(0)")
+    {
+      now = ""
+    }else
+    {
+      now = now
+    }
+    now <- paste(now, apply(as.data.frame(compare_correct_list$edu_name2), 2, paste, collapse = ", "), sep = ", ")
+    
+    #以下是為了解決now開頭為","
+    str_now <- str_locate(now, ",")[ ,1]
+    
+    if(is.na(str_now))
+    {
+      str_now = " "
+    }else
+    {
+      str_now = str_now
+    }
+    
+    if(str_now == 1)
+    {
+      now = substr(now, start = 2, stop = nchar(now))  
+    }else
+    {
+      now = now
+    }
+    #以下是為了解決now為0
+    if(now == "0")
+    {
+      now = ""
+    }else
+    {
+      now = now
+    }
+    
+    #以下是為了解決now為 0
+    if(now == " 0")
+    {
+      now = ""
+    }else
+    {
+      now = now
+    }
+    
+    #以下是為了解決now結尾為", 0"
+    str_now <- str_locate(now, ", 0")[ ,1]
+    
+    if(!is.na(str_now) & now != "")
+    {
+      now = substr(now, start = 1, stop = nchar(now) - 3)
+    }else
+    {
+      now = now
+    }
+    
+    #以下是為了解決now結尾為", NA"
+    if(is.na(str_locate(now, ", NA")[ ,1])){
+      now = now
+    }else if(str_locate(now, ", NA")[ ,1] == nchar(now) - 3){
+      now = substr(now, start = 1, stop = nchar(now) - 4)
+    }else{
+      now = now
+    }
+    
+    #另存'本次需修正名單"，以便於與下次名單比對
+    openxlsx :: write.xlsx(correct_list, file = "C:/edhr-111t1/dta/edhr_111t1-202210/pre_correct_list_人事.xlsx", rowNames = FALSE, overwrite = TRUE)
+    
+    clear_list <- left_join(compare_list, correct_list, by = c("organization_id")) %>% #本次三階檢通過學校
+      subset(select = c(organization_id, edu_name2, name)) %>%
+      subset(is.na(edu_name2)) 
+    clear <-apply(as.data.frame(clear_list$name), 2, paste, collapse = ", ")
+    clear_correct_list <- merge(x = correct_list, y = pre_correct_list, by = c("organization_id"), all = TRUE) %>%
+      subset(is.na(edu_name2.x)) %>%
+      subset(select = c(organization_id, edu_name2.y))
+    clear_correct_list <- merge(x = clear_correct_list , y = pre_correct_list, by = c("organization_id"), all.x = TRUE) %>%  #clear_correct_list: 沒出現在correct_list 且出現在pre_correct_list，可能為(1)本次通過且上次未通過 或(2)本次被退件且上次未通過，需排除(2)，也就是clear_correct_list的名單若也出現在pre_correct_list，需排除
+      subset(is.na(edu_name2)) %>%
+      subset(select = c(organization_id, edu_name2.y))
+    #以下是為了解決clear_correct_list為0
+    if(dim(clear_correct_list)[1] == 0)
+    {
+      clear_correct_list[1, 1 : 2] = 0
+    }else
+    {
+      clear_correct_list = clear_correct_list
+    }
+    
+    clear_correct_list$edu_name2.y <- substr(clear_correct_list$edu_name2.y, start = 1, stop = str_locate(clear_correct_list$edu_name2.y, pattern = "\\(")[1, 1] - 1)
+    clear_correct_list$edu_name2.y <- paste(clear_correct_list$edu_name2.y, "(", clear_correct_list$organization_id, ")", sep = "")
+    clear_2 <-apply(as.data.frame(clear_correct_list$edu_name2.y), 2, paste, collapse = ", ")
+    clear <- paste(clear, clear_2, sep = ",")
+    
+    #以下是為了解決clear開頭為","
+    if(str_locate(clear, ",")[ ,1] == 1)
+    {
+      clear = substr(clear, start = 2, stop = nchar(clear))  
+    }else
+    {
+      clear = clear
+    }
+    
+    #以下是為了解決"0(0)"
+    if(now == "0(0)")
+    {
+      now = ""
+    }else
+    {
+      now = now
+    }
+    
+    #以下是為了解決now開頭為" "
+    # if (is.na(now)) {
+    #   now = now
+    # } else if (str_locate(now, " ")[ ,1] == 1 & now != "") {
+    #   now = substr(now, start = 2, stop = nchar(now))  
+    # } else {
+    #   now = now
+    # }
+    
+    #以下是為了解決now中間出現NA
+    now <- gsub(", NA", "", now)
+    
+    if(correct == "0(0)")
+    {
+      correct = ""
+    }else
+    {
+      correct = correct
+    }
+    
+    #以下是為了解決"NA(0)"
+    if(clear == "NA(0)")
+    {
+      clear = ""
+    }else
+    {
+      clear = clear
+    }
+    
+    #以下是為了解決clear出現,NA(0)
+    clear <- gsub(",NA\\(0\\)", "", clear)
+    
+    #以下是為了解決clear為"0(0)"
+    if(clear == "0(0)")
+    {
+      clear = ""
+    }else
+    {
+      clear = clear
+    }
+    
+    #以下是為了解決now為" NA"
+    now <- gsub(" NA", "", now)
+    
+    #寄信
+    #先判斷check_print檔案是否使用中(以"是否可更改檔案名稱"來判斷 若可更改 代表未使用中)
+    checkprint_filename <- "C:/edhr-111t1/work/edhr-111t1-check_print-人事.xls"
+    checkprint_filename_2 <- substr(checkprint_filename, start = 1, stop = str_locate(checkprint_filename, ".xls")[ ,1] - 1)  
+    
+    if(file.rename(from = checkprint_filename, to = paste(checkprint_filename_2, "2.xls", sep = "")) == TRUE)
+    {
+      if(nchar(now) == 0)
+      {
+        file.rename(from = paste(checkprint_filename_2, "2.xls", sep = ""), to = checkprint_filename)
+        
+        paste(format(time_now, format = "%Y/%m/%d %H:%M"), " 本次無學校上傳", sep = "")
+      }else
+      {
+        #存入xlsx，自動開啟
+        #建立檔案名稱
+        correct_filename_year <- substr(title, start = str_locate(title, "學年度")[ ,1] - 3, stop = str_locate(title, "學年度")[ ,1] - 1)
+        if(substr(title, start = str_locate(title, "學期")[ ,1] - 1, stop = str_locate(title, "學期")[ ,1] - 1) == "上")
+        {
+          correct_filename_sem <- "1"
+        }else{
+          correct_filename_sem <- "2"
+        }
+        correct_filename_name <- substr(title, start = str_locate(title, "（")[ ,1] + 1, stop = str_locate(title, "）")[ ,1] - 1)
+        correct_filename <- paste(correct_filename_year, correct_filename_sem, correct_filename_name, "_上傳名單", sep = "")
+        
+        #建立fileopen.bat
+        write.table(paste("start C:\\autochecking\\",correct_filename, ".xlsx", sep = ""), file = "C:\\autochecking\\fileopen.bat", append = FALSE, quote = FALSE, col.names = FALSE, row.names = FALSE, fileEncoding = "BIG5")
+        
+        if(!file.exists(paste("C:\\autochecking\\",correct_filename, ".xlsx", sep = "")))
+        {
+          #如果檔案不存在
+          # 建立 Excel 活頁簿
+          wb <- createWorkbook()
+          
+          # 設定框線樣式
+          options("openxlsx.borderColour" = "#4F80BD")
+          options("openxlsx.borderStyle" = "thin")
+          
+          # 設定 Excel 活頁簿預設字型
+          modifyBaseFont(wb, fontSize = 20, fontName = "Arial")
+          
+          # 新增工作表
+          addWorksheet(wb, sheetName = "上傳名單", gridLines = FALSE)
+          
+          # 建立上傳學校名單表格
+          body <- data.frame(matrix(0, 1, 4))
+          colnames(body) <- c("上傳時間", "本次上傳學校", "本次需補正學校", "本次三階檢通過學校")
+          body[1, ] <- c(format(time_now, format = "%Y/%m/%d %H:%M"), now, correct, clear)
+          
+          # 建立樣式
+          headSty <- createStyle(fontSize = 22, fgFill="#DCE6F1", halign="center", border = "TopBottomLeftRight", wrapText = TRUE)
+          
+          # 將學校名單表格寫入
+          txtSty <- createStyle(halign="left", valign = "center", border = "TopBottomLeftRight", wrapText = TRUE)
+          writeData(wb, 1, x = body, startCol = "A", startRow=1, borders="rows", headerStyle = headSty)
+          addStyle(wb, sheet = 1, style = txtSty, cols = 1:4, rows = 2:(dim(body)[1]+1), gridExpand = TRUE)
+          
+          # 設定欄寬
+          setColWidths(wb, 1, cols=1, widths = 16)
+          setColWidths(wb, 1, cols=2:5, widths = 20)
+          
+          # 儲存 Excel 活頁簿
+          saveWorkbook(wb, paste("C:\\autochecking\\",correct_filename, ".xlsx", sep = ""), overwrite = TRUE)
+          
+          # excel檔開啟30秒後自動關閉
+          time_a <- Sys.time()
+          a <- as.numeric(format(time_a, format = "%M")) * 60 + as.numeric(format(time_a, format = "%S"))      
+          shell.exec("C:\\autochecking\\fileopen.bat")
+          
+          b <- a
+          while (b - a < 30)
+          {
+            time_b <- Sys.time()
+            b <- as.numeric(format(time_b, format = "%M")) * 60 + as.numeric(format(time_b, format = "%S"))
+          }
+          
+          if(!file.exists("C:\\autochecking\\fileclose.bat"))
+          {
+            write.table(paste("taskkill /FI \"WINDOWTITLE eq ", correct_filename, "*\"", sep = ""), file = "C:\\autochecking\\fileclose.bat", append = FALSE, quote = FALSE, col.names = FALSE, row.names = FALSE)
+          }else
+          {
+            print("建立fileclose.bat檔案")
+          }
+          
+          shell.exec("C:\\autochecking\\fileclose.bat")
+        }else{
+          #如果檔案存在
+          # 建立 Excel 活頁簿
+          wb <- createWorkbook()
+          
+          # 設定框線樣式
+          options("openxlsx.borderColour" = "#4F80BD")
+          options("openxlsx.borderStyle" = "thin")
+          
+          # 設定 Excel 活頁簿預設字型
+          modifyBaseFont(wb, fontSize = 20, fontName = "Arial")
+          
+          # 新增工作表
+          addWorksheet(wb, sheetName = "上傳名單", gridLines = FALSE)
+          
+          # 建立上傳學校名單表格
+          body <- readxl :: read_excel(paste("C:\\autochecking\\",correct_filename, ".xlsx", sep = ""))
+          body <- rbind(c("0", "0", "0", "0"), body)
+          colnames(body) <- c("上傳時間", "本次上傳學校", "本次需補正學校", "本次三階檢通過學校")
+          body[1, ] <- as.list(c(format(time_now, format = "%Y/%m/%d %H:%M"), now, correct, clear))
+          
+          # 建立樣式
+          headSty <- createStyle(fontSize = 22, fgFill="#DCE6F1", halign="center", border = "TopBottomLeftRight", wrapText = TRUE)
+          
+          # 將學校名單表格寫入
+          txtSty <- createStyle(halign="left", valign = "center", border = "TopBottomLeftRight", wrapText = TRUE)
+          writeData(wb, 1, x = body, startCol = "A", startRow=1, borders="rows", headerStyle = headSty)
+          addStyle(wb, sheet = 1, style = txtSty, cols = 1:4, rows = 2:(dim(body)[1]+1), gridExpand = TRUE)
+          
+          # 設定欄寬
+          setColWidths(wb, 1, cols=1, widths = 16)
+          setColWidths(wb, 1, cols=2:5, widths = 20)
+          
+          # 儲存 Excel 活頁簿
+          saveWorkbook(wb, paste("C:\\autochecking\\",correct_filename, ".xlsx", sep = ""), overwrite = TRUE)
+          
+          # excel檔開啟30秒後自動關閉
+          time_a <- Sys.time()
+          a <- as.numeric(format(time_a, format = "%M")) * 60 + as.numeric(format(time_a, format = "%S"))      
+          shell.exec("C:\\autochecking\\fileopen.bat")
+          
+          b <- a
+          while (b - a < 30)
+          {
+            time_b <- Sys.time()
+            b <- as.numeric(format(time_b, format = "%M")) * 60 + as.numeric(format(time_b, format = "%S"))
+          }
+          
+          write.table(paste("taskkill /FI \"WINDOWTITLE eq ", correct_filename, "*\"", sep = ""), file = "C:\\autochecking\\fileclose.bat", append = FALSE, quote = FALSE, col.names = FALSE, row.names = FALSE, fileEncoding = "BIG5")
+          
+          shell.exec("C:\\autochecking\\fileclose.bat")
+          
+          file.rename(from = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事2.xls", to = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xls")
+        }
+      }
+    }else
+    {
+      #建立errortext_fileopen.bat
+      if(!file.exists("C:\\autochecking\\errortext_fileopen.bat"))
+      {
+        write.table("start C:\\autochecking\\errortext_fileopen.xlsx", file = "C:\\autochecking\\errortext_fileopen.bat", append = FALSE, quote = FALSE, col.names = FALSE, row.names = FALSE)
+        print("建立errortext_fileopen.bat檔案")
+      }else
+      {
+        print("errortext_fileopen.bat檔案存在")
+      }
+      
+      #如果檔案不存在
+      # 建立 Excel 活頁簿
+      wb <- createWorkbook()
+      
+      # 設定框線樣式
+      options("openxlsx.borderColour" = "#4F80BD")
+      options("openxlsx.borderStyle" = "thin")
+      
+      # 設定 Excel 活頁簿預設字型
+      modifyBaseFont(wb, fontSize = 20, fontName = "Arial")
+      
+      # 新增工作表
+      addWorksheet(wb, sheetName = "上傳名單", gridLines = FALSE)
+      
+      # 建立上傳學校名單表格
+      body <- "本次自動化檢核未執行，請盡速關閉檢核報告word檔，自動化檢核方可繼續執行。閱讀完畢請關閉此檔案。"
+      
+      # 建立樣式
+      headSty <- createStyle(fontSize = 22, fgFill="#DCE6F1", halign="center", border = "TopBottomLeftRight", wrapText = TRUE)
+      
+      # 將學校名單表格寫入
+      txtSty <- createStyle(halign="left", valign = "center", border = "TopBottomLeftRight", wrapText = TRUE)
+      writeData(wb, 1, x = body, startCol = "A", startRow=1, borders="rows", headerStyle = headSty)
+      addStyle(wb, sheet = 1, style = txtSty, cols = 1:5, rows = 1, gridExpand = TRUE)
+      mergeCells(wb, sheet = 1, cols = 1:5, rows = 1:1)
+      
+      # 設定欄寬
+      setColWidths(wb, 1, cols=1, widths = 16)
+      setColWidths(wb, 1, cols=2:5, widths = 20)
+      
+      # 儲存 Excel 活頁簿
+      saveWorkbook(wb, "C:\\autochecking\\errortext_fileopen.xlsx", overwrite = TRUE)
+      shell.exec("C:\\autochecking\\errortext_fileopen.bat")
+    }
+  }else
+  {
+    print("pre_list_agree和pre_correct_list兩個xlsx檔不存在")
+  }
 }
