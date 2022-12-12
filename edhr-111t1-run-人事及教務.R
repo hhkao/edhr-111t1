@@ -2007,6 +2007,7 @@ flag_person$err_flag <- case_when(
   TRUE ~ 0
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag6 <- flag_person %>%
   subset(select = c(organization_id, idnumber, name, edu_name2, source, err_flag)) %>%
@@ -2046,7 +2047,7 @@ flag6$flag6 <- gsub("； NA", replacement="", flag6$flag6)
 flag6 <- flag6 %>%
   subset(select = c(organization_id, flag6)) %>%
   distinct(organization_id, flag6)
-
+}else{
 #偵測flag6是否存在。若不存在，則產生NA行
 if('flag6' %in% ls()){
   print("flag6")
@@ -2056,7 +2057,7 @@ if('flag6' %in% ls()){
   subset(select = c(organization_id))
   flag6$flag6 <- ""
 }
-
+}
 # flag7: 出生年月日換算成年齡後，過高或過低。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -2080,6 +2081,7 @@ flag_person$name <- case_when(
   TRUE ~ flag_person$name
 )
 
+if (dim(flag_person %>% subset(irr_year == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_flag7 <- flag_person %>%
   subset(select = c(organization_id, idnumber, name, edu_name2, source, irr_year)) %>%
@@ -2120,7 +2122,7 @@ flag7 <- flag7 %>%
   subset(select = c(organization_id, flag7)) %>%
   distinct(organization_id, flag7) %>%
   mutate(flag7 = paste(flag7, "（請確認出生年月日是否正確）", sep = ""))
-
+}else{
 #偵測flag7是否存在。若不存在，則產生NA行
 if('flag7' %in% ls()){
   print("flag7")
@@ -2130,7 +2132,7 @@ if('flag7' %in% ls()){
     subset(select = c(organization_id))
   flag7$flag7 <- ""
 }
-
+}
 # flag8: 國籍別應填入「本國籍」或者外交部網站之世界各國名稱一覽表的國家名稱（或者至少須足以辨識國家）。 -------------------------------------------------------------------
   #flag8_append-------------------------------------------------------------------
 flag_person <- drev_person_1
@@ -2147,6 +2149,7 @@ flag_person$err_flag <- case_when(
 )
   #---
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag8 <- flag_person %>%
   subset(select = c(organization_id, idnumber, name, edu_name2, source, err_flag)) %>%
@@ -2186,7 +2189,7 @@ flag8$flag8 <- gsub("； NA", replacement="", flag8$flag8)
 flag8 <- flag8 %>%
   subset(select = c(organization_id, flag8)) %>%
   distinct(organization_id, flag8)
-
+}else{
 #偵測flag8是否存在。若不存在，則產生NA行
 if('flag8' %in% ls()){
   print("flag8")
@@ -2196,7 +2199,7 @@ if('flag8' %in% ls()){
     subset(select = c(organization_id))
   flag8$flag8 <- ""
 }
-
+}
 # flag9: 博士、碩士、學士、副學士畢業學校國別（一）～（二）應填入「本國」或者外交部網站之世界各國名稱一覽表的國家名稱（或者至少須足以辨識國家）。 -------------------------------------------------------------------
   #flag9_append-------------------------------------------------------------------
 flag_person <- drev_person_1
@@ -2213,6 +2216,7 @@ flag_person$err_flag <- case_when(
 )
   #---
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag9 <- flag_person %>%
   subset(select = c(organization_id, idnumber, name, edu_name2, source, err_flag)) %>%
@@ -2252,7 +2256,7 @@ flag9$flag9 <- gsub("； NA", replacement="", flag9$flag9)
 flag9 <- flag9 %>%
   subset(select = c(organization_id, flag9)) %>%
   distinct(organization_id, flag9)
-
+}else{
 #偵測flag9是否存在。若不存在，則產生NA行
 if('flag9' %in% ls()){
   print("flag9")
@@ -2262,7 +2266,7 @@ if('flag9' %in% ls()){
     subset(select = c(organization_id))
   flag9$flag9 <- ""
 }
-
+}
 # flag15: 兼任行政職職稱（一）～（三）不應填入校長或非行政職職稱，例如老師、教師、運動教練等。 -------------------------------------------------------------------
   #flag15_append-------------------------------------------------------------------
 flag_person <- drev_person_1
@@ -2302,6 +2306,7 @@ flag_person$err_flag_txt <- case_when(
 )
   #---
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag15 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -2342,7 +2347,7 @@ flag15 <- flag15 %>%
   subset(select = c(organization_id, flag15)) %>%
   distinct(organization_id, flag15) %>%
   mutate(flag15 = paste(flag15, "（校長、教師、教官、主任教官、族語老師、教學支援人員屬於服務身分別，若渠等教員未再兼任行政職務，如秘書、學務主任、生活輔導組組長等，請於兼任行政職職稱(單位)填“N” ）", sep = ""))
-
+}else{
 #偵測flag15是否存在。若不存在，則產生NA行
 if('flag15' %in% ls()){
   print("flag15")
@@ -2352,7 +2357,7 @@ if('flag15' %in% ls()){
     subset(select = c(organization_id))
   flag15$flag15 <- ""
 }
-  
+}
 # flag16: 請假類別應依《教師請假規則》、《公務人員請假規則》以及人事行政主管機關公教員工請假給假一覽表相關規定填列。 -------------------------------------------------------------------
 flag_person <- drev_person_1
   
@@ -2399,6 +2404,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag16 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -2439,7 +2445,7 @@ flag16 <- flag16 %>%
   subset(select = c(organization_id, flag16)) %>%
   distinct(organization_id, flag16) %>%
   mutate(flag16 = paste(flag16, "（請確認請假類別，或是否屬於請假，若非屬請假請填寫 “N”）", sep = ""))
-  
+}else{
 #偵測flag16是否存在。若不存在，則產生NA行
 if('flag16' %in% ls()){
   print("flag16")
@@ -2449,7 +2455,7 @@ if('flag16' %in% ls()){
     subset(select = c(organization_id))
   flag16$flag16 <- ""
 }
-
+}
 # flag18: 人事資料表各欄位是否有資料分布異常的情形。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -2499,6 +2505,7 @@ flag_person_wide_flag18$err_flag_txt <- paste(flag_person_wide_flag18$err_emptyp
 #   subset(select = c(organization_id, flag18_txt)) %>%
 #   distinct(organization_id, flag18_txt)
 
+if (dim(flag_person %>% subset(grepl("\\S", flag_person_wide_flag18$err_flag_txt)))[1] != 0){
 #根據organization_id，展開成寬資料(wide)
 flag18 <- flag_person_wide_flag18 %>%
   subset(grepl("\\S", flag_person_wide_flag18$err_flag_txt)) %>%
@@ -2524,7 +2531,7 @@ trim_t <- function (x){
 }
 
 flag18$flag18 <- trim_t(flag18$flag18) ##test
-
+}else{
 #偵測flag18是否存在。若不存在，則產生NA行
 if('flag18' %in% ls()){
   print("flag18")
@@ -2534,9 +2541,7 @@ if('flag18' %in% ls()){
     subset(select = c(organization_id))
   flag18$flag18 <- ""
 }
-
-
-
+}
 # flag19: 填寫外來人口統一證號者，國籍別應非「本國籍」。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -2556,6 +2561,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag19 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -2596,7 +2602,7 @@ flag19 <- flag19 %>%
   subset(select = c(organization_id, flag19)) %>%
   distinct(organization_id, flag19) %>%
   mutate(flag19 = paste(flag19, "（請修正該員所屬國籍別）", sep = ""))
-
+}else{
 #偵測flag19是否存在。若不存在，則產生NA行
 if('flag19' %in% ls()){
   print("flag19")
@@ -2606,7 +2612,7 @@ if('flag19' %in% ls()){
     subset(select = c(organization_id))
   flag19$flag19 <- ""
 }
-
+}
 # flag20: 教職員工畢業學校若為專科學校，學歷資訊應於「副學士」畢業學校欄位填列。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -2657,6 +2663,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag20 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -2696,7 +2703,7 @@ flag20$flag20 <- gsub("； NA", replacement="", flag20$flag20)
 flag20 <- flag20 %>%
   subset(select = c(organization_id, flag20)) %>%
   distinct(organization_id, flag20)
-
+}else{
 #偵測flag20是否存在。若不存在，則產生NA行
 if('flag20' %in% ls()){
   print("flag20")
@@ -2706,7 +2713,7 @@ if('flag20' %in% ls()){
     subset(select = c(organization_id))
   flag20$flag20 <- ""
 }
-
+}
 # flag24: 本校到職日期與填報基準日的差距，不應小於本校任職需扣除年資。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -2786,6 +2793,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag24 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -2826,7 +2834,7 @@ flag24 <- flag24 %>%
   subset(select = c(organization_id, flag24)) %>%
   distinct(organization_id, flag24) %>%
   mutate(flag24 = paste("請確認該員之「本校到職日期」、「本校任職需扣除之年資」，", flag24, sep = ""))
-
+}else{
 #偵測flag24是否存在。若不存在，則產生NA行
 if('flag24' %in% ls()){
   print("flag24")
@@ -2836,7 +2844,7 @@ if('flag24' %in% ls()){
     subset(select = c(organization_id))
   flag24$flag24 <- ""
 }
-
+}
 # flag39: 學校工作總年資（本校服務年資+本校到職前學校服務總年資），與年齡之差距過大或過小。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -2951,6 +2959,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag39 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -2991,7 +3000,7 @@ flag39 <- flag39 %>%
   subset(select = c(organization_id, flag39)) %>%
   distinct(organization_id, flag39) %>%
   mutate(flag39 = paste("請確認該員之「本校到職日期」、「本校任職需扣除之年資」、「本校到職前學校服務總年資」，", flag39, sep = ""))
-
+}else{
 #偵測flag39是否存在。若不存在，則產生NA行
 if('flag39' %in% ls()){
   print("flag39")
@@ -3001,7 +3010,7 @@ if('flag39' %in% ls()){
     subset(select = c(organization_id))
   flag39$flag39 <- ""
 }
-
+}
 # flag45: 聘任科別應填入服務身分別為「教師」、「主任教官」、「教官」之聘任科別中文名稱。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -3058,6 +3067,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag45 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -3098,7 +3108,7 @@ flag45 <- flag45 %>%
   subset(select = c(organization_id, flag45)) %>%
   distinct(organization_id, flag45) %>%
   mutate(flag45 = paste(flag45, "（請依欄位說明，修正「教師」、「主任教官」、「教官」之聘任科別中文名稱，「教師」、「主任教官」、「教官」以外其他服務身分別教員之聘任科別請修正為NA。）", sep = ""))
-
+}else{
 #偵測flag45是否存在。若不存在，則產生NA行
 if('flag45' %in% ls()){
   print("flag45")
@@ -3108,7 +3118,7 @@ if('flag45' %in% ls()){
     subset(select = c(organization_id))
   flag45$flag45 <- ""
 }
-
+}
 # flag47: 兼任行政職職稱(一)若填寫“校長"，代表服務身分別填答有誤，故應核對服務身分別與兼任行政職職稱(一)。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -3123,6 +3133,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag47 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -3163,7 +3174,7 @@ flag47 <- flag47 %>%
   subset(select = c(organization_id, flag47)) %>%
   distinct(organization_id, flag47) %>%
   mutate(flag47 = paste(flag47, "（請依實際情況並按欄位說明修正）", sep = ""))
-
+}else{
 #偵測flag47是否存在。若不存在，則產生NA行
 if('flag47' %in% ls()){
   print("flag47")
@@ -3173,7 +3184,7 @@ if('flag47' %in% ls()){
     subset(select = c(organization_id))
   flag47$flag47 <- ""
 }
-
+}
 # flag48: 1. 職務名稱與兼任行政職職稱(一)，兩者不應填相同職稱。2. 兼任行政職職稱(一)~(三)，三者不應填相同職稱。-------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -3201,6 +3212,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag48 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -3245,7 +3257,7 @@ flag48 <- flag48 %>%
   subset(select = c(organization_id, flag48)) %>%
   distinct(organization_id, flag48) %>%
   mutate(flag48 = paste(flag48, "（以上人員之專職工作職稱請填入『職務名稱』，非『兼任行政職職稱』。併請確認以上人員除本職職務外，是否再兼任其他職務）", sep = ""))
-
+}else{
 #偵測flag48是否存在。若不存在，則產生NA行
 if('flag48' %in% ls()){
   print("flag48")
@@ -3255,7 +3267,7 @@ if('flag48' %in% ls()){
     subset(select = c(organization_id))
   flag48$flag48 <- ""
 }
-
+}
 # flag49: 1.	職員(工)的「職務名稱」不應填N（全型或半型皆不行）。-------------------------------------------------------------------
 # 2. 職員(工)的「服務單位」不應填N（全型或半型皆不行），且應入填入對應職稱的學校內部單位。
 flag_person <- drev_person_1
@@ -3311,6 +3323,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_adm == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag49 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_adm)) %>%
@@ -3351,7 +3364,7 @@ flag49 <- flag49 %>%
   subset(select = c(organization_id, flag49)) %>%
   distinct(organization_id, flag49) %>%
   mutate(flag49 = paste(flag49, "（請確認『職務名稱』、『服務單位』）", sep = ""))
-
+}else{
 #偵測flag49是否存在。若不存在，則產生NA行
 if('flag49' %in% ls()){
   print("flag49")
@@ -3361,7 +3374,7 @@ if('flag49' %in% ls()){
     subset(select = c(organization_id))
   flag49$flag49 <- ""
 }
-
+}
 # flag50: 留職停薪原因為「應徵入伍留職停薪」、「奉派協助友邦留職停薪」、「育嬰留職停薪」、「侍親留職停薪」、「依親留職停薪」、「出國進修或研究留職停薪」、「易服勞役留職停薪」、「延長留職停薪」、「照護配偶或子女留職停薪」、「國內外進修期滿延長留職停薪」、「延長病假期滿留職停薪」、「因公傷病公假期滿留職停薪」、「留職停薪/停聘」、「其他情事留職停薪」，在借調類別應填寫N。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -3391,6 +3404,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_lev == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag50 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_lev)) %>%
@@ -3431,7 +3445,7 @@ flag50 <- flag50 %>%
   subset(select = c(organization_id, flag50)) %>%
   distinct(organization_id, flag50) %>%
   mutate(flag50 = paste(flag50, "", sep = ""))
-
+}else{
 #偵測flag50是否存在。若不存在，則產生NA行
 if('flag50' %in% ls()){
   print("flag50")
@@ -3441,7 +3455,7 @@ if('flag50' %in% ls()){
     subset(select = c(organization_id))
   flag50$flag50 <- ""
 }
-
+}
 # flag51: 原則上，「留職停薪原因」與「借調類別」填寫應相符:1.	借調公民營事業機構留職停薪↔借調至公民營事業機構 2.	借調行政法人機關留職停薪↔借調至行政法人機關 3.借調法定實驗學校留職停薪↔借調至法定實驗學校-------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -3462,6 +3476,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_lev == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag51 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_lev)) %>%
@@ -3502,7 +3517,7 @@ flag51 <- flag51 %>%
   subset(select = c(organization_id, flag51)) %>%
   distinct(organization_id, flag51) %>%
   mutate(flag51 = paste(flag51, "", sep = ""))
-
+}else{
 #偵測flag51是否存在。若不存在，則產生NA行
 if('flag51' %in% ls()){
   print("flag51")
@@ -3512,7 +3527,7 @@ if('flag51' %in% ls()){
     subset(select = c(organization_id))
   flag51$flag51 <- ""
 }
-
+}
 # flag52: 留職停薪原因若填寫「應徵入伍留職停薪」、「奉派協助友邦留職停薪」、「育嬰留職停薪」、「侍親留職停薪」、「依親留職停薪」、「出國進修或研究留職停薪」、「易服勞役留職停薪」、「延長留職停薪」、「照護配偶或子女留職停薪」、「國內外進修期滿延長留職停薪」、「延長病假期滿留職停薪」、「因公傷病公假期滿留職停薪」、「留職停薪/停聘」、「其他情事留職停薪」、「借調公務機關留職停薪」、「借調公民營事業機構留職停薪」、「借調行政法人機關留職停薪」、「借調法定實驗學校留職停薪」，在商借類別應填寫N。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -3530,6 +3545,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_lev == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag52 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_lev)) %>%
@@ -3570,7 +3586,7 @@ flag52 <- flag52 %>%
   subset(select = c(organization_id, flag52)) %>%
   distinct(organization_id, flag52) %>%
   mutate(flag52 = paste(flag52, "", sep = ""))
-
+}else{
 #偵測flag52是否存在。若不存在，則產生NA行
 if('flag52' %in% ls()){
   print("flag52")
@@ -3580,7 +3596,7 @@ if('flag52' %in% ls()){
     subset(select = c(organization_id))
   flag52$flag52 <- ""
 }
-
+}
 # flag57: 學歷資料各學位別畢業學校國別/校名/科系所之（一）與（二）內容不應相同，請依學位取得實際情況修正。-------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -3598,6 +3614,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_degree == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag57 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_degree)) %>%
@@ -3638,7 +3655,7 @@ flag57 <- flag57 %>%
   subset(select = c(organization_id, flag57)) %>%
   distinct(organization_id, flag57) %>%
   mutate(flag57 = paste(flag57, "", sep = ""))
-
+}else{
 #偵測flag57是否存在。若不存在，則產生NA行
 if('flag57' %in% ls()){
   print("flag57")
@@ -3648,8 +3665,7 @@ if('flag57' %in% ls()){
     subset(select = c(organization_id))
   flag57$flag57 <- ""
 }
-
-
+}
 # flag59: 校長之聘任類別需為「專任」。-------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -3666,6 +3682,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag59 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -3706,7 +3723,7 @@ flag59 <- flag59 %>%
   subset(select = c(organization_id, flag59)) %>%
   distinct(organization_id, flag59) %>%
   mutate(flag59 = paste(flag59, "", sep = ""))
-
+}else{
 #偵測flag59是否存在。若不存在，則產生NA行
 if('flag59' %in% ls()){
   print("flag59")
@@ -3716,7 +3733,7 @@ if('flag59' %in% ls()){
     subset(select = c(organization_id))
   flag59$flag59 <- ""
 }
-
+}
 # flag62: 職務名稱及兼任行政職職稱（一）～（三）資料內容是否完整正確。-------------------------------------------------------------------
 #如：1.	職務名稱及兼任行政職職稱（一）～（三）填入非職稱內容。
 #2.	服務單位及兼任行政職服務單位（一）～（三）填入非服務單位內容。
@@ -4458,6 +4475,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag62 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -4498,7 +4516,7 @@ flag62 <- flag62 %>%
   subset(select = c(organization_id, flag62)) %>%
   distinct(organization_id, flag62) %>%
   mutate(flag62 = paste(flag62, "（請再確認該員職務正確名稱）", sep = ""))
-
+}else{
 #偵測flag62是否存在。若不存在，則產生NA行
 if('flag62' %in% ls()){
   print("flag62")
@@ -4508,7 +4526,7 @@ if('flag62' %in% ls()){
     subset(select = c(organization_id))
   flag62$flag62 <- ""
 }
-
+}
 # flag64: 本校任職需扣除年資非0000者分布偏高。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -4523,13 +4541,7 @@ flag_person_wide_flag64 <- aggregate(cbind(dese, jj) ~ organization_id, flag_per
 flag_person_wide_flag64$flag_err <- 0
 flag_person_wide_flag64$err_flag_txt <- if_else(flag_person_wide_flag64$dese / flag_person_wide_flag64$jj > 0.25, "扣除年資不為零的人數偏高，請再依欄位說明確認。", "")
 
-
-#產生檢誤報告文字
-flag64_temp <- flag_person_wide_flag64 %>%
-  group_by(organization_id) %>%
-  subset(select = c(organization_id, err_flag_txt)) %>%
-  distinct(organization_id, flag64_txt)
-
+if (dim(flag_person_wide_flag64 %>% subset(err_flag_txt != ""))[1] != 0){
 #根據organization_id，展開成寬資料(wide)
 flag64 <- flag_person_wide_flag64 %>%
   subset(err_flag_txt != "") %>%
@@ -4548,7 +4560,7 @@ flag64$flag64 <- gsub("； NA", replacement="", flag64$flag64)
 flag64 <- flag64 %>%
   subset(select = c(organization_id, flag64)) %>%
   distinct(organization_id, flag64)
-
+}else{
 #偵測flag64是否存在。若不存在，則產生NA行
 if('flag64' %in% ls()){
   print("flag64")
@@ -4558,7 +4570,7 @@ if('flag64' %in% ls()){
     subset(select = c(organization_id))
   flag64$flag64 <- ""
 }
-
+}
 # flag80: 代理教師、兼任教師、鐘點教師、長期代課教師、約用教師、約聘僱教師的「本校到職日期」非屬本學期，請再確認。-------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -4599,6 +4611,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag80 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -4639,7 +4652,7 @@ flag80 <- flag80 %>%
   subset(select = c(organization_id, flag80)) %>%
   distinct(organization_id, flag80) %>%
   mutate(flag80 = paste(flag80, "", sep = ""))
-
+}else{
 #偵測flag80是否存在。若不存在，則產生NA行
 if('flag80' %in% ls()){
   print("flag80")
@@ -4649,7 +4662,7 @@ if('flag80' %in% ls()){
     subset(select = c(organization_id))
   flag80$flag80 <- ""
 }
-
+}
 # flag82: 若請假類別填寫「留職停薪」，則留職停薪原因須填寫內容。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -4672,6 +4685,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag82 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -4712,7 +4726,7 @@ flag82 <- flag82 %>%
   subset(select = c(organization_id, flag82)) %>%
   distinct(organization_id, flag82) %>%
   mutate(flag82 = paste(flag82, "", sep = ""))
-
+}else{
 #偵測flag82是否存在。若不存在，則產生NA行
 if('flag82' %in% ls()){
   print("flag82")
@@ -4722,7 +4736,7 @@ if('flag82' %in% ls()){
     subset(select = c(organization_id))
   flag82$flag82 <- ""
 }
-
+}
 # flag89: 專任教師、代理教師原則須具大專以上學歷，請再確認實際情況及所填資料。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -4738,6 +4752,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag89 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -4778,7 +4793,7 @@ flag89 <- flag89 %>%
   subset(select = c(organization_id, flag89)) %>%
   distinct(organization_id, flag89) %>%
   mutate(flag89 = paste(flag89, "（請確認渠等人員畢業學歷）", sep = ""))
-
+}else{
 #偵測flag89是否存在。若不存在，則產生NA行
 if('flag89' %in% ls()){
   print("flag89")
@@ -4788,7 +4803,7 @@ if('flag89' %in% ls()){
     subset(select = c(organization_id))
   flag89$flag89 <- ""
 }
-
+}
 # flag90: 校內行政職務，原則由專任或代理教師兼任，請再確認實際情況及所填資料。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -4813,6 +4828,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag90 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -4853,7 +4869,7 @@ flag90 <- flag90 %>%
   subset(select = c(organization_id, flag90)) %>%
   distinct(organization_id, flag90) %>%
   mutate(flag90 = paste(flag90, "（校內行政職務原則由專任或代理教師兼任，請協助再確認上述教師是否兼任行政職，或協助再確認上述教師之聘任類別）", sep = ""))
-
+}else{
 #偵測flag90是否存在。若不存在，則產生NA行
 if('flag90' %in% ls()){
   print("flag90")
@@ -4863,7 +4879,7 @@ if('flag90' %in% ls()){
     subset(select = c(organization_id))
   flag90$flag90 <- ""
 }
-
+}
 # flag94: 職員（工）的「職務名稱」與「聘任類別」不相符應。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -4887,6 +4903,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag94 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -4927,7 +4944,7 @@ flag94 <- flag94 %>%
   subset(select = c(organization_id, flag94)) %>%
   distinct(organization_id, flag94) %>%
   mutate(flag94 = paste(flag94, "（請確認上開職員(工)之『聘任類別』及『職務名稱』。凡以簽訂契約方式任用之人員，無論是否為編制內員額，其『聘任類別』皆請修正為『約聘僱』。並請再協助確認上開職員(工)『職務名稱』是否正確。惟貴校職員(工)如具正式公務人員身分者，則其『聘任類別』原則應是『專任』。）（貴校如僅有本項檢查須再確認修正資料，則不列入國教署催辦範圍，惟請儘速確認修正送出資料。）", sep = ""))
-
+}else{
 #偵測flag94是否存在。若不存在，則產生NA行
 if('flag94' %in% ls()){
   print("flag94")
@@ -4937,7 +4954,7 @@ if('flag94' %in% ls()){
     subset(select = c(organization_id))
   flag94$flag94 <- ""
 }
-
+}
 # spe3: 本校到職日期晚於填報基準日。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -4962,6 +4979,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_spe == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_spe3 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_spe)) %>%
@@ -5002,7 +5020,7 @@ spe3 <- spe3 %>%
   subset(select = c(organization_id, spe3)) %>%
   distinct(organization_id, spe3) %>%
   mutate(spe3 = paste(spe3, "（請確認到職日期，並請以資料基準日111年9月30日當時情況為準）", sep = ""))
-
+}else{
 #偵測spe3是否存在。若不存在，則產生NA行
 if('spe3' %in% ls()){
   print("spe3")
@@ -5012,7 +5030,7 @@ if('spe3' %in% ls()){
     subset(select = c(organization_id))
   spe3$spe3 <- ""
 }
-
+}
 # spe5: 教職員工畢業學校若為(科技)大學或(技術)學院，學歷資訊原則於「學士」、「碩士」或「博士」學歷欄位填列，而非「副學士」。 -------------------------------------------------------------------
 flag_person <- drev_person_1
 
@@ -5053,6 +5071,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_spe5 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -5092,7 +5111,7 @@ spe5$spe5 <- gsub("； NA", replacement="", spe5$spe5)
 spe5 <- spe5 %>%
   subset(select = c(organization_id, spe5)) %>%
   distinct(organization_id, spe5)
-
+}else{
 #偵測spe5是否存在。若不存在，則產生NA行
 if('spe5' %in% ls()){
   print("spe5")
@@ -5102,7 +5121,7 @@ if('spe5' %in% ls()){
     subset(select = c(organization_id))
   spe5$spe5 <- ""
 }
-
+}
 # spe6: 各教育階段學歷資料內容是否完整正確。-------------------------------------------------------------------
 # 例如：
 # 1.	各學歷階段「國別」非填入「本國」或者外交部網站之世界各國名稱一覽表的國家名稱（或者至少須足以辨識國家）。
@@ -7044,6 +7063,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_spe6 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -7083,7 +7103,7 @@ spe6$spe6 <- gsub("； NA", replacement="", spe6$spe6)
 spe6 <- spe6 %>%
   subset(select = c(organization_id, spe6)) %>%
   distinct(organization_id, spe6)
-
+}else{
 #偵測spe6是否存在。若不存在，則產生NA行
 if('spe6' %in% ls()){
   print("spe6")
@@ -7093,7 +7113,7 @@ if('spe6' %in% ls()){
     subset(select = c(organization_id))
   spe6$spe6 <- ""
 }
-
+}
 # flag83: 離退教職員（工）資料表所列人員，不應填列為本次教員資料表或職員（工）資料表之專任或代理人員。 -------------------------------------------------------------------
 flag_person <- drev_P_retire %>%
   rename(name = name.x, name_retire = name.y)
@@ -7110,6 +7130,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag83 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -7150,7 +7171,7 @@ flag83 <- flag83 %>%
   subset(select = c(organization_id, flag83)) %>%
   distinct(organization_id, flag83) %>%
   mutate(flag83 = paste(flag83, "（請確認上述人員是否退休、退伍或因故離職，若是，則不需填列至本次教員資料表或職員（工）資料表）", sep = ""))
-
+}else{
 #偵測flag83是否存在。若不存在，則產生NA行
 if('flag83' %in% ls()){
   print("flag83")
@@ -7160,7 +7181,7 @@ if('flag83' %in% ls()){
     subset(select = c(organization_id))
   flag83$flag83 <- ""
 }
-
+}
 # flag92: 教員/職員（工）資料表及離退教職員(工)資料表，同一身分識別碼所對應的姓名不一致，請確認各該身分識別碼所屬正確人員。 -------------------------------------------------------------------
 flag_person <- drev_P_retire %>%
   rename(name = name.x, name_retire = name.y)
@@ -7181,6 +7202,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag92 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -7221,7 +7243,7 @@ flag92 <- flag92 %>%
   subset(select = c(organization_id, flag92)) %>%
   distinct(organization_id, flag92) %>%
   mutate(flag92 = paste(flag92, "（教員/職員（工）資料表及離退教職員(工)資料表，同一身分識別碼所對應的姓名不一致，請確認各該身分識別碼所屬正確人員。）", sep = ""))
-
+}else{
 #偵測flag92是否存在。若不存在，則產生NA行
 if('flag92' %in% ls()){
   print("flag92")
@@ -7231,7 +7253,7 @@ if('flag92' %in% ls()){
     subset(select = c(organization_id))
   flag92$flag92 <- ""
 }
-
+}
 # flag84: 離退教職員（工）資料表所列人員，應為上一學年（期）專任教職員（工）。 -------------------------------------------------------------------
 flag_person <- drev_P_retire_pre_inner %>%
   rename(name = name.x, name_retire = name.y) %>%
@@ -7248,6 +7270,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag84 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -7288,7 +7311,7 @@ flag84 <- flag84 %>%
   subset(select = c(organization_id, flag84)) %>%
   distinct(organization_id, flag84) %>%
   mutate(flag84 = paste(flag84, "（查貴校上一學年所填資料，上述人員聘任類別非屬『專任』。依欄位說明，非專任教職員(工)之退休或離職者，不須填列離退教職員(工)資料表，請務必再確認。）", sep = ""))
-
+}else{
 #偵測flag84是否存在。若不存在，則產生NA行
 if('flag84' %in% ls()){
   print("flag84")
@@ -7298,7 +7321,7 @@ if('flag84' %in% ls()){
     subset(select = c(organization_id))
   flag84$flag84 <- ""
 }
-
+}
 # flag85: 離退教職員（工）資料表中，離職退休情況註記為「退休」人員之年齡偏小。 -------------------------------------------------------------------
 flag_person <- drev_P_retire_pre_inner %>%
   rename(name = name.x, name_retire = name.y) %>%
@@ -7340,6 +7363,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag85 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -7380,7 +7404,7 @@ flag85 <- flag85 %>%
   subset(select = c(organization_id, flag85)) %>%
   distinct(organization_id, flag85) %>%
   mutate(flag85 = paste(flag85, "（該員年齡似低於最低法定退休年齡，敬請再協助確認）", sep = ""))
-
+}else{
 #偵測flag85是否存在。若不存在，則產生NA行
 if('flag85' %in% ls()){
   print("flag85")
@@ -7390,7 +7414,7 @@ if('flag85' %in% ls()){
     subset(select = c(organization_id))
   flag85$flag85 <- ""
 }
-
+}
 # flag93: 離退教職員（工）資料表所列人員，應為上一學年（期）之教員或職員（工）。 -------------------------------------------------------------------
 flag_person <- drev_P_retire_pre_right %>%
   rename(name = name.x, name_retire = name.y) %>%
@@ -7408,6 +7432,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag93 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
@@ -7448,7 +7473,7 @@ flag93 <- flag93 %>%
   subset(select = c(organization_id, flag93)) %>%
   distinct(organization_id, flag93) %>%
   mutate(flag93 = paste(flag93, "（查貴校上一學年所填資料，上述人員聘任類別非屬『專任』。依欄位說明，非專任教職員(工)之退休或離職者，不須填列離退教職員(工)資料表，請務必再確認。）", sep = ""))
-
+}else{
 #偵測flag93是否存在。若不存在，則產生NA行
 if('flag93' %in% ls()){
   print("flag93")
@@ -7458,7 +7483,7 @@ if('flag93' %in% ls()){
     subset(select = c(organization_id))
   flag93$flag93 <- ""
 }
-
+}
 # flag86: 上一學年（期）專任教職員（工）若未於本學年（期）教職員（工）資料表內，則應填列於離退教職員（工）資料表。 -------------------------------------------------------------------
 flag_person <- drev_P_retire_merge_pre %>%
   rename(name = name.x, name_retire = name, edu_name2 = edu_name2.x)
@@ -7475,6 +7500,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag86 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, err_flag)) %>%
@@ -7515,7 +7541,7 @@ flag86 <- flag86 %>%
   subset(select = c(organization_id, flag86)) %>%
   distinct(organization_id, flag86) %>%
   mutate(flag86 = paste(flag86, "（經比對貴校上一學年所填資料，上述人員並未出現於本學期的教員資料表或職員(工)資料表，請確認渠等是否於本學期(111年8月1日至9月30日)退休或因故離職，若於本學期退休或因故離職，應於離退教職員(工)資料表填寫資料。如非於本學期退休或因故離職，或已介聘、調至他校，請來電告知。）", sep = ""))
-
+}else{
 #偵測flag86是否存在。若不存在，則產生NA行
 if('flag86' %in% ls()){
   print("flag86")
@@ -7525,7 +7551,7 @@ if('flag86' %in% ls()){
     subset(select = c(organization_id))
   flag86$flag86 <- ""
 }
-
+}
 # flag91: 本學期離退教職員（工）資料表比對上一學年（期）教員/職員（工）資料表，同一身分識別碼所對應的姓名不同。 -------------------------------------------------------------------
 flag_person <- drev_P_retire_merge_pre %>%
   rename(name = name.x, name_pre = name.y, name_retire = name, edu_name2 = edu_name2.x)
@@ -7546,6 +7572,7 @@ flag_person$err_flag_txt <- case_when(
   TRUE ~ flag_person$err_flag_txt
 )
 
+if (dim(flag_person %>% subset(err_flag == 1))[1] != 0){
 #根據organization_id + source，展開成寬資料(wide)
 flag_person_wide_flag91 <- flag_person %>%
   subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, err_flag)) %>%
@@ -7586,7 +7613,7 @@ flag91 <- flag91 %>%
   subset(select = c(organization_id, flag91)) %>%
   distinct(organization_id, flag91) %>%
   mutate(flag91 = paste(flag91, "（離退人員於上一期資料填報姓名不相同。如已更名，請來電告知）", sep = ""))
-
+}else{
 #偵測flag91是否存在。若不存在，則產生NA行
 if('flag91' %in% ls()){
   print("flag91")
@@ -7596,8 +7623,7 @@ if('flag91' %in% ls()){
     subset(select = c(organization_id))
   flag91$flag91 <- ""
 }
-
-
+}
 # 建立合併列印檔 -------------------------------------------------------------------
 temp <- c("flag2", "flag3", "flag6", "flag7", "flag8", "flag9", "flag15", "flag16", "flag18", "flag19", "flag20", "flag24", "flag39", "flag45", "flag47", "flag48", "flag49", "flag50", "flag51", "flag52", "flag57", "flag59", "flag62", "flag64", "flag80", "flag82", "flag83", "flag84", "flag85", "flag86", "flag89", "flag90", "flag91", "flag92", "flag93", "flag94", "sp3", "sp5", "sp6")
 check02 <- merge(x = edu_name2, y = flag1, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
@@ -7652,7 +7678,7 @@ check02 <- merge(x = check02, y = spe6, by = c("organization_id"), all.x = TRUE,
 #國立北科大附屬桃園農工(030403)
   #同等學力
   check02$spe6 <- if_else(check02$spe6 == "職員(工)資料表之大學（學士）以上各教育階段學歷資料不完整或不正確：歐奕廷（副學士或專科畢業學校（一）：同等學歷）" & check02$organization_id == "030403", "", check02$spe6)
-      #林美豪 李後翰 蔡宗奮 郭金山 翁菁穗 林殷兆 許日進 呂竺昇 吳聖傑 李國釗 呂阿祝 黃華彩 蘇佳恩 房增財 黃婉婷 陳坤松  皆非本學期退休或因故離職人員
+  #林美豪 李後翰 蔡宗奮 郭金山 翁菁穗 林殷兆 許日進 呂竺昇 吳聖傑 李國釗 呂阿祝 黃華彩 蘇佳恩 房增財 黃婉婷 陳坤松  皆非本學期退休或因故離職人員
   check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "030403", "", check02$flag86)
 
 #市立龍潭高中(033302)
@@ -8091,6 +8117,7 @@ for (i in temp){
 check02 <- check02 %>%
   subset(err_flag != 0)
 
+if (dim(check02 %>% subset(err_flag != 0))[1] != 0){
 #標誌出無錯誤的處室
 check02$err_flag_P <- 0
 check02$err_flag_Ps <- 0
@@ -8114,4 +8141,6 @@ for (i in temp){
 
 check02 <- check02 %>%
   subset(select = -c(err_flag, err_flag_P, err_flag_Ps))
+}else{
 openxlsx :: write.xlsx(check02, file = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx", rowNames = FALSE, overwrite = TRUE)
+}
