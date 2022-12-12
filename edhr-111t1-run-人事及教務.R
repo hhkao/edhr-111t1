@@ -15,7 +15,7 @@ lapply(packages, require, character.only = TRUE)
 # 匯入學校資料檔 -------------------------------------------------------------------
 # input data
 # 分頁名稱為系統指定。
-path <- "\\\\192.168.110.244\\share_tmp\\給修恒\\1111\\edhr-111t1\\dta\\edhr_111t1-202210\\111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事）.xlsx"
+path <- "C:\\edhr-111t1\\dta\\edhr_111t1-202210\\111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事）.xlsx"
 excel_sheets(path)
 
 data_teacher <- read_excel(path, sheet = "教員資料表")
@@ -7641,7 +7641,8 @@ check02 <- merge(x = check02, y = spe3, by = c("organization_id"), all.x = TRUE,
 check02 <- merge(x = check02, y = spe5, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
 check02 <- merge(x = check02, y = spe6, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
 
-save C:\edhr-111t1\edhr-111t1-check02-人事.dta, replace
+#autochecking_personnel 第168行改成 C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx
+#autochecking_personnel 第182, 257行改成 C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xls
 
 # 計畫端個案處理 -------------------------------------------------------------------
 #國立中央大學附屬中壢高中(030305)
@@ -8113,4 +8114,4 @@ for (i in temp){
 
 check02 <- check02 %>%
   subset(select = -c(err_flag, err_flag_P, err_flag_Ps))
-openxlsx :: write.xlsx(check02, file = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事-by R.xlsx", rowNames = FALSE, overwrite = TRUE)
+openxlsx :: write.xlsx(check02, file = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx", rowNames = FALSE, overwrite = TRUE)
