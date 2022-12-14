@@ -15,25 +15,24 @@ lapply(packages, require, character.only = TRUE)
 # 匯入學校資料檔 -------------------------------------------------------------------
 # input data
 # 分頁名稱為系統指定。
-path <- "C:\\edhr-111t1\\dta\\edhr_111t1-202210\\111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事）.xlsx"
+path <- "\\\\192.168.110.244\\share_tmp\\給修恒\\1101\\edhr-110t1\\dta\\edhr_110t1-202201\\110學年度上學期高級中等學校教育人力資源資料庫（20校人事及教務）.xlsx"
 excel_sheets(path)
 
 data_teacher <- read_excel(path, sheet = "教員資料表")
 data_staff   <- read_excel(path, sheet = "職員(工)資料表")
-data_retire   <- read_excel(path, sheet = "離退教職員(工)資料表")
-#data_load    <- read_excel(path, sheet = "教學資料表")
-#data_courseA  <- read_excel(path, sheet = "授課資料表A.有課程代碼（23碼）")
-#data_courseB  <- read_excel(path, sheet = "授課資料表B.無課程代碼（23碼）")
+#data_retire   <- read_excel(path, sheet = "離退教職員(工)資料表")
+data_load    <- read_excel(path, sheet = "教學資料表")
+data_courseA  <- read_excel(path, sheet = "授課資料表A")
+data_courseB  <- read_excel(path, sheet = "授課資料表B")
 
 # 匯入上一期人事資料檔 -------------------------------------------------------------------
-# 整合20校試辦中的公立學校、所有公立教員資料表及職員(工)資料表
 
 #資料讀取#
 edhr <- dbConnect(odbc::odbc(), "CHER01-EDHR-NEW", timeout = 10)
 
-# 1101 20校試辦 教員資料表
+# 1092 20校試辦 教員資料表
 #請輸入本次填報設定檔標題(字串需與標題完全相符，否則會找不到)
-title <- "110學年度上學期高級中等學校教育人力資源資料庫（20校人事及教務）"
+title <- "109學年度下學期高級中等學校教育人力資源資料庫（20校人事及教務）"
 
 department <- "人事室"
 
@@ -85,21 +84,15 @@ teacher$desedym <- formatC(teacher$desedym, dig = 0, wid = 4, format = "f", flag
 teacher$beobdym <- formatC(teacher$beobdym, dig = 0, wid = 4, format = "f", flag = "0")
 teacher$organization_id <- formatC(teacher$organization_id, dig = 0, wid = 6, format = "f", flag = "0")
 
-#只留下審核通過之名單 只留下公立
+#只留下審核通過之名單
 teacher <- merge(x = teacher, y = list_agree, by = "organization_id", all.x = TRUE) %>%
   subset(agree == 1) %>%
   subset(select = -c(updated_at, agree))
-
-teacher$try <- substr(teacher$organization_id, 3, 3)
 
 teacher <- teacher %>%
-  subset(try == "0" | try == "3" | try == "4") %>%
-  subset(select = -c(try))
-
-teacher20_1101 <- teacher %>%
   mutate(dta_teacher = "教員資料表")
 
-# 1101 20校試辦 職員(工)資料表
+# 1092 20校試辦 職員(工)資料表
 #讀取職員(工)資料表名稱
 staff_tablename <- dbGetQuery(edhr, 
                               paste("
@@ -134,129 +127,13 @@ staff$organization_id <- formatC(staff$organization_id, dig = 0, wid = 6, format
 staff <- merge(x = staff, y = list_agree, by = "organization_id", all.x = TRUE) %>%
   subset(agree == 1) %>%
   subset(select = -c(updated_at, agree))
-
-staff$try <- substr(staff$organization_id, 3, 3)
 
 staff <- staff %>%
-  subset(try == "0" | try == "3" | try == "4") %>%
-  subset(select = -c(try))
-
-staff20_1101 <- staff %>%
   mutate(dta_teacher = "職員(工)資料表")
 
-# 1101公立學校 教員資料表
-#請輸入本次填報設定檔標題(字串需與標題完全相符，否則會找不到)
-title <- "110學年度上學期高級中等學校教育人力資源資料庫（公立學校人事）"
-
-department <- "人事室"
-
-#讀取審核同意之學校名單
-list_agree <- dbGetQuery(edhr, 
-                         paste("
-SELECT DISTINCT b.id AS organization_id , 1 AS agree
-FROM [plat5_edhr].[dbo].[teacher_fillers] a 
-LEFT JOIN 
-(SELECT a.reporter_id, c.id
-FROM [plat5_edhr].[dbo].[teacher_fillers] a LEFT JOIN [plat5_edhr].[dbo].[teacher_reporters] b ON a.reporter_id = b.id
-LEFT JOIN [plat5_edhr].[dbo].[organization_details] c ON b.organization_id = c.organization_id
-) b ON a.reporter_id = b.reporter_id
-WHERE a.agree = 1 AND department_id IN (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments]
-                                        WHERE report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports]
-                                                            WHERE title = '", title, "'))", sep = "")
-) %>%
-  distinct(organization_id, .keep_all = TRUE)
-
-#讀取教員資料表名稱
-teacher_tablename <- dbGetQuery(edhr, 
-                                paste("
-SELECT [name] FROM [plat5_edhr].[dbo].[row_tables] 
-	where sheet_id = (SELECT [id] FROM [plat5_edhr].[dbo].[row_sheets] 
-						          where file_id = (SELECT field_component_id FROM [plat5_edhr].[dbo].[teacher_datasets] 
-											                  WHERE title = '教員資料表' AND department_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments] 
-																						                                              WHERE title = '", department, "' AND  report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports] 
-																												                                                                                      WHERE title = '", title, "'))))", sep = "")
-) %>% as.character()
-
-#讀取教員資料表
-teacher <- dbGetQuery(edhr, 
-                      paste("SELECT * FROM [rows].[dbo].[", teacher_tablename, "] WHERE deleted_at IS NULL", sep = "")
-) %>%
-  subset(select = -c(id, created_at, deleted_at, updated_by, created_by, deleted_by))
-
-#欄位名稱更改為設定的欄位代號
-col_names <- dbGetQuery(edhr, "SELECT id, name, title FROM [plat5_edhr].[dbo].[row_columns]")
-col_names$id <- paste("C", col_names$id, sep = "")
-for (i in 2 : dim(teacher)[2]) #從2開始是因為第一的欄位是update_at
-{
-  colnames(teacher)[i] <- col_names$name[grep(paste(colnames(teacher)[i], "$", sep = ""), col_names$id)]
-}
-#格式調整
-teacher$gender <- formatC(teacher$gender, dig = 0, wid = 1, format = "f", flag = "0")
-teacher$birthdate <- formatC(teacher$birthdate, dig = 0, wid = 7, format = "f", flag = "0")
-teacher$onbodat <- formatC(teacher$onbodat, dig = 0, wid = 7, format = "f", flag = "0")
-teacher$desedym <- formatC(teacher$desedym, dig = 0, wid = 4, format = "f", flag = "0")
-teacher$beobdym <- formatC(teacher$beobdym, dig = 0, wid = 4, format = "f", flag = "0")
-teacher$organization_id <- formatC(teacher$organization_id, dig = 0, wid = 6, format = "f", flag = "0")
-
-#只留下審核通過之名單
-teacher <- merge(x = teacher, y = list_agree, by = "organization_id", all.x = TRUE) %>%
-  subset(agree == 1) %>%
-  subset(select = -c(updated_at, agree))
-
-teacher_1101 <- teacher %>%
-  mutate(dta_teacher = "教員資料表")
-
-# 1101公立學校 職員(工)資料表
-#讀取職員(工)資料表名稱
-staff_tablename <- dbGetQuery(edhr, 
-                              paste("
-SELECT [name] FROM [plat5_edhr].[dbo].[row_tables] 
-	where sheet_id = (SELECT [id] FROM [plat5_edhr].[dbo].[row_sheets] 
-						          where file_id = (SELECT field_component_id FROM [plat5_edhr].[dbo].[teacher_datasets] 
-											                   WHERE title = '職員(工)資料表' AND department_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments] 
-																							                                                 WHERE title = '", department, "' AND  report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports] 
-																												                                                            WHERE title = '", title, "'))))", sep = "")
-) %>% as.character()
-
-#讀取職員(工)資料表
-staff <- dbGetQuery(edhr, 
-                    paste("SELECT * FROM [rows].[dbo].[", staff_tablename, "] WHERE deleted_at IS NULL", sep = "")
-) %>%
-  subset(select = -c(id, created_at, deleted_at, updated_by, created_by, deleted_by))
-#欄位名稱更改為設定的欄位代號
-for (i in 2 : dim(staff)[2]) #從2開始是因為第一的欄位是update_at
-{
-  colnames(staff)[i] <- col_names$name[grep(paste(colnames(staff)[i], "$", sep = ""), col_names$id)]
-}
-
-#格式調整
-staff$gender <- formatC(staff$gender, dig = 0, wid = 1, format = "f", flag = "0")
-staff$birthdate <- formatC(staff$birthdate, dig = 0, wid = 7, format = "f", flag = "0")
-staff$onbodat <- formatC(staff$onbodat, dig = 0, wid = 7, format = "f", flag = "0")
-staff$desedym <- formatC(staff$desedym, dig = 0, wid = 4, format = "f", flag = "0")
-staff$beobdym <- formatC(staff$beobdym, dig = 0, wid = 4, format = "f", flag = "0")
-staff$organization_id <- formatC(staff$organization_id, dig = 0, wid = 6, format = "f", flag = "0")
-
-#只留下審核通過之名單
-staff <- merge(x = staff, y = list_agree, by = "organization_id", all.x = TRUE) %>%
-  subset(agree == 1) %>%
-  subset(select = -c(updated_at, agree))
-
-staff_1101 <- staff %>%
-  mutate(dta_teacher = "職員(工)資料表")
-#####合併#####
-drev_person_pre <- bind_rows(teacher20_1101, staff20_1101, teacher_1101, staff_1101) %>%
+#合併教員資料表與職員(工)資料表
+drev_person_pre <- bind_rows(teacher, staff) %>%
   rename(source = dta_teacher)
-
-#中壢家商資料修正
-drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "H121370425" & drev_person_pre$organization_id == "033408", "教師", drev_person_pre$sertype)
-drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "J120744744" & drev_person_pre$organization_id == "033408", "教師", drev_person_pre$sertype)
-drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "J221679800" & drev_person_pre$organization_id == "033408", "教師", drev_person_pre$sertype)
-drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "C220687295" & drev_person_pre$organization_id == "033408", "教師", drev_person_pre$sertype)
-drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "U221141104" & drev_person_pre$organization_id == "033408", "教師", drev_person_pre$sertype)
-drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "Q222500292" & drev_person_pre$organization_id == "033408", "教師", drev_person_pre$sertype)
-drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "H224770876" & drev_person_pre$organization_id == "033408", "教師", drev_person_pre$sertype)
-drev_person_pre$sertype <- if_else(drev_person_pre$idnumber == "K221339311" & drev_person_pre$organization_id == "033408", "教師", drev_person_pre$sertype)
 
 #記錄時間
 time_now <- Sys.time()
@@ -374,6 +251,23 @@ data_schtype$type_code <- recode_factor(data_schtype$type_code,
 data_schtype$type_code <- factor(data_schtype$type_code, levels = c("C", "E", "F", "H", "V", "M", "J", "U"))
 data_schtype$type_code[data_schtype$dn_code == "D" & data_schtype$type_code == "U"] <- "E"
 data_schtype$type_code[data_schtype$dn_code == "N" & data_schtype$type_code == "U"] <- "F"
+
+#計算班級數
+  #縣市立別
+data_schtype_v2 <- data_schtype %>%
+  subset(type_code != "J")
+data_schtype_v2 <- data_schtype_v2 %>%
+  left_join(aggregate(nclass ~ authority, data_schtype_v2, sum), by = c("authority")) %>% #縣市立別
+  rename(nclass = nclass.x, nauthority = nclass.y) %>%
+  left_join(aggregate(nclass ~ organization_id, data_schtype_v2, sum), by = c("organization_id")) %>% #學校別
+  rename(nclass = nclass.x, nsch = nclass.y) %>%
+  left_join(aggregate(nclass ~ organization_id + type_code, data_schtype_v2, sum), by = c("organization_id", "type_code")) %>% #學制別
+  rename(nclass = nclass.x, ntype = nclass.y) %>%
+  left_join(aggregate(nclass ~ organization_id + type_code + dep1_code, data_schtype_v2, sum), by = c("organization_id", "type_code", "dep1_code")) %>% #群別
+  rename(nclass = nclass.x, ndep = nclass.y) %>%
+  subset(select = c(organization_id, type_code, dep1_code, dep1_name, depcode, dep2_name, nclass, nauthority, ntype, nsch)) %>%
+  rename(cinsticode = type_code, studyareacode = dep1_code)
+
 
 # 各校班級的開課單位
 data_schtype_wide <- data_schtype %>%
@@ -1793,6 +1687,7 @@ drev_P_load$depcode_p <- case_when(
 # }
 
 
+# 人事 -----------------------------------------------------------
 
 # flag1: 學校（副）校長、一級單位主管名單的完整度 -------------------------------------------------------------------
 # temp <- c("admintitle0", "admintitle1", "admintitle2", "admintitle3")
@@ -7554,6 +7449,10 @@ if('flag86' %in% ls()){
   flag86$flag86 <- ""
 }
 }
+
+
+
+
 # flag91: 本學期離退教職員（工）資料表比對上一學年（期）教員/職員（工）資料表，同一身分識別碼所對應的姓名不同。 -------------------------------------------------------------------
 flag_person <- drev_P_retire_merge_pre %>%
   rename(name = name.x, name_pre = name.y, name_retire = name, edu_name2 = edu_name2.x)
@@ -7626,6 +7525,11 @@ if('flag91' %in% ls()){
   flag91$flag91 <- ""
 }
 }
+
+
+# 教務 -----------------------------------------------------------
+
+
 # 建立合併列印檔 -------------------------------------------------------------------
 temp <- c("flag2", "flag3", "flag6", "flag7", "flag8", "flag9", "flag15", "flag16", "flag18", "flag19", "flag20", "flag24", "flag39", "flag45", "flag47", "flag48", "flag49", "flag50", "flag51", "flag52", "flag57", "flag59", "flag62", "flag64", "flag80", "flag82", "flag83", "flag84", "flag85", "flag86", "flag89", "flag90", "flag91", "flag92", "flag93", "flag94", "sp3", "sp5", "sp6")
 check02 <- merge(x = edu_name2, y = flag1, by = c("organization_id"), all.x = TRUE, all.y = TRUE)
