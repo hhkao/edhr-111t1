@@ -19,7 +19,152 @@ lapply(packages, require, character.only = TRUE)
 # 匯入學校資料檔 -------------------------------------------------------------------
 # input data
 # 分頁名稱為系統指定。
-path <- "C:\\edhr-111t1\\dta\\edhr_111t1-202210\\111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事）.xlsx"
+
+#資料讀取#
+edhr <- dbConnect(odbc::odbc(), "CHER01-EDHR-NEW", timeout = 10)
+
+#請輸入本次填報設定檔標題(字串需與標題完全相符，否則會找不到)
+title <- "111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事）"
+
+department <- "人事室"
+
+#讀取審核同意之學校名單
+list_agree <- dbGetQuery(edhr, 
+                         paste("
+SELECT DISTINCT b.id AS organization_id , 1 AS agree
+FROM [plat5_edhr].[dbo].[teacher_fillers] a 
+LEFT JOIN 
+(SELECT a.reporter_id, c.id
+FROM [plat5_edhr].[dbo].[teacher_fillers] a LEFT JOIN [plat5_edhr].[dbo].[teacher_reporters] b ON a.reporter_id = b.id
+LEFT JOIN [plat5_edhr].[dbo].[organization_details] c ON b.organization_id = c.organization_id
+) b ON a.reporter_id = b.reporter_id
+WHERE a.agree = 1 AND department_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments]
+                                        WHERE report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports]
+                                                            WHERE title = '", title, "'))", sep = "")
+) %>%
+  distinct(organization_id, .keep_all = TRUE) %>%
+  subset(organization_id == "313301" | organization_id == "313302" | organization_id == "323301" | organization_id == "323302" | organization_id == "323401" | organization_id == "323402" | organization_id == "330301" | organization_id == "333301" | organization_id == "333304" | organization_id == "333401" | organization_id == "343301" | organization_id == "343302" | organization_id == "343303" | organization_id == "353301" | organization_id == "353302" | organization_id == "353303" | organization_id == "363301" | organization_id == "363302" | organization_id == "373301" | organization_id == "373302" | organization_id == "380301" | organization_id == "383301" | organization_id == "383302" | organization_id == "383401" | organization_id == "393301" | organization_id == "393302" | organization_id == "393401" | organization_id == "403301" | organization_id == "403302" | organization_id == "403303" | organization_id == "403401" | organization_id == "413301" | organization_id == "413302" | organization_id == "413401" | organization_id == "423301" | organization_id == "423302" | organization_id == "383303" | organization_id == "030305" | organization_id == "030403" | organization_id == "033302" | organization_id == "033304" | organization_id == "033306" | organization_id == "033316" | organization_id == "033325" | organization_id == "033327" | organization_id == "033407" | organization_id == "033408" | organization_id == "034306" | organization_id == "034312" | organization_id == "034314" | organization_id == "034319" | organization_id == "034332" | organization_id == "034335" | organization_id == "034347" | organization_id == "034348" | organization_id == "034399" | organization_id == "070301" | organization_id == "070304" | organization_id == "070307" | organization_id == "070316" | organization_id == "070319" | organization_id == "070401" | organization_id == "070402" | organization_id == "070403" | organization_id == "070405" | organization_id == "070406" | organization_id == "070408" | organization_id == "070409" | organization_id == "070410" | organization_id == "070415" | organization_id == "074308" | organization_id == "074313" | organization_id == "074323" | organization_id == "074328" | organization_id == "074339" | organization_id == "080302" | organization_id == "080305" | organization_id == "080307" | organization_id == "080308" | organization_id == "080401" | organization_id == "080403" | organization_id == "080404" | organization_id == "080406" | organization_id == "080410" | organization_id == "084309" | organization_id == "170301" | organization_id == "170302" | organization_id == "170403" | organization_id == "170404" | organization_id == "173304" | organization_id == "173306" | organization_id == "173307" | organization_id == "173314" | organization_id == "140301" | organization_id == "140302" | organization_id == "140303" | organization_id == "140404" | organization_id == "140405" | organization_id == "140408" | organization_id == "144322" | organization_id == "720301")
+
+
+#讀取教員資料表名稱
+teacher_tablename <- dbGetQuery(edhr, 
+                                paste("
+SELECT [name] FROM [plat5_edhr].[dbo].[row_tables] 
+	where sheet_id = (SELECT [id] FROM [plat5_edhr].[dbo].[row_sheets] 
+						          where file_id = (SELECT field_component_id FROM [plat5_edhr].[dbo].[teacher_datasets] 
+											                  WHERE title = '教員資料表' AND department_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments] 
+																						                                              WHERE title = '", department, "' AND  report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports] 
+																												                                                                                      WHERE title = '", title, "'))))", sep = "")
+) %>% as.character()
+
+#讀取教員資料表
+teacher <- dbGetQuery(edhr, 
+                      paste("SELECT * FROM [rows].[dbo].[", teacher_tablename, "] WHERE deleted_at IS NULL", sep = "")
+) %>%
+  subset(select = -c(id, created_at, deleted_at, updated_by, created_by, deleted_by))
+
+#欄位名稱更改為設定的欄位代號
+col_names <- dbGetQuery(edhr, "SELECT id, name, title FROM [plat5_edhr].[dbo].[row_columns]")
+col_names$id <- paste("C", col_names$id, sep = "")
+for (i in 2 : dim(teacher)[2]) #從2開始是因為第一的欄位是update_at
+{
+  colnames(teacher)[i] <- col_names$name[grep(paste(colnames(teacher)[i], "$", sep = ""), col_names$id)]
+}
+#格式調整
+teacher$gender <- formatC(teacher$gender, dig = 0, wid = 1, format = "f", flag = "0")
+teacher$birthdate <- formatC(teacher$birthdate, dig = 0, wid = 7, format = "f", flag = "0")
+teacher$onbodat <- formatC(teacher$onbodat, dig = 0, wid = 7, format = "f", flag = "0")
+teacher$desedym <- formatC(teacher$desedym, dig = 0, wid = 4, format = "f", flag = "0")
+teacher$beobdym <- formatC(teacher$beobdym, dig = 0, wid = 4, format = "f", flag = "0")
+teacher$organization_id <- formatC(teacher$organization_id, dig = 0, wid = 6, format = "f", flag = "0")
+
+#只留下審核通過之名單
+teacher <- merge(x = teacher, y = list_agree, by = "organization_id", all.x = TRUE) %>%
+  subset(agree == 1) %>%
+  subset(select = -c(updated_at, agree))
+
+#管區
+teacher <- teacher %>%
+  subset(organization_id == "313301" | organization_id == "313302" | organization_id == "323301" | organization_id == "323302" | organization_id == "323401" | organization_id == "323402" | organization_id == "330301" | organization_id == "333301" | organization_id == "333304" | organization_id == "333401" | organization_id == "343301" | organization_id == "343302" | organization_id == "343303" | organization_id == "353301" | organization_id == "353302" | organization_id == "353303" | organization_id == "363301" | organization_id == "363302" | organization_id == "373301" | organization_id == "373302" | organization_id == "380301" | organization_id == "383301" | organization_id == "383302" | organization_id == "383401" | organization_id == "393301" | organization_id == "393302" | organization_id == "393401" | organization_id == "403301" | organization_id == "403302" | organization_id == "403303" | organization_id == "403401" | organization_id == "413301" | organization_id == "413302" | organization_id == "413401" | organization_id == "423301" | organization_id == "423302" | organization_id == "383303" | organization_id == "030305" | organization_id == "030403" | organization_id == "033302" | organization_id == "033304" | organization_id == "033306" | organization_id == "033316" | organization_id == "033325" | organization_id == "033327" | organization_id == "033407" | organization_id == "033408" | organization_id == "034306" | organization_id == "034312" | organization_id == "034314" | organization_id == "034319" | organization_id == "034332" | organization_id == "034335" | organization_id == "034347" | organization_id == "034348" | organization_id == "034399" | organization_id == "070301" | organization_id == "070304" | organization_id == "070307" | organization_id == "070316" | organization_id == "070319" | organization_id == "070401" | organization_id == "070402" | organization_id == "070403" | organization_id == "070405" | organization_id == "070406" | organization_id == "070408" | organization_id == "070409" | organization_id == "070410" | organization_id == "070415" | organization_id == "074308" | organization_id == "074313" | organization_id == "074323" | organization_id == "074328" | organization_id == "074339" | organization_id == "080302" | organization_id == "080305" | organization_id == "080307" | organization_id == "080308" | organization_id == "080401" | organization_id == "080403" | organization_id == "080404" | organization_id == "080406" | organization_id == "080410" | organization_id == "084309" | organization_id == "170301" | organization_id == "170302" | organization_id == "170403" | organization_id == "170404" | organization_id == "173304" | organization_id == "173306" | organization_id == "173307" | organization_id == "173314" | organization_id == "140301" | organization_id == "140302" | organization_id == "140303" | organization_id == "140404" | organization_id == "140405" | organization_id == "140408" | organization_id == "144322" | organization_id == "720301")
+
+#讀取職員(工)資料表名稱
+staff_tablename <- dbGetQuery(edhr, 
+                              paste("
+SELECT [name] FROM [plat5_edhr].[dbo].[row_tables] 
+	where sheet_id = (SELECT [id] FROM [plat5_edhr].[dbo].[row_sheets] 
+						          where file_id = (SELECT field_component_id FROM [plat5_edhr].[dbo].[teacher_datasets] 
+											                   WHERE title = '職員(工)資料表' AND department_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments] 
+																							                                                 WHERE title = '", department, "' AND  report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports] 
+																												                                                            WHERE title = '", title, "'))))", sep = "")
+) %>% as.character()
+
+#讀取職員(工)資料表
+staff <- dbGetQuery(edhr, 
+                    paste("SELECT * FROM [rows].[dbo].[", staff_tablename, "] WHERE deleted_at IS NULL", sep = "")
+) %>%
+  subset(select = -c(id, created_at, deleted_at, updated_by, created_by, deleted_by))
+#欄位名稱更改為設定的欄位代號
+for (i in 2 : dim(staff)[2]) #從2開始是因為第一的欄位是update_at
+{
+  colnames(staff)[i] <- col_names$name[grep(paste(colnames(staff)[i], "$", sep = ""), col_names$id)]
+}
+
+#格式調整
+staff$gender <- formatC(staff$gender, dig = 0, wid = 1, format = "f", flag = "0")
+staff$birthdate <- formatC(staff$birthdate, dig = 0, wid = 7, format = "f", flag = "0")
+staff$onbodat <- formatC(staff$onbodat, dig = 0, wid = 7, format = "f", flag = "0")
+staff$desedym <- formatC(staff$desedym, dig = 0, wid = 4, format = "f", flag = "0")
+staff$beobdym <- formatC(staff$beobdym, dig = 0, wid = 4, format = "f", flag = "0")
+staff$organization_id <- formatC(staff$organization_id, dig = 0, wid = 6, format = "f", flag = "0")
+
+#只留下審核通過之名單
+staff <- merge(x = staff, y = list_agree, by = "organization_id", all.x = TRUE) %>%
+  subset(agree == 1) %>%
+  subset(select = -c(updated_at, agree))
+
+#管區
+staff <- staff %>%
+  subset(organization_id == "313301" | organization_id == "313302" | organization_id == "323301" | organization_id == "323302" | organization_id == "323401" | organization_id == "323402" | organization_id == "330301" | organization_id == "333301" | organization_id == "333304" | organization_id == "333401" | organization_id == "343301" | organization_id == "343302" | organization_id == "343303" | organization_id == "353301" | organization_id == "353302" | organization_id == "353303" | organization_id == "363301" | organization_id == "363302" | organization_id == "373301" | organization_id == "373302" | organization_id == "380301" | organization_id == "383301" | organization_id == "383302" | organization_id == "383401" | organization_id == "393301" | organization_id == "393302" | organization_id == "393401" | organization_id == "403301" | organization_id == "403302" | organization_id == "403303" | organization_id == "403401" | organization_id == "413301" | organization_id == "413302" | organization_id == "413401" | organization_id == "423301" | organization_id == "423302" | organization_id == "383303" | organization_id == "030305" | organization_id == "030403" | organization_id == "033302" | organization_id == "033304" | organization_id == "033306" | organization_id == "033316" | organization_id == "033325" | organization_id == "033327" | organization_id == "033407" | organization_id == "033408" | organization_id == "034306" | organization_id == "034312" | organization_id == "034314" | organization_id == "034319" | organization_id == "034332" | organization_id == "034335" | organization_id == "034347" | organization_id == "034348" | organization_id == "034399" | organization_id == "070301" | organization_id == "070304" | organization_id == "070307" | organization_id == "070316" | organization_id == "070319" | organization_id == "070401" | organization_id == "070402" | organization_id == "070403" | organization_id == "070405" | organization_id == "070406" | organization_id == "070408" | organization_id == "070409" | organization_id == "070410" | organization_id == "070415" | organization_id == "074308" | organization_id == "074313" | organization_id == "074323" | organization_id == "074328" | organization_id == "074339" | organization_id == "080302" | organization_id == "080305" | organization_id == "080307" | organization_id == "080308" | organization_id == "080401" | organization_id == "080403" | organization_id == "080404" | organization_id == "080406" | organization_id == "080410" | organization_id == "084309" | organization_id == "170301" | organization_id == "170302" | organization_id == "170403" | organization_id == "170404" | organization_id == "173304" | organization_id == "173306" | organization_id == "173307" | organization_id == "173314" | organization_id == "140301" | organization_id == "140302" | organization_id == "140303" | organization_id == "140404" | organization_id == "140405" | organization_id == "140408" | organization_id == "144322" | organization_id == "720301")
+
+#讀取離退教職員(工)資料表名稱
+retire_tablename <- dbGetQuery(edhr, 
+                               paste("
+SELECT [name] FROM [plat5_edhr].[dbo].[row_tables] 
+	where sheet_id = (SELECT [id] FROM [plat5_edhr].[dbo].[row_sheets] 
+						          where file_id = (SELECT field_component_id FROM [plat5_edhr].[dbo].[teacher_datasets] 
+											                   WHERE title = '離退教職員(工)資料表' AND department_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments] 
+																							                                                 WHERE title = '", department, "' AND  report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports] 
+																												                                                            WHERE title = '", title, "'))))", sep = "")
+) %>% as.character()
+
+#讀取離退教職員(工)資料表
+retire <- dbGetQuery(edhr, 
+                     paste("SELECT * FROM [rows].[dbo].[", retire_tablename, "] WHERE deleted_at IS NULL", sep = "")
+) %>%
+  subset(select = -c(id, created_at, deleted_at, updated_by, created_by, deleted_by))
+#欄位名稱更改為設定的欄位代號
+for (i in 2 : dim(retire)[2]) #從2開始是因為第一的欄位是update_at
+{
+  colnames(retire)[i] <- col_names$name[grep(paste(colnames(retire)[i], "$", sep = ""), col_names$id)]
+}
+
+#格式調整
+retire$organization_id <- formatC(retire$organization_id, dig = 0, wid = 6, format = "f", flag = "0")
+
+#只留下審核通過之名單
+retire <- merge(x = retire, y = list_agree, by = "organization_id", all.x = TRUE) %>%
+  subset(agree == 1) %>%
+  subset(select = -c(updated_at, agree))
+
+#管區
+retire <- retire %>%
+  subset(organization_id == "313301" | organization_id == "313302" | organization_id == "323301" | organization_id == "323302" | organization_id == "323401" | organization_id == "323402" | organization_id == "330301" | organization_id == "333301" | organization_id == "333304" | organization_id == "333401" | organization_id == "343301" | organization_id == "343302" | organization_id == "343303" | organization_id == "353301" | organization_id == "353302" | organization_id == "353303" | organization_id == "363301" | organization_id == "363302" | organization_id == "373301" | organization_id == "373302" | organization_id == "380301" | organization_id == "383301" | organization_id == "383302" | organization_id == "383401" | organization_id == "393301" | organization_id == "393302" | organization_id == "393401" | organization_id == "403301" | organization_id == "403302" | organization_id == "403303" | organization_id == "403401" | organization_id == "413301" | organization_id == "413302" | organization_id == "413401" | organization_id == "423301" | organization_id == "423302" | organization_id == "383303" | organization_id == "030305" | organization_id == "030403" | organization_id == "033302" | organization_id == "033304" | organization_id == "033306" | organization_id == "033316" | organization_id == "033325" | organization_id == "033327" | organization_id == "033407" | organization_id == "033408" | organization_id == "034306" | organization_id == "034312" | organization_id == "034314" | organization_id == "034319" | organization_id == "034332" | organization_id == "034335" | organization_id == "034347" | organization_id == "034348" | organization_id == "034399" | organization_id == "070301" | organization_id == "070304" | organization_id == "070307" | organization_id == "070316" | organization_id == "070319" | organization_id == "070401" | organization_id == "070402" | organization_id == "070403" | organization_id == "070405" | organization_id == "070406" | organization_id == "070408" | organization_id == "070409" | organization_id == "070410" | organization_id == "070415" | organization_id == "074308" | organization_id == "074313" | organization_id == "074323" | organization_id == "074328" | organization_id == "074339" | organization_id == "080302" | organization_id == "080305" | organization_id == "080307" | organization_id == "080308" | organization_id == "080401" | organization_id == "080403" | organization_id == "080404" | organization_id == "080406" | organization_id == "080410" | organization_id == "084309" | organization_id == "170301" | organization_id == "170302" | organization_id == "170403" | organization_id == "170404" | organization_id == "173304" | organization_id == "173306" | organization_id == "173307" | organization_id == "173314" | organization_id == "140301" | organization_id == "140302" | organization_id == "140303" | organization_id == "140404" | organization_id == "140405" | organization_id == "140408" | organization_id == "144322" | organization_id == "720301")
+
+#輸出
+list_of_datasets <- list("教員資料表" = teacher, "職員(工)資料表" = staff, "離退教職員(工)資料表" = retire)
+path <- paste("\\\\192.168.110.244\\share_tmp\\給修恒\\1111\\edhr-111t1\\dta\\edhr_111t1-202210\\", title, ".xlsx", sep = "")
+openxlsx :: write.xlsx(list_of_datasets, file = path, rowNames = FALSE, overwrite = TRUE)
+
 excel_sheets(path)
 
 data_teacher <- read_excel(path, sheet = "教員資料表")
@@ -33,8 +178,6 @@ data_retire   <- read_excel(path, sheet = "離退教職員(工)資料表")
   teacher <- data_teacher
   staff <- data_staff
 
-  #資料讀取#
-  edhr <- dbConnect(odbc::odbc(), "CHER01-EDHR-NEW", timeout = 10)
   
   #請輸入本次填報設定檔標題(字串需與標題完全相符，否則會找不到)
   title <- "111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事）"
