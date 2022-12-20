@@ -19,7 +19,154 @@ lapply(packages, require, character.only = TRUE)
 # 匯入學校資料檔 -------------------------------------------------------------------
 # input data
 # 分頁名稱為系統指定。
+
+#資料讀取#
+edhr <- dbConnect(odbc::odbc(), "CHER01-EDHR-NEW", timeout = 10)
+
+#請輸入本次填報設定檔標題(字串需與標題完全相符，否則會找不到)
+title <- "111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事及教務）"
+
+department <- "人事室"
+
+#讀取審核同意之學校名單
+list_agree <- dbGetQuery(edhr, 
+                         paste("
+SELECT DISTINCT b.id AS organization_id , 1 AS agree
+FROM [plat5_edhr].[dbo].[teacher_fillers] a 
+LEFT JOIN 
+(SELECT a.reporter_id, c.id
+FROM [plat5_edhr].[dbo].[teacher_fillers] a LEFT JOIN [plat5_edhr].[dbo].[teacher_reporters] b ON a.reporter_id = b.id
+LEFT JOIN [plat5_edhr].[dbo].[organization_details] c ON b.organization_id = c.organization_id
+) b ON a.reporter_id = b.reporter_id
+WHERE a.agree = 1 AND department_id IN (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments]
+                                        WHERE report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports]
+                                                            WHERE title = '", title, "'))", sep = "")
+) %>%
+  distinct(organization_id, .keep_all = TRUE) %>%
+  subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
+
+
+#讀取教員資料表名稱
+teacher_tablename <- dbGetQuery(edhr, 
+                                paste("
+SELECT [name] FROM [plat5_edhr].[dbo].[row_tables] 
+	where sheet_id = (SELECT [id] FROM [plat5_edhr].[dbo].[row_sheets] 
+						          where file_id = (SELECT field_component_id FROM [plat5_edhr].[dbo].[teacher_datasets] 
+											                  WHERE title = '教員資料表' AND department_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments] 
+																						                                              WHERE title = '", department, "' AND  report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports] 
+																												                                                                                      WHERE title = '", title, "'))))", sep = "")
+) %>% as.character()
+
+#讀取教員資料表
+teacher <- dbGetQuery(edhr, 
+                      paste("SELECT * FROM [rows].[dbo].[", teacher_tablename, "] WHERE deleted_at IS NULL", sep = "")
+) %>%
+  subset(select = -c(id, created_at, deleted_at, updated_by, created_by, deleted_by))
+
+#欄位名稱更改為設定的欄位代號
+col_names <- dbGetQuery(edhr, "SELECT id, name, title FROM [plat5_edhr].[dbo].[row_columns]")
+col_names$id <- paste("C", col_names$id, sep = "")
+for (i in 2 : dim(teacher)[2]) #從2開始是因為第一的欄位是update_at
+{
+  colnames(teacher)[i] <- col_names$name[grep(paste(colnames(teacher)[i], "$", sep = ""), col_names$id)]
+}
+#格式調整
+teacher$gender <- formatC(teacher$gender, dig = 0, wid = 1, format = "f", flag = "0")
+teacher$birthdate <- formatC(teacher$birthdate, dig = 0, wid = 7, format = "f", flag = "0")
+teacher$onbodat <- formatC(teacher$onbodat, dig = 0, wid = 7, format = "f", flag = "0")
+teacher$desedym <- formatC(teacher$desedym, dig = 0, wid = 4, format = "f", flag = "0")
+teacher$beobdym <- formatC(teacher$beobdym, dig = 0, wid = 4, format = "f", flag = "0")
+teacher$organization_id <- formatC(teacher$organization_id, dig = 0, wid = 6, format = "f", flag = "0")
+
+#只留下審核通過之名單
+teacher <- merge(x = teacher, y = list_agree, by = "organization_id", all.x = TRUE) %>%
+  subset(agree == 1) %>%
+  subset(select = -c(updated_at, agree))
+
+#管區
+teacher <- teacher %>%
+  #subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
+  
+  #讀取職員(工)資料表名稱
+  staff_tablename <- dbGetQuery(edhr, 
+                                paste("
+SELECT [name] FROM [plat5_edhr].[dbo].[row_tables] 
+	where sheet_id = (SELECT [id] FROM [plat5_edhr].[dbo].[row_sheets] 
+						          where file_id = (SELECT field_component_id FROM [plat5_edhr].[dbo].[teacher_datasets] 
+											                   WHERE title = '職員(工)資料表' AND department_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments] 
+																							                                                 WHERE title = '", department, "' AND  report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports] 
+																												                                                            WHERE title = '", title, "'))))", sep = "")
+  ) %>% as.character()
+
+#讀取職員(工)資料表
+staff <- dbGetQuery(edhr, 
+                    paste("SELECT * FROM [rows].[dbo].[", staff_tablename, "] WHERE deleted_at IS NULL", sep = "")
+) %>%
+  subset(select = -c(id, created_at, deleted_at, updated_by, created_by, deleted_by))
+#欄位名稱更改為設定的欄位代號
+for (i in 2 : dim(staff)[2]) #從2開始是因為第一的欄位是update_at
+{
+  colnames(staff)[i] <- col_names$name[grep(paste(colnames(staff)[i], "$", sep = ""), col_names$id)]
+}
+
+#格式調整
+staff$gender <- formatC(staff$gender, dig = 0, wid = 1, format = "f", flag = "0")
+staff$birthdate <- formatC(staff$birthdate, dig = 0, wid = 7, format = "f", flag = "0")
+staff$onbodat <- formatC(staff$onbodat, dig = 0, wid = 7, format = "f", flag = "0")
+staff$desedym <- formatC(staff$desedym, dig = 0, wid = 4, format = "f", flag = "0")
+staff$beobdym <- formatC(staff$beobdym, dig = 0, wid = 4, format = "f", flag = "0")
+staff$organization_id <- formatC(staff$organization_id, dig = 0, wid = 6, format = "f", flag = "0")
+
+#只留下審核通過之名單
+staff <- merge(x = staff, y = list_agree, by = "organization_id", all.x = TRUE) %>%
+  subset(agree == 1) %>%
+  subset(select = -c(updated_at, agree))
+
+#管區
+staff <- staff %>%
+  #subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
+  
+  department <- "教務處"
+
+#讀取教學資料表名稱
+load_tablename <- dbGetQuery(edhr, 
+                             paste("
+SELECT [name] FROM [plat5_edhr].[dbo].[row_tables] 
+	where sheet_id = (SELECT [id] FROM [plat5_edhr].[dbo].[row_sheets] 
+						          where file_id = (SELECT field_component_id FROM [plat5_edhr].[dbo].[teacher_datasets] 
+											                  WHERE title = '教學資料表' AND department_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments] 
+																						                                              WHERE title = '", department, "' AND  report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports] 
+																												                                                       WHERE title = '", title, "'))))", sep = "")
+) %>% as.character()
+
+#讀取教學資料表
+load <- dbGetQuery(edhr, 
+                   paste("SELECT * FROM [rows].[dbo].[", load_tablename, "] WHERE deleted_at IS NULL", sep = "")
+) %>%
+  subset(select = -c(id, created_at, deleted_at, updated_by, created_by, deleted_by))
+
+#欄位名稱更改為設定的欄位代號
+for (i in 2 : dim(load)[2]) #從2開始是因為第一的欄位是update_at
+{
+  colnames(load)[i] <- col_names$name[grep(paste(colnames(load)[i], "$", sep = ""), col_names$id)]
+}
+#格式調整
+load$organization_id <- formatC(load$organization_id, dig = 0, wid = 6, format = "f", flag = "0")
+
+#只留下審核通過之名單
+load <- merge(x = load, y = list_agree, by = "organization_id", all.x = TRUE) %>%
+  subset(agree == 1) %>%
+  subset(select = -c(updated_at, agree))
+
+#管區
+load <- load %>%
+  #subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
+  
+#輸出
+list_of_datasets <- list("教員資料表" = teacher, "職員(工)資料表" = staff, "教學資料表" = load)
 path <- "\\\\192.168.110.244\\share_tmp\\給修恒\\1101\\edhr-110t1\\dta\\edhr_110t1-202201\\110學年度上學期高級中等學校教育人力資源資料庫（20校人事及教務）.xlsx"
+openxlsx :: write.xlsx(list_of_datasets, file = path, rowNames = FALSE, overwrite = TRUE)
+
 excel_sheets(path)
 
 data_teacher <- read_excel(path, sheet = "教員資料表")
@@ -35,9 +182,6 @@ staff <- data_staff
 load <- data_load
 courseA <- data_courseA
 courseB <- data_courseB
-
-#資料讀取#
-edhr <- dbConnect(odbc::odbc(), "CHER01-EDHR-NEW", timeout = 10)
 
 #請輸入本次填報設定檔標題(字串需與標題完全相符，否則會找不到)
 title <- "110學年度上學期高級中等學校教育人力資源資料庫（20校人事及教務）"
