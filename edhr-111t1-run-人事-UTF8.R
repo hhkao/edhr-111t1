@@ -177,25 +177,6 @@ data_retire   <- read_excel(path, sheet = "離退教職員(工)資料表")
 #自動化檢誤用
   teacher <- data_teacher
   staff <- data_staff
-  
-  #請輸入本次填報設定檔標題(字串需與標題完全相符，否則會找不到)
-  title <- "111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事）"
-  
-  #讀取審核同意之學校名單
-  list_agree <- dbGetQuery(edhr, 
-                           paste("
-  SELECT DISTINCT b.id AS organization_id , 1 AS agree
-  FROM [plat5_edhr].[dbo].[teacher_fillers] a 
-  LEFT JOIN 
-  (SELECT a.reporter_id, c.id
-  FROM [plat5_edhr].[dbo].[teacher_fillers] a LEFT JOIN [plat5_edhr].[dbo].[teacher_reporters] b ON a.reporter_id = b.id
-  LEFT JOIN [plat5_edhr].[dbo].[organization_details] c ON b.organization_id = c.organization_id
-  ) b ON a.reporter_id = b.reporter_id
-  WHERE a.agree = 1 AND department_id IN (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments]
-                                          WHERE report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports]
-                                                              WHERE title = '", title, "'))", sep = "")
-  ) %>%
-    distinct(organization_id, .keep_all = TRUE)
 
 # 匯入上一期人事資料檔 -------------------------------------------------------------------
 # 整合20校試辦中的公立學校、所有公立教員資料表及職員(工)資料表
@@ -5281,7 +5262,8 @@ spe5$spe5 <- gsub("； NA", replacement="", spe5$spe5)
 #產生檢誤報告文字
 spe5 <- spe5 %>%
   subset(select = c(organization_id, spe5)) %>%
-  distinct(organization_id, spe5)
+  distinct(organization_id, spe5) %>%
+  mutate(spe5 = paste(spe5, "（請確認以上人員畢業證書所載學位別。若最高學歷畢業學校為(科技/空中)大學或(技術)學院，且為專科學制，請於「副學士或專科畢業學校」欄位中在校名後註記專科學制或專科部）", sep = ""))
 }else{
 #偵測spe5是否存在。若不存在，則產生NA行
 if('spe5' %in% ls()){
@@ -8312,6 +8294,7 @@ for (i in temp){
 
 check02 <- check02 %>%
   subset(select = -c(err_flag, err_flag_P, err_flag_Ps))
+openxlsx :: write.xlsx(check02, file = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx", rowNames = FALSE, overwrite = TRUE)
 }else{
 openxlsx :: write.xlsx(check02, file = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx", rowNames = FALSE, overwrite = TRUE)
 }
@@ -8653,14 +8636,14 @@ if(dim(teacher)[1] == 0 & dim(staff)[1] == 0)
     
     #寄信
     #先判斷check_print檔案是否使用中(以"是否可更改檔案名稱"來判斷 若可更改 代表未使用中)
-    checkprint_filename <- "C:/edhr-111t1/work/edhr-111t1-check_print-人事.xls"
-    checkprint_filename_2 <- substr(checkprint_filename, start = 1, stop = str_locate(checkprint_filename, ".xls")[ ,1] - 1)  
+    checkprint_filename <- "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx"
+    checkprint_filename_2 <- substr(checkprint_filename, start = 1, stop = str_locate(checkprint_filename, ".xlsx")[ ,1] - 1)  
     
-    if(file.rename(from = checkprint_filename, to = paste(checkprint_filename_2, "2.xls", sep = "")) == TRUE)
+    if(file.rename(from = checkprint_filename, to = paste(checkprint_filename_2, "2.xlsx", sep = "")) == TRUE)
     {
       if(nchar(now) == 0)
       {
-        file.rename(from = paste(checkprint_filename_2, "2.xls", sep = ""), to = checkprint_filename)
+        file.rename(from = paste(checkprint_filename_2, "2.xlsx", sep = ""), to = checkprint_filename)
         
         paste(format(time_now, format = "%Y/%m/%d %H:%M"), " 本次無學校上傳", sep = "")
       }else
@@ -8789,7 +8772,7 @@ if(dim(teacher)[1] == 0 & dim(staff)[1] == 0)
           
           shell.exec("C:\\autochecking\\fileclose.bat")
           
-          file.rename(from = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事2.xls", to = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xls")
+          file.rename(from = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事2.xlsx", to = "C:\\edhr-111t1\\work\\edhr-111t1-check_print-人事.xlsx")
         }
       }
     }else
