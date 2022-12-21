@@ -178,26 +178,6 @@ data_retire   <- read_excel(path, sheet = "離退教職員(工)資料表")
   teacher <- data_teacher
   staff <- data_staff
 
-  
-  #請輸入本次填報設定檔標題(字串需與標題完全相符，否則會找不到)
-  title <- "111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事）"
-
-  #讀取審核同意之學校名單
-  list_agree <- dbGetQuery(edhr, 
-                               paste("
-  SELECT DISTINCT b.id AS organization_id , 1 AS agree
-  FROM [plat5_edhr].[dbo].[teacher_fillers] a 
-  LEFT JOIN 
-  (SELECT a.reporter_id, c.id
-  FROM [plat5_edhr].[dbo].[teacher_fillers] a LEFT JOIN [plat5_edhr].[dbo].[teacher_reporters] b ON a.reporter_id = b.id
-  LEFT JOIN [plat5_edhr].[dbo].[organization_details] c ON b.organization_id = c.organization_id
-  ) b ON a.reporter_id = b.reporter_id
-  WHERE a.agree = 1 AND department_id IN (SELECT id FROM [plat5_edhr].[dbo].[teacher_departments]
-                                          WHERE report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports]
-                                                              WHERE title = '", title, "'))", sep = "")
-  ) %>%
-    distinct(organization_id, .keep_all = TRUE)
-
 # 匯入上一期人事資料檔 -------------------------------------------------------------------
 # 整合20校試辦中的公立學校、所有公立教員資料表及職員(工)資料表
 
