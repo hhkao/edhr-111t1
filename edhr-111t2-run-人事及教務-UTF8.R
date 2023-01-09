@@ -1,3 +1,7 @@
+#需修改
+  #1. 填報設定檔名稱
+  #2. 管區
+
 # 若自動化檢誤執行有問題，要先把下面兩個檔案刪掉，再重跑
 # pre_correct_list.xlsx
 # pre_list_agree.xlsx
@@ -24,7 +28,7 @@ lapply(packages, require, character.only = TRUE)
 edhr <- dbConnect(odbc::odbc(), "CHER01-EDHR-NEW", timeout = 10)
 
 #請輸入本次填報設定檔標題(字串需與標題完全相符，否則會找不到)
-title <- "111學年度上學期高級中等學校教育人力資源資料庫（公立學校人事及教務）"
+title <- "110學年度上學期高級中等學校教育人力資源資料庫（20校人事及教務）"
 
 department <- "人事室"
 
@@ -42,8 +46,8 @@ WHERE a.agree = 1 AND department_id IN (SELECT id FROM [plat5_edhr].[dbo].[teach
                                         WHERE report_id = (SELECT id FROM [plat5_edhr].[dbo].[teacher_reports]
                                                             WHERE title = '", title, "'))", sep = "")
 ) %>%
-  distinct(organization_id, .keep_all = TRUE) %>%
-  subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
+  distinct(organization_id, .keep_all = TRUE)
+  #管區 %>% subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
 
 
 #讀取教員資料表名稱
@@ -84,8 +88,8 @@ teacher <- merge(x = teacher, y = list_agree, by = "organization_id", all.x = TR
   subset(select = -c(updated_at, agree))
 
 #管區
-teacher <- teacher %>%
-  #subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
+teacher <- teacher
+  #管區 %>% subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
   
   #讀取職員(工)資料表名稱
   staff_tablename <- dbGetQuery(edhr, 
@@ -123,8 +127,8 @@ staff <- merge(x = staff, y = list_agree, by = "organization_id", all.x = TRUE) 
   subset(select = -c(updated_at, agree))
 
 #管區
-staff <- staff %>%
-  #subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
+staff <- staff 
+  #管區 %>% subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
   
   department <- "教務處"
 
@@ -159,12 +163,12 @@ load <- merge(x = load, y = list_agree, by = "organization_id", all.x = TRUE) %>
   subset(select = -c(updated_at, agree))
 
 #管區
-load <- load %>%
-  #subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
+load <- load 
+  #管區 %>% subset(organization_id == "421302" | organization_id == "381302" | organization_id == "331404" | organization_id == "421303" | organization_id == "411301" | organization_id == "401302" | organization_id == "351402" | organization_id == "381305" | organization_id == "411401" | organization_id == "421301" | organization_id == "361B09" | organization_id == "331403" | organization_id == "331402" | organization_id == "341302" | organization_id == "411302" | organization_id == "401303" | organization_id == "411303" | organization_id == "401301" | organization_id == "381306" | organization_id == "381304" | organization_id == "381303" | organization_id == "331301" | organization_id == "341402" | organization_id == "361401" | organization_id == "311401" | organization_id == "331304" | organization_id == "351B09" | organization_id == "331302" | organization_id == "361301" | organization_id == "351301" | organization_id == "421404" | organization_id == "321399" | organization_id == "381301" | organization_id == "581301" | organization_id == "121318" | organization_id == "581401" | organization_id == "121417" | organization_id == "521303" | organization_id == "581302" | organization_id == "581402" | organization_id == "521301" | organization_id == "551303" | organization_id == "121307" | organization_id == "121410" | organization_id == "121302" | organization_id == "121415" | organization_id == "551402" | organization_id == "521401" | organization_id == "551301" | organization_id == "121413" | organization_id == "121405" | organization_id == "121320" | organization_id == "121306" | organization_id == "101303" | organization_id == "101304" | organization_id == "101406" | organization_id == "101405" | organization_id == "141406" | organization_id == "141307" | organization_id == "141301" | organization_id == "181305" | organization_id == "181307" | organization_id == "181308" | organization_id == "181306" | organization_id == "201314" | organization_id == "201313" | organization_id == "201304" | organization_id == "201408" | organization_id == "201309" | organization_id == "201312" | organization_id == "201310")
   
 #輸出
 list_of_datasets <- list("教員資料表" = teacher, "職員(工)資料表" = staff, "教學資料表" = load)
-path <- "\\\\192.168.110.244\\share_tmp\\給修恒\\1101\\edhr-110t1\\dta\\edhr_110t1-202201\\110學年度上學期高級中等學校教育人力資源資料庫（20校人事及教務）.xlsx"
+path <- "\\\\192.168.110.244\\share_tmp\\給修恒\\1112\\edhr-111t2\\dta\\edhr_111t2-202304\\111學年度下學期高級中等學校教育人力資源資料庫（20校人事及教務）.xlsx"
 openxlsx :: write.xlsx(list_of_datasets, file = path, rowNames = FALSE, overwrite = TRUE)
 
 excel_sheets(path)
@@ -173,15 +177,15 @@ data_teacher <- read_excel(path, sheet = "教員資料表")
 data_staff   <- read_excel(path, sheet = "職員(工)資料表")
 #data_retire   <- read_excel(path, sheet = "離退教職員(工)資料表")
 data_load    <- read_excel(path, sheet = "教學資料表")
-data_courseA  <- read_excel(path, sheet = "授課資料表A")
-data_courseB  <- read_excel(path, sheet = "授課資料表B")
+#data_courseA  <- read_excel(path, sheet = "授課資料表A")
+#data_courseB  <- read_excel(path, sheet = "授課資料表B")
 
 #自動化檢誤用
 teacher <- data_teacher
 staff <- data_staff
 load <- data_load
-courseA <- data_courseA
-courseB <- data_courseB
+#courseA <- data_courseA
+#courseB <- data_courseB
 
 #請輸入本次填報設定檔標題(字串需與標題完全相符，否則會找不到)
 title <- "110學年度上學期高級中等學校教育人力資源資料庫（20校人事及教務）"
@@ -1618,22 +1622,22 @@ for (x in temp){
 }	
 
 #亂碼
-drev_person_1[["mdegreeu1"]][grep("^國立台灣藝術⼤學$", drev_person_1[["mdegreeu1"]])] <- "國立台灣藝術大學"
-drev_person_1[["mdegreeu1"]][grep("^私立中華科技⼤學$", drev_person_1[["mdegreeu1"]])] <- "私立中華科技大學"
+drev_person_1[["mdegreeu1"]][grep("^國立台灣藝術?學$", drev_person_1[["mdegreeu1"]])] <- "國立台灣藝術大學"
+drev_person_1[["mdegreeu1"]][grep("^私立中華科技?學$", drev_person_1[["mdegreeu1"]])] <- "私立中華科技大學"
 
-drev_person_1[["mdegreeg1"]][grep("^⽣物科技系$", drev_person_1[["mdegreeg1"]])] <- "生物科技系"
+drev_person_1[["mdegreeg1"]][grep("^?物科技系$", drev_person_1[["mdegreeg1"]])] <- "生物科技系"
 
-drev_person_1[["bdegreeu1"]][grep("^國立台北科技⼤學$", drev_person_1[["bdegreeu1"]])] <- "國立台北科技大學"
-drev_person_1[["bdegreeu1"]][grep("^⾼雄餐旅⼤學$", drev_person_1[["bdegreeu1"]])] <- "高雄餐旅大學"
-drev_person_1[["bdegreeu1"]][grep("^銘傳⼤學$", drev_person_1[["bdegreeu1"]])] <- "銘傳大學"
-drev_person_1[["bdegreeu1"]][grep("^德明財經科技⼤學$", drev_person_1[["bdegreeu1"]])] <- "德明財經科技大學"
-drev_person_1[["bdegreeu1"]][grep("^國立台灣藝術⼤學$", drev_person_1[["bdegreeu1"]])] <- "國立台灣藝術大學"
-drev_person_1[["bdegreeu1"]][grep("^吳鳳科技⼤學$", drev_person_1[["bdegreeu1"]])] <- "吳鳳科技大學"
-drev_person_1[["bdegreeu1"]][grep("^弘光科技⼤學$", drev_person_1[["bdegreeu1"]])] <- "弘光科技大學"
+drev_person_1[["bdegreeu1"]][grep("^國立台北科技?學$", drev_person_1[["bdegreeu1"]])] <- "國立台北科技大學"
+drev_person_1[["bdegreeu1"]][grep("^?雄餐旅?學$", drev_person_1[["bdegreeu1"]])] <- "高雄餐旅大學"
+drev_person_1[["bdegreeu1"]][grep("^銘傳?學$", drev_person_1[["bdegreeu1"]])] <- "銘傳大學"
+drev_person_1[["bdegreeu1"]][grep("^德明財經科技?學$", drev_person_1[["bdegreeu1"]])] <- "德明財經科技大學"
+drev_person_1[["bdegreeu1"]][grep("^國立台灣藝術?學$", drev_person_1[["bdegreeu1"]])] <- "國立台灣藝術大學"
+drev_person_1[["bdegreeu1"]][grep("^吳鳳科技?學$", drev_person_1[["bdegreeu1"]])] <- "吳鳳科技大學"
+drev_person_1[["bdegreeu1"]][grep("^弘光科技?學$", drev_person_1[["bdegreeu1"]])] <- "弘光科技大學"
 
-drev_person_1[["bdegreeg1"]][grep("^⾞輛⼯程系$", drev_person_1[["bdegreeg1"]])] <- "車輛工程系"
-drev_person_1[["bdegreeg1"]][grep("^⻄餐廚藝系$", drev_person_1[["bdegreeg1"]])] <- "西餐廚藝系"
-drev_person_1[["bdegreeg1"]][grep("^化妝品應⽤管理系$", drev_person_1[["bdegreeg1"]])] <- "化妝品應用管理系"
+drev_person_1[["bdegreeg1"]][grep("^?輛?程系$", drev_person_1[["bdegreeg1"]])] <- "車輛工程系"
+drev_person_1[["bdegreeg1"]][grep("^?餐廚藝系$", drev_person_1[["bdegreeg1"]])] <- "西餐廚藝系"
+drev_person_1[["bdegreeg1"]][grep("^化妝品應?管理系$", drev_person_1[["bdegreeg1"]])] <- "化妝品應用管理系"
 
 #將gender由字串轉成數字
 drev_person_1 <- drev_person_1 %>% 
@@ -1667,7 +1671,8 @@ data_retire_1 <- data_retire %>%
 drev_P_retire_merge_pre <- merge(x = drev_P_retire_merge_pre, y = data_retire_1, by = c("organization_id", "idnumber"), all.x = TRUE, all.y = TRUE)
 
 # 人事資料表與教學資料表合併 -----------------------------------------------------------
-drev_P_load <- merge(x = drev_person_1, y = data_load, by = c("organization_id", "idnumber"), all.x = TRUE, all.y = TRUE)
+drev_P_load <- merge(x = drev_person_1, y = data_load, by = c("organization_id", "idnumber"), all.x = TRUE, all.y = TRUE) %>%
+  rename(name = name.x, name_load = name.y)
 
 # 教學資料表資料格式修正 ------------------------------------------------------------------
 temp <- c("tutor", "mitleader", "classleader", "ccounselor", "adminteacher", "specurr")
@@ -3527,7 +3532,7 @@ if('flag50' %in% ls()){
   flag50$flag50 <- ""
 }
 }
-# flag51: 原則上，「留職停薪原因」與「借調類別」填寫應相符:1.	借調公民營事業機構留職停薪↔借調至公民營事業機構 2.	借調行政法人機關留職停薪↔借調至行政法人機關 3.借調法定實驗學校留職停薪↔借調至法定實驗學校-------------------------------------------------------------------
+# flag51: 原則上，「留職停薪原因」與「借調類別」填寫應相符:1.	借調公民營事業機構留職停薪?借調至公民營事業機構 2.	借調行政法人機關留職停薪?借調至行政法人機關 3.借調法定實驗學校留職停薪?借調至法定實驗學校-------------------------------------------------------------------
 flag_person <- drev_person_1
 
 #「留職停薪原因」與「借調類別」不合理處
@@ -5112,7 +5117,7 @@ flag_person$err_flag_adegreeu1 <- if_else(grepl("大學", flag_person$adegreeu1)
 flag_person$err_flag_adegreeu1 <- if_else(grepl("學院", flag_person$adegreeu1), 1, flag_person$err_flag_adegreeu1)
 flag_person$err_flag_adegreeu2 <- if_else(grepl("大學", flag_person$adegreeu2), 1, flag_person$err_flag_adegreeu2)
 flag_person$err_flag_adegreeu2 <- if_else(grepl("學院", flag_person$adegreeu2), 1, flag_person$err_flag_adegreeu2)
-#達姆施塔特工業大學（德語：Technische Universität Darmstadt），是德國歷史悠久的理工大學
+#達姆施塔特工業大學（德語：Technische Universitat Darmstadt），是德國歷史悠久的理工大學
 flag_person$err_flag_adegreeu2 <- if_else(grepl("Darmstadt$", flag_person$adegreeu2), 1, flag_person$err_flag_adegreeu2)
 #副學士的情況
 flag_person$err_flag_adegreeu1 <- if_else(grepl("專科", flag_person$adegreeu1), 0, flag_person$err_flag_adegreeu1)
@@ -5309,7 +5314,7 @@ flag_person$err_ddegreeu1 <- if_else(grepl("CNR", flag_person$ddegreeu1), 0, fla
 flag_person$err_ddegreeu1 <- if_else(grepl("TheNewSchool", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
 flag_person$err_ddegreeu1 <- if_else(grepl("Hochschule", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
 flag_person$err_ddegreeu1 <- if_else(grepl("BergenSchoolofArchitecture", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
-flag_person$err_ddegreeu1 <- if_else(grepl("Universität", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
+flag_person$err_ddegreeu1 <- if_else(grepl("Universitat", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
 flag_person$err_ddegreeu1 <- if_else(grepl("Institute$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
 flag_person$err_ddegreeu1 <- if_else(grepl("StellenboschUni$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
 flag_person$err_ddegreeu1 <- if_else(grepl("^TUDarmstadt$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
@@ -5317,7 +5322,7 @@ flag_person$err_ddegreeu1 <- if_else(grepl("^N$", flag_person$ddegreeu1), 0, fla
 flag_person$err_ddegreeu1 <- if_else(grepl("^莫斯科柴可夫斯基$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
 flag_person$err_ddegreeu1 <- if_else(grepl("音樂院$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
 flag_person$err_ddegreeu1 <- if_else(grepl("音樂研究所$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
-flag_person$err_ddegreeu1 <- if_else(grepl("大学$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
+flag_person$err_ddegreeu1 <- if_else(grepl("大?$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
 flag_person$err_ddegreeu1 <- if_else(grepl("研究所博士班$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
 flag_person$err_ddegreeu1 <- if_else(grepl("^中興法商$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
 flag_person$err_ddegreeu1 <- if_else(grepl("^待查詢$", flag_person$ddegreeu1), 0, flag_person$err_ddegreeu1)
@@ -5477,7 +5482,7 @@ flag_person$err_ddegreeu2 <- if_else(grepl("CNR", flag_person$ddegreeu2), 0, fla
 flag_person$err_ddegreeu2 <- if_else(grepl("TheNewSchool", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
 flag_person$err_ddegreeu2 <- if_else(grepl("Hochschule", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
 flag_person$err_ddegreeu2 <- if_else(grepl("BergenSchoolofArchitecture", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
-flag_person$err_ddegreeu2 <- if_else(grepl("Universität", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
+flag_person$err_ddegreeu2 <- if_else(grepl("Universitat", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
 flag_person$err_ddegreeu2 <- if_else(grepl("Institute$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
 flag_person$err_ddegreeu2 <- if_else(grepl("StellenboschUni$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
 flag_person$err_ddegreeu2 <- if_else(grepl("^TUDarmstadt$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
@@ -5485,7 +5490,7 @@ flag_person$err_ddegreeu2 <- if_else(grepl("^N$", flag_person$ddegreeu2), 0, fla
 flag_person$err_ddegreeu2 <- if_else(grepl("^莫斯科柴可夫斯基$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
 flag_person$err_ddegreeu2 <- if_else(grepl("音樂院$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
 flag_person$err_ddegreeu2 <- if_else(grepl("音樂研究所$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
-flag_person$err_ddegreeu2 <- if_else(grepl("大学$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
+flag_person$err_ddegreeu2 <- if_else(grepl("大?$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
 flag_person$err_ddegreeu2 <- if_else(grepl("研究所博士班$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
 flag_person$err_ddegreeu2 <- if_else(grepl("^中興法商$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
 flag_person$err_ddegreeu2 <- if_else(grepl("^待查詢$", flag_person$ddegreeu2), 0, flag_person$err_ddegreeu2)
@@ -5652,11 +5657,11 @@ flag_person$err_mdegreeu1 <- if_else(grepl("CNR$", flag_person$mdegreeu1), 0, fl
 flag_person$err_mdegreeu1 <- if_else(grepl("TheNewSchool$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("Hochschule$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("BergenSchoolofArchitecture$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
-flag_person$err_mdegreeu1 <- if_else(grepl("Universität$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
+flag_person$err_mdegreeu1 <- if_else(grepl("Universitat$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("Institute$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("StellenboschUni$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("^TUDarmstadt$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
-flag_person$err_mdegreeu1 <- if_else(grepl("^大学$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
+flag_person$err_mdegreeu1 <- if_else(grepl("^大?$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("^研究所博士班$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("^中興法商$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("^N$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
@@ -5679,7 +5684,7 @@ flag_person$err_mdegreeu1 <- if_else(grepl("^肄業$", flag_person$mdegreeu1), 1
 flag_person$err_mdegreeu1 <- if_else(grepl("^學分班$", flag_person$mdegreeu1), 1, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("^籌備處$", flag_person$mdegreeu1), 1, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("^高雄餐旅$", flag_person$mdegreeu1), 1, flag_person$err_mdegreeu1)
-flag_person$err_mdegreeu1 <- if_else(grepl("^universitéJeanMoulinLyon3$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
+flag_person$err_mdegreeu1 <- if_else(grepl("^universiteJeanMoulinLyon3$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("^UniversityCollegeLondon$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("^BirminghamUiversity$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("^ColumbiaUniversity哥倫比亞大學MathematicsEducation$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
@@ -5688,7 +5693,7 @@ flag_person$err_mdegreeu1 <- if_else(grepl("^UNITEDSTATESSPORTSACADEMY$", flag_p
 flag_person$err_mdegreeu1 <- if_else(grepl("^KnowledgeSystemsInstitute$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("DomusAcademy", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 flag_person$err_mdegreeu1 <- if_else(grepl("DOMUSACADEMY", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
-flag_person$err_mdegreeu1 <- if_else(grepl("^UniversitéStendhalGrenobleIII$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
+flag_person$err_mdegreeu1 <- if_else(grepl("^UniversiteStendhalGrenobleIII$", flag_person$mdegreeu1), 0, flag_person$err_mdegreeu1)
 
 #碩士學位畢業系所（一）
 flag_person$err_mdegreeg1 <- 0
@@ -5846,11 +5851,11 @@ flag_person$err_mdegreeu2 <- if_else(grepl("CNR$", flag_person$mdegreeu2), 0, fl
 flag_person$err_mdegreeu2 <- if_else(grepl("TheNewSchool$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("Hochschule$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("BergenSchoolofArchitecture$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
-flag_person$err_mdegreeu2 <- if_else(grepl("Universität$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
+flag_person$err_mdegreeu2 <- if_else(grepl("Universitat$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("Institute$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("StellenboschUni$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("^TUDarmstadt$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
-flag_person$err_mdegreeu2 <- if_else(grepl("^大学$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
+flag_person$err_mdegreeu2 <- if_else(grepl("^大?$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("^研究所博士班$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("^中興法商$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("^N$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
@@ -5873,7 +5878,7 @@ flag_person$err_mdegreeu2 <- if_else(grepl("^肄業$", flag_person$mdegreeu2), 1
 flag_person$err_mdegreeu2 <- if_else(grepl("^學分班$", flag_person$mdegreeu2), 1, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("^籌備處$", flag_person$mdegreeu2), 1, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("^高雄餐旅$", flag_person$mdegreeu2), 1, flag_person$err_mdegreeu2)
-flag_person$err_mdegreeu2 <- if_else(grepl("^universitéJeanMoulinLyon3$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
+flag_person$err_mdegreeu2 <- if_else(grepl("^universiteJeanMoulinLyon3$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("^UniversityCollegeLondon$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("^BirminghamUiversity$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("^ColumbiaUniversity哥倫比亞大學MathematicsEducation$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
@@ -5882,7 +5887,7 @@ flag_person$err_mdegreeu2 <- if_else(grepl("^UNITEDSTATESSPORTSACADEMY$", flag_p
 flag_person$err_mdegreeu2 <- if_else(grepl("^KnowledgeSystemsInstitute$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("DomusAcademy", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 flag_person$err_mdegreeu2 <- if_else(grepl("DOMUSACADEMY", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
-flag_person$err_mdegreeu2 <- if_else(grepl("^UniversitéStendhalGrenobleIII$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
+flag_person$err_mdegreeu2 <- if_else(grepl("^UniversiteStendhalGrenobleIII$", flag_person$mdegreeu2), 0, flag_person$err_mdegreeu2)
 
 #碩士學位畢業系所（二）
 flag_person$err_mdegreeg2 <- 0
@@ -6042,10 +6047,10 @@ flag_person$err_bdegreeu1 <- if_else(grepl("CNR", flag_person$bdegreeu1), 0, fla
 flag_person$err_bdegreeu1 <- if_else(grepl("TheNewSchool", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("Hochschule", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("BergenSchoolofArchitecture", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
-flag_person$err_bdegreeu1 <- if_else(grepl("Universität", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
+flag_person$err_bdegreeu1 <- if_else(grepl("Universitat", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("StellenboschUni$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("^TUDarmstadt$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
-flag_person$err_bdegreeu1 <- if_else(grepl("大学$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
+flag_person$err_bdegreeu1 <- if_else(grepl("大?$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("^中興法商$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("^N$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("^待查詢$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
@@ -6066,7 +6071,7 @@ flag_person$err_bdegreeu1 <- if_else(grepl("國立體院", flag_person$bdegreeu1
 flag_person$err_bdegreeu1 <- if_else(grepl("逕獨碩士", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("UNISA", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("Univerity", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
-flag_person$err_bdegreeu1 <- if_else(grepl("山口県立大学", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
+flag_person$err_bdegreeu1 <- if_else(grepl("山口?立大?", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("ColumbiaBiblicalSeminaryandSchoolofMissions", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("本國", flag_person$bdegreeu1), 1, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("肄業", flag_person$bdegreeu1), 1, flag_person$err_bdegreeu1)
@@ -6081,7 +6086,7 @@ flag_person$err_bdegreeu1 <- if_else(grepl("^CityandGuildsofLondonArtSchool$", f
 flag_person$err_bdegreeu1 <- if_else(grepl("^BirminghamUiversity$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("^NewJerseyInstituteofTechnology$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("^CollegeofEducationPotchefstroomSA$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
-flag_person$err_bdegreeu1 <- if_else(grepl("^学校法人ホンダ学園ホンダテクニカルカレッジ関西$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
+flag_person$err_bdegreeu1 <- if_else(grepl("^?校法人????園?????????????西$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("^同等學力$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("^政戰正規班$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
 flag_person$err_bdegreeu1 <- if_else(grepl("^日本國立埼玉大學$", flag_person$bdegreeu1), 0, flag_person$err_bdegreeu1)
@@ -6249,10 +6254,10 @@ flag_person$err_bdegreeu2 <- if_else(grepl("CNR", flag_person$bdegreeu2), 0, fla
 flag_person$err_bdegreeu2 <- if_else(grepl("TheNewSchool", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("Hochschule", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("BergenSchoolofArchitecture", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
-flag_person$err_bdegreeu2 <- if_else(grepl("Universität", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
+flag_person$err_bdegreeu2 <- if_else(grepl("Universitat", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("StellenboschUni$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("^TUDarmstadt$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
-flag_person$err_bdegreeu2 <- if_else(grepl("大学$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
+flag_person$err_bdegreeu2 <- if_else(grepl("大?$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("^中興法商$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("^N$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("^待查詢$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
@@ -6273,7 +6278,7 @@ flag_person$err_bdegreeu2 <- if_else(grepl("國立體院", flag_person$bdegreeu2
 flag_person$err_bdegreeu2 <- if_else(grepl("逕獨碩士", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("UNISA", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("Univerity", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
-flag_person$err_bdegreeu2 <- if_else(grepl("山口県立大学", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
+flag_person$err_bdegreeu2 <- if_else(grepl("山口?立大?", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("ColumbiaBiblicalSeminaryandSchoolofMissions", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("本國", flag_person$bdegreeu2), 1, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("肄業", flag_person$bdegreeu2), 1, flag_person$err_bdegreeu2)
@@ -6288,7 +6293,7 @@ flag_person$err_bdegreeu2 <- if_else(grepl("^CityandGuildsofLondonArtSchool$", f
 flag_person$err_bdegreeu2 <- if_else(grepl("^BirminghamUiversity$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("^NewJerseyInstituteofTechnology$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("^CollegeofEducationPotchefstroomSA$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
-flag_person$err_bdegreeu2 <- if_else(grepl("^学校法人ホンダ学園ホンダテクニカルカレッジ関西$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
+flag_person$err_bdegreeu2 <- if_else(grepl("^?校法人????園?????????????西$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("^同等學力$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("^政戰正規班$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
 flag_person$err_bdegreeu2 <- if_else(grepl("^日本國立埼玉大學$", flag_person$bdegreeu2), 0, flag_person$err_bdegreeu2)
@@ -6451,9 +6456,9 @@ flag_person$err_adegreeu1 <- if_else(grepl("CNR", flag_person$adegreeu1), 0, fla
 flag_person$err_adegreeu1 <- if_else(grepl("TheNewSchool", flag_person$adegreeu1), 0, flag_person$err_adegreeu1)
 flag_person$err_adegreeu1 <- if_else(grepl("Hochschule", flag_person$adegreeu1), 0, flag_person$err_adegreeu1)
 flag_person$err_adegreeu1 <- if_else(grepl("BergenSchoolofArchitecture", flag_person$adegreeu1), 0, flag_person$err_adegreeu1)
-flag_person$err_adegreeu1 <- if_else(grepl("Universität", flag_person$adegreeu1), 0, flag_person$err_adegreeu1)
+flag_person$err_adegreeu1 <- if_else(grepl("Universitat", flag_person$adegreeu1), 0, flag_person$err_adegreeu1)
 flag_person$err_adegreeu1 <- if_else(grepl("^TUDarmstadt$", flag_person$adegreeu1), 0, flag_person$err_adegreeu1)
-flag_person$err_adegreeu1 <- if_else(grepl("大学$", flag_person$adegreeu1), 0, flag_person$err_adegreeu1)
+flag_person$err_adegreeu1 <- if_else(grepl("大?$", flag_person$adegreeu1), 0, flag_person$err_adegreeu1)
 flag_person$err_adegreeu1 <- if_else(grepl("^N$", flag_person$adegreeu1), 0, flag_person$err_adegreeu1)
 flag_person$err_adegreeu1 <- if_else(grepl("^待查詢$", flag_person$adegreeu1), 0, flag_person$err_adegreeu1)
 flag_person$err_adegreeu1 <- if_else(grepl("職業學校", flag_person$adegreeu1), 1, flag_person$err_adegreeu1)
@@ -6625,9 +6630,9 @@ flag_person$err_adegreeu2 <- if_else(grepl("CNR", flag_person$adegreeu2), 0, fla
 flag_person$err_adegreeu2 <- if_else(grepl("TheNewSchool", flag_person$adegreeu2), 0, flag_person$err_adegreeu2)
 flag_person$err_adegreeu2 <- if_else(grepl("Hochschule", flag_person$adegreeu2), 0, flag_person$err_adegreeu2)
 flag_person$err_adegreeu2 <- if_else(grepl("BergenSchoolofArchitecture", flag_person$adegreeu2), 0, flag_person$err_adegreeu2)
-flag_person$err_adegreeu2 <- if_else(grepl("Universität", flag_person$adegreeu2), 0, flag_person$err_adegreeu2)
+flag_person$err_adegreeu2 <- if_else(grepl("Universitat", flag_person$adegreeu2), 0, flag_person$err_adegreeu2)
 flag_person$err_adegreeu2 <- if_else(grepl("^TUDarmstadt$", flag_person$adegreeu2), 0, flag_person$err_adegreeu2)
-flag_person$err_adegreeu2 <- if_else(grepl("大学$", flag_person$adegreeu2), 0, flag_person$err_adegreeu2)
+flag_person$err_adegreeu2 <- if_else(grepl("大?$", flag_person$adegreeu2), 0, flag_person$err_adegreeu2)
 flag_person$err_adegreeu2 <- if_else(grepl("^N$", flag_person$adegreeu2), 0, flag_person$err_adegreeu2)
 flag_person$err_adegreeu2 <- if_else(grepl("^待查詢$", flag_person$adegreeu2), 0, flag_person$err_adegreeu2)
 flag_person$err_adegreeu2 <- if_else(grepl("職業學校", flag_person$adegreeu2), 1, flag_person$err_adegreeu2)
@@ -7702,6 +7707,131 @@ if('flag91' %in% ls()){
 
 
 # 教務 -----------------------------------------------------------
+# flag25: 1. 請確認並填寫主要任教科別之全稱。如為共同學科，請分科填寫，例如：國文科、歷史科、生物科等；如為專業群科，不需填寫群別，但亦請分科填寫，例如：鑄造科、汽車科、烘焙科等。該名教師如任教二科別以上，請填寫最「主要」任教之科別，或校內歸屬之科別。-------------------------------------------------------------------
+#2. 學校如聘請兼任教師，專門教授校訂課程、各類選修課程、團體活動時間、彈性學習時間之課程或活動，則其「主要任教科別」請直接分別填寫：「校訂必修課程」、「選修課程」、「團體活動時間」或「彈性學習時間」。
+flag_load <- drev_P_load
+
+flag_load$err_flag <- 0
+flag_load$err_flag <- if_else(flag_load$source == "教員資料表" & (flag_load$tutor == "Y" | flag_load$tutor == "N") & (flag_load$sertype == "教師" | flag_load$sertype == "主任教官" | flag_load$sertype == "教官") & nchar(flag_load$depcode_p) != 2 & nchar(flag_load$depcode_p) != 3, 1, flag_load$err_flag)
+flag_load$err_flag <- if_else(flag_load$source == "教員資料表" & (flag_load$tutor == "Y" | flag_load$tutor == "N") & (flag_load$sertype == "教師" | flag_load$sertype == "主任教官" | flag_load$sertype == "教官") & flag_load$depcode_p == "NA", 0, flag_load$err_flag)  #因NA要改成flag31處理
+
+#特例：輔導科（生涯規劃、生命教育）暫不區分
+flag_load$err_flag <- if_else(flag_load$mainsub == "輔導活動" | flag_load$mainsub == "輔導科" | flag_load$mainsub == "輔導活動科" | flag_load$mainsub == "輔導", 0, flag_load$err_flag)
+#特例：台中家商確實設有應用外語科
+flag_load$err_flag <- if_else((flag_load$mainsub == "應用外語科" | flag_load$mainsub == "應外科") & (flag_load$organization_id == "193404" | flag_load$organization_id == "013430"), 0, flag_load$err_flag)
+#特例：台中家商確實設置烘焙食品科 餐飲技術科
+flag_load$err_flag <- if_else((flag_load$mainsub == "烘焙食品科") & (flag_load$organization_id == "193404"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "餐飲技術科") & (flag_load$organization_id == "193404"), 0, flag_load$err_flag)
+#特例：新豐高中：應用英語學程（外語群）
+flag_load$err_flag <- if_else((flag_load$mainsub == "第二外語（德語）科") & (flag_load$organization_id == "110302"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "第二外語（日語）科") & (flag_load$organization_id == "110302"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "第二外語（法語）科") & (flag_load$organization_id == "110302"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "第二外語（西班牙語）科") & (flag_load$organization_id == "110302"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "第二外語（越南語）") & (flag_load$organization_id == "110302"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "第二外語（韓語）科") & (flag_load$organization_id == "110302"), 0, flag_load$err_flag)
+#特例：復興實中：多元選修
+flag_load$err_flag <- if_else((flag_load$mainsub == "日語") & (flag_load$organization_id == "331304"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "西班牙語") & (flag_load$organization_id == "331304"), 0, flag_load$err_flag)
+#特例：台南高工：綜合職能科（高二或高三的舊課程）
+flag_load$err_flag <- if_else((flag_load$mainsub == "綜合職能科") & (flag_load$organization_id == "110409"), 0, flag_load$err_flag)
+#特例：華僑高中：多元選修
+flag_load$err_flag <- if_else((flag_load$mainsub == "印尼語科") & (flag_load$organization_id == "010301"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "日語科") & (flag_load$organization_id == "010301"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "法語科") & (flag_load$organization_id == "010301"), 0, flag_load$err_flag)
+#特例：華僑高中：第二外語
+flag_load$err_flag <- if_else((flag_load$mainsub == "第二外國語文") & (flag_load$organization_id == "010301"), 0, flag_load$err_flag)
+#學校如聘請兼任教師專門教授校訂課程、各類選修課程、團體活動時間、彈性學習時間之課程或活動，則其「主要任教科別」請直接分別填寫：「校訂必修課程」、「選修課程」、「團體活動時間」、「彈性學習時間」。
+flag_load$err_flag <- if_else(flag_load$mainsub == "校訂必修課程", 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "選修課程") | (flag_load$mainsub == "校訂選修課程"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "團體活動時間") | (flag_load$mainsub == "社團活動時間"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else(flag_load$mainsub == "彈性學習時間", 0, flag_load$err_flag)
+#純屬國中部之教師 其主要任教科別可填理化、視覺藝術、童軍...等
+flag_load$err_flag <- if_else((flag_load$mainsub == "理化" | flag_load$mainsub == "理化科") & (flag_load$empunit == "國中部日間部" | flag_load$empunit == "國中部進修部"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "視覺藝術") & (flag_load$empunit == "國中部日間部" | flag_load$empunit == "國中部進修部"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "童軍") & (flag_load$empunit == "國中部日間部" | flag_load$empunit == "國中部進修部"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "綜合輔導") & (flag_load$empunit == "國中部日間部" | flag_load$empunit == "國中部進修部"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "國中綜合輔導專長") & (flag_load$empunit == "國中部日間部" | flag_load$empunit == "國中部進修部"), 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "國中英語") & (flag_load$empunit == "國中部日間部" | flag_load$empunit == "國中部進修部"), 0, flag_load$err_flag)
+#復興實中雙語部教師有跨部別教授之情形 主要任教科別可填理化
+flag_load$err_flag <- if_else((flag_load$mainsub == "理化") & flag_load$empunit == "雙語部" & grepl("A", flag_load$specurr), 0, flag_load$err_flag)
+#石碇高中專任教師教授計算機概論
+flag_load$err_flag <- if_else((flag_load$mainsub == "計算機概論") & flag_load$idnumber == "P223558906" & flag_load$organization_id == "014348", 0, flag_load$err_flag)
+#弘文高中只教國中的教師，主要任教科別為理化
+flag_load$err_flag <- if_else((flag_load$mainsub == "理化科") & flag_load$idnumber == "L122460055" & flag_load$organization_id == "061317", 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "理化科") & flag_load$idnumber == "L222168218" & flag_load$organization_id == "061317", 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "理化科") & flag_load$idnumber == "B121378112" & flag_load$organization_id == "061317", 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "理化科") & flag_load$idnumber == "L125023867" & flag_load$organization_id == "061317", 0, flag_load$err_flag)
+flag_load$err_flag <- if_else((flag_load$mainsub == "理化科") & flag_load$idnumber == "G121338364" & flag_load$organization_id == "061317", 0, flag_load$err_flag)
+#復興實中王惠英是人事主任沒錯，填在教員資料表，主聘單位為小學部，主要任教科別填「社會」是沒問題的
+flag_load$err_flag <- if_else((flag_load$mainsub == "社會") & flag_load$idnumber == "N222189031" & flag_load$empunit == "小學部" & flag_load$organization_id == "331304", 0, flag_load$err_flag)
+
+#加註
+flag_load$name <- paste(flag_load$name, "（", sep = "")
+flag_load$name <- if_else(flag_load$err_flag != 0, paste(flag_load$name, flag_load$mainsub, sep = ""), flag_load$name)
+flag_load$name <- paste(flag_load$name, "）", sep = "")
+flag_load$name <- gsub("；）", replacement = "）", flag_load$name)
+flag_load$name <- gsub("（）", replacement = "", flag_load$name)
+
+#呈現姓名
+flag_load$err_flag_txt <- ""
+flag_load$err_flag_txt <- case_when(
+  flag_load$err_flag == 1 ~ flag_load$name,
+  TRUE ~ flag_load$err_flag_txt
+)
+
+if (dim(flag_load %>% subset(err_flag == 1))[1] != 0){
+  #根據organization_id + source，展開成寬資料(wide)
+  flag_load_wide_flag25 <- flag_load %>%
+    subset(select = c(organization_id, idnumber, err_flag_txt, edu_name2, source, err_flag)) %>%
+    subset(err_flag == 1) %>%
+    dcast(organization_id + source ~ err_flag_txt, value.var = "err_flag_txt")
+  
+  #合併所有name
+  temp <- colnames(flag_load_wide_flag25)[3 : length(colnames(flag_load_wide_flag25))]
+  flag_load_wide_flag25$flag25_r <- NA
+  for (i in temp){
+    flag_load_wide_flag25$flag25_r <- paste(flag_load_wide_flag25$flag25_r, flag_load_wide_flag25[[i]], sep = " ")
+  }
+  flag_load_wide_flag25$flag25_r <- gsub("NA ", replacement="", flag_load_wide_flag25$flag25_r)
+  flag_load_wide_flag25$flag25_r <- gsub(" NA", replacement="", flag_load_wide_flag25$flag25_r)
+  
+  #產生檢誤報告文字
+  flag25_temp <- flag_load_wide_flag25 %>%
+    group_by(organization_id) %>%
+    mutate(flag25_txt = paste("校長之聘任類別需為「專任」。", sep = ""), "") %>%
+    subset(select = c(organization_id, flag25_txt)) %>%
+    distinct(organization_id, flag25_txt)
+  
+  #根據organization_id，展開成寬資料(wide)
+  flag25 <- flag25_temp %>%
+    dcast(organization_id ~ flag25_txt, value.var = "flag25_txt")
+  
+  #合併教員資料表及職員(工)資料表報告文字
+  temp <- colnames(flag25)[2 : length(colnames(flag25))]
+  flag25$flag25 <- NA
+  for (i in temp){
+    flag25$flag25 <- paste(flag25$flag25, flag25[[i]], sep = "； ")
+  }
+  flag25$flag25 <- gsub("NA； ", replacement="", flag25$flag25)
+  flag25$flag25 <- gsub("； NA", replacement="", flag25$flag25)
+  
+  #產生檢誤報告文字
+  flag25 <- flag25 %>%
+    subset(select = c(organization_id, flag25)) %>%
+    distinct(organization_id, flag25) %>%
+    mutate(flag25 = paste(flag25, "", sep = ""))
+}else{
+  #偵測flag25是否存在。若不存在，則產生NA行
+  if('flag25' %in% ls()){
+    print("flag25")
+  }else{
+    flag25 <- drev_P_load %>%
+      distinct(organization_id, .keep_all = TRUE) %>%
+      subset(select = c(organization_id))
+    flag25$flag25 <- ""
+  }
+}
+
 
 
 # 建立合併列印檔 -------------------------------------------------------------------
@@ -7848,7 +7978,7 @@ check02 <- merge(x = check02, y = spe6, by = c("organization_id"), all.x = TRUE,
 #國立彰師附工(070401)
   #代理教師連續聘任沒有中斷
   check02$flag80 <- if_else(check02$flag80 != "" & check02$organization_id == "070401", "", check02$flag80)
-  #蘇俊榮 周照棠 柯姿羽 陳凱勛 梁文瀞 洪武詮 林益瑋 吳武峰 施雄敏 林浚彬 林侑辰 梁祐祥 柯東佑 高駿雲 皆非本學期退休或因故離職人員
+  #蘇俊榮 周照棠 柯姿羽 陳凱勛 梁文? 洪武詮 林益瑋 吳武峰 施雄敏 林浚彬 林侑辰 梁祐祥 柯東佑 高駿雲 皆非本學期退休或因故離職人員
   check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "070401", "", check02$flag86)
 
 #國立永靖高工(070402)
@@ -8048,7 +8178,7 @@ check02 <- merge(x = check02, y = spe6, by = c("organization_id"), all.x = TRUE,
   check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "333304", "", check02$flag86)
 
 #市立大安高工(333401)
-  #趙晋海 高添貴 孔祥璿 陳揚翔 潘虹竹 田育台 陳亮君 林俊岳 何元皓 黃柏文 楊運祥 非本學期退休或因故離職人員
+  #趙?海 高添貴 孔祥璿 陳揚翔 潘虹竹 田育台 陳亮君 林俊岳 何元皓 黃柏文 楊運祥 非本學期退休或因故離職人員
   check02$flag86 <- if_else(check02$flag86 != "" & check02$organization_id == "333401", "", check02$flag86)
 
 #市立中山女中(343301)
